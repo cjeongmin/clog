@@ -1,13 +1,14 @@
 import { atom, useRecoilState, useRecoilValue } from "recoil";
 
 export interface PostType {
+  id: string;
   title: string;
   body: string;
-  date: Date;
+  date: string;
 }
 
 const postListState = atom<PostType[]>({
-  key: "postList",
+  key: "PostListState",
   default: [],
 });
 

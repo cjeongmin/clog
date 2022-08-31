@@ -1,20 +1,19 @@
-import { collection, getDocs, onSnapshot, query } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
 import { ReactElement, useEffect } from "react";
 import { PostType, usePostListState } from "../atoms/postListState";
-import { postsCollection } from "../utils/firebase";
+import { getPostsSnapshot } from "../utils/firebase";
 
 const Sidebar = (): ReactElement => {
   const [postList, setPostList] = usePostListState();
 
   useEffect(() => {
     (async () => {
-      const snapshot = await getDocs(postsCollection);
+      const snapshot = await getPostsSnapshot();
       let next: PostType[] = [];
       snapshot.forEach((doc) => {
         const { title, body, date } = doc.data();
-        next.push({ title, body, date: new Date(date) });
+        next.push({ id: doc.id, title, body, date: new Date(date) });
       });
       setPostList(next);
     })();
@@ -53,7 +52,7 @@ const Sidebar = (): ReactElement => {
           overflow-y: auto;
         }
 
-        .post-list > div {
+        .post-list div {
           margin-top: 10%;
         }
 
@@ -81,10 +80,12 @@ const Sidebar = (): ReactElement => {
         <hr />
         <span className="text center">Recent posts.</span>
         <div className="post-list">
-          {postList.map(({ title }, index) => (
-            <div className="post" key={index}>
-              {title}
-            </div>
+          {postList.map(({ id, title }) => (
+            <Link href={`/posts/${id}`} key={id}>
+              <a>
+                <div className="post">{title}</div>
+              </a>
+            </Link>
           ))}
         </div>
       </div>

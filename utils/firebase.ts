@@ -1,6 +1,13 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { collection, getFirestore } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  getFirestore,
+} from "firebase/firestore";
+import { PostType } from "../atoms/postListState";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -19,4 +26,20 @@ const app = initializeApp(firebaseConfig);
 
 const firestore = getFirestore(app);
 
-export const postsCollection = collection(firestore, "posts");
+const postsCollection = collection(firestore, "posts");
+
+export const getPostsSnapshot = async () => {
+  const snapshot = await getDocs(postsCollection);
+  return snapshot;
+};
+
+export const getPost = async (postId: string) => {
+  const docRef = doc(firestore, "posts", postId);
+  const docSnap = await getDoc(docRef);
+
+  if (!docSnap.exists()) {
+    return null;
+  }
+
+  return docSnap.data();
+};

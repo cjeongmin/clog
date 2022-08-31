@@ -1,10 +1,51 @@
-import type { NextPage } from "next";
-import { useRouter } from "next/router";
+import type { GetServerSideProps } from "next";
+import { PostType } from "../../atoms/postListState";
+import { getPost } from "../../utils/firebase";
 
-const Post: NextPage = () => {
-  const router = useRouter();
-  const { postId } = router.query;
-  return <p>{`${postId}`}</p>;
+const Post = ({ title, body, date }: PostType) => {
+  return (
+    <>
+      <style jsx>{`
+        .post {
+          display: flex;
+          min-height: 100%;
+          flex-direction: column;
+        }
+      `}</style>
+
+      <div className="post">
+        <h1>{title}</h1>
+        <h5>{date}</h5>
+        <p>{body}</p>
+      </div>
+    </>
+  );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const postId = context.params?.postId;
+  if (postId === undefined || Array.isArray(postId)) {
+    return {
+      notFound: true,
+    };
+  }
+
+  const post = await getPost(postId);
+  if (!post) {
+    return {
+      notFound: true,
+    };
+  }
+
+  const { title, body, date } = post;
+
+  return {
+    props: {
+      title,
+      body,
+      date: new Date(date.seconds * 1000).toLocaleString(),
+    },
+  };
 };
 
 export default Post;
