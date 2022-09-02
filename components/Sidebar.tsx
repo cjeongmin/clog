@@ -1,19 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Dispatch, ReactElement, SetStateAction, useEffect } from "react";
+import {
+  useActivatedEditorState,
+  useActivatedModalState,
+} from "../atoms/activatedState";
 import { PostType, usePostListState } from "../atoms/postListState";
 import { getPostsSnapshot } from "../utils/firebase";
 
-const Sidebar = ({
-  activatedEditor,
-  editorHandler,
-  modalHandler,
-}: {
-  activatedEditor: boolean;
-  editorHandler: Dispatch<SetStateAction<boolean>>;
-  modalHandler: Dispatch<SetStateAction<boolean>>;
-}): ReactElement => {
+const Sidebar = ({}: {}): ReactElement => {
   const [postList, setPostList] = usePostListState();
+  const [_, setActivatedModal] = useActivatedModalState();
+  const [activatedEditor, setActivatedEditor] = useActivatedEditorState();
 
   useEffect(() => {
     (async () => {
@@ -126,13 +124,13 @@ const Sidebar = ({
         {activatedEditor ? (
           <>
             <div className="buttons">
-              <button onClick={() => modalHandler(true)}>Post</button>
+              <button onClick={() => setActivatedModal(true)}>Post</button>
               <div className="separator" />
-              <button onClick={() => editorHandler(false)}>Cancel</button>
+              <button onClick={() => setActivatedEditor(false)}>Cancel</button>
             </div>
           </>
         ) : (
-          <button onClick={() => editorHandler(true)}>New Post</button>
+          <button onClick={() => setActivatedEditor(true)}>New Post</button>
         )}
       </nav>
     </>

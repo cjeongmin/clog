@@ -1,10 +1,18 @@
 import type { NextPage } from "next";
+import { useActivatedEditorState } from "../atoms/activatedState";
 
 const Home: NextPage = () => {
+  const [activatedEditor, _] = useActivatedEditorState();
   return (
-    <div>
-      <p>Index</p>
-    </div>
+    <>
+      {!activatedEditor ? (
+        <div>
+          <p>Index</p>
+        </div>
+      ) : (
+        <></>
+      )}
+    </>
   );
 };
 

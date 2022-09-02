@@ -1,5 +1,4 @@
 import type { AppProps } from "next/app";
-import { useState } from "react";
 import { RecoilRoot } from "recoil";
 import Modal from "../components/Modal";
 import PostEditor from "../components/PostEditor";
@@ -7,9 +6,6 @@ import Sidebar from "../components/Sidebar";
 import "../styles/globals.css";
 
 function App({ Component, pageProps }: AppProps) {
-  const [activatedEditor, setActivatedEditor] = useState(false);
-  const [activatedModal, setActivatedModal] = useState(false);
-
   return (
     <>
       <style jsx>{`
@@ -21,14 +17,11 @@ function App({ Component, pageProps }: AppProps) {
       `}</style>
 
       <RecoilRoot>
-        <Sidebar
-          activatedEditor={activatedEditor}
-          editorHandler={setActivatedEditor}
-          modalHandler={setActivatedModal}
-        />
+        <Sidebar />
         <main>
-          {activatedEditor ? <PostEditor /> : <Component {...pageProps} />}
-          {activatedModal && <Modal />}
+          <Component {...pageProps} />
+          <PostEditor />
+          <Modal />
         </main>
       </RecoilRoot>
     </>

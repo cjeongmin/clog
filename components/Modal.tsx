@@ -1,13 +1,15 @@
 import { ReactElement, useState } from "react";
+import { useActivatedModalState } from "../atoms/activatedState";
 
 const Modal = (): ReactElement => {
+  const [activatedModal, setActivatedModal] = useActivatedModalState();
   const [title, setTitle] = useState("");
 
   return (
     <>
       <style jsx>{`
         .modal {
-          z-index: 1;
+          z-index: 2;
           position: absolute;
           top: 0;
           left: 0;
@@ -51,15 +53,16 @@ const Modal = (): ReactElement => {
 
         .buttons {
           height: 50%;
-
           display: flex;
         }
 
         .buttons > button {
           flex-grow: 1;
           border: none;
+          outline: none;
           box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
           transition: 0.2s background-color;
+          cursor: pointer;
         }
 
         .buttons > button:hover {
@@ -67,20 +70,24 @@ const Modal = (): ReactElement => {
         }
       `}</style>
 
-      <div className="modal">
-        <div className="main">
-          <span className="modal-title">제목</span>
-          <input
-            placeholder="제목을 입력하세요"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-          <div className="buttons">
-            <button>Upload</button>
-            <button>Cancel</button>
+      {activatedModal ? (
+        <div className="modal">
+          <div className="main">
+            <span className="modal-title">제목</span>
+            <input
+              placeholder="제목을 입력하세요"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+            <div className="buttons">
+              <button>Upload</button>
+              <button onClick={() => setActivatedModal(false)}>Cancel</button>
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <></>
+      )}
     </>
   );
 };

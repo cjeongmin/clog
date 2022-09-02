@@ -1,8 +1,11 @@
 import type { GetServerSideProps } from "next";
+import { useActivatedEditorState } from "../../atoms/activatedState";
 import { PostType } from "../../atoms/postListState";
 import { getPost } from "../../utils/firebase";
 
 const Post = ({ title, body, date }: PostType) => {
+  const [activatedEditor, _] = useActivatedEditorState();
+
   return (
     <>
       <style jsx>{`
@@ -13,11 +16,15 @@ const Post = ({ title, body, date }: PostType) => {
         }
       `}</style>
 
-      <div className="post">
-        <h1>{title}</h1>
-        <h5>{date}</h5>
-        <p>{body}</p>
-      </div>
+      {!activatedEditor ? (
+        <div className="post">
+          <h1>{title}</h1>
+          <h5>{date}</h5>
+          <p>{body}</p>
+        </div>
+      ) : (
+        <></>
+      )}
     </>
   );
 };

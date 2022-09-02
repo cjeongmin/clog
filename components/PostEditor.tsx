@@ -1,5 +1,6 @@
 import { convertToRaw, Editor, EditorState, RichUtils } from "draft-js";
 import React, { ReactElement, useEffect, useRef, useState } from "react";
+import { useActivatedEditorState } from "../atoms/activatedState";
 import { useEditorState } from "../atoms/editorState";
 
 const Button = ({
@@ -109,6 +110,7 @@ const InlineStyleControls = ({
 };
 
 const PostEditor = (): ReactElement => {
+  const [activatedEditor, _] = useActivatedEditorState();
   const [editorState, setEditorState] = useEditorState();
   const editor = useRef<Editor>(null);
 
@@ -133,6 +135,7 @@ const PostEditor = (): ReactElement => {
       <style jsx>{`
         .editor {
           height: 100%;
+          z-index: 1;
         }
 
         .toolbar {
@@ -140,24 +143,28 @@ const PostEditor = (): ReactElement => {
         }
       `}</style>
 
-      <div className="editor" onClick={focusEditor}>
-        <div className="toolbar">
-          <BlockStyleControls
+      {activatedEditor ? (
+        <div className="editor" onClick={focusEditor}>
+          <div className="toolbar">
+            <BlockStyleControls
+              editorState={editorState}
+              onToggle={toggleBlockType}
+            />
+            <InlineStyleControls
+              editorState={editorState}
+              onToggle={toggleInlineStyle}
+            />
+          </div>
+          <hr />
+          <Editor
+            ref={editor}
             editorState={editorState}
-            onToggle={toggleBlockType}
-          />
-          <InlineStyleControls
-            editorState={editorState}
-            onToggle={toggleInlineStyle}
+            onChange={(editorState) => setEditorState(editorState)}
           />
         </div>
-        <hr />
-        <Editor
-          ref={editor}
-          editorState={editorState}
-          onChange={(editorState) => setEditorState(editorState)}
-        />
-      </div>
+      ) : (
+        <></>
+      )}
     </>
   );
 };
