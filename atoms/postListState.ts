@@ -12,7 +12,7 @@ const postListState = atom<PostType[]>({
   default: [],
 });
 
-export const nextIdSelector = selector({
+const nextIdSelector = selector({
   key: "NextIdSelector",
   get: ({ get }) => {
     const list = get(postListState);
@@ -20,6 +20,10 @@ export const nextIdSelector = selector({
     return length ? list[length - 1].id + 1 : 1;
   },
 });
+
+export function getNextId() {
+  return useRecoilValue(nextIdSelector);
+}
 
 export function usePostListState() {
   return useRecoilState(postListState);

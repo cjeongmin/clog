@@ -3,6 +3,10 @@ import { useActivatedEditorState } from "../../atoms/activatedState";
 import { PostType } from "../../atoms/postListState";
 import { getPost } from "../../utils/firebase";
 
+const Main = ({ body }: { body: string }) => {
+  return <div dangerouslySetInnerHTML={{ __html: body }}></div>;
+};
+
 const Post = ({ title, body, date }: PostType) => {
   const [activatedEditor, _] = useActivatedEditorState();
 
@@ -20,7 +24,7 @@ const Post = ({ title, body, date }: PostType) => {
         <div className="post">
           <h1>{title}</h1>
           <h5>{date}</h5>
-          <p>{body}</p>
+          <Main body={body} />
         </div>
       ) : (
         <></>

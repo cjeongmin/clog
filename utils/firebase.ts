@@ -1,4 +1,5 @@
 // Import the functions you need from the SDKs you need
+import { convertFromRaw, RawDraftContentBlock } from "draft-js";
 import { initializeApp } from "firebase/app";
 import {
   collection,

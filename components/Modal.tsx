@@ -1,9 +1,59 @@
-import { ReactElement, useState } from "react";
-import { useActivatedModalState } from "../atoms/activatedState";
+import { useRouter } from "next/router";
+import { ReactElement, useRef, useState } from "react";
+import {
+  useActivatedEditorState,
+  useActivatedModalState,
+} from "../atoms/activatedState";
+import { getContent } from "../atoms/editorState";
+import { getNextId } from "../atoms/postListState";
+import { addPost } from "../utils/firebase";
 
 const Modal = (): ReactElement => {
+  const router = useRouter();
   const [activatedModal, setActivatedModal] = useActivatedModalState();
+  const [_, setActivatedEditor] = useActivatedEditorState();
   const [title, setTitle] = useState("");
+  const mainRef = useRef<HTMLDivElement>(null);
+
+  const id = getNextId();
+  const body = getContent();
+
+  const uploadPost = () => {
+    if (title == "") {
+      return false;
+    }
+
+    addPost({ id, title, body });
+    setTitle("");
+    setActivatedModal(false);
+    setActivatedEditor(false);
+    router.push(`/posts/${id}`);
+    return true;
+  };
+
+  const cancel = () => {
+    setTitle("");
+    setActivatedModal(false);
+  };
+
+  const shakingAnimate = () => {
+    if (mainRef.current === null) {
+      return;
+    }
+    mainRef.current.animate(
+      {
+        transform: [
+          "translate(-49%, -50%)",
+          "translate(-51%, -50%)",
+          "translate(-50%, -50%)",
+        ],
+      },
+      {
+        duration: 200,
+        easing: "ease-in-out",
+      }
+    );
+  };
 
   return (
     <>
@@ -71,8 +121,16 @@ const Modal = (): ReactElement => {
       `}</style>
 
       {activatedModal ? (
-        <div className="modal">
-          <div className="main">
+        <div
+          className="modal"
+          onClick={(e) => {
+            if (e.target != e.currentTarget) {
+              return;
+            }
+            cancel();
+          }}
+        >
+          <div className="main" ref={mainRef}>
             <span className="modal-title">제목</span>
             <input
               placeholder="제목을 입력하세요"
@@ -80,8 +138,14 @@ const Modal = (): ReactElement => {
               onChange={(e) => setTitle(e.target.value)}
             />
             <div className="buttons">
-              <button>Upload</button>
-              <button onClick={() => setActivatedModal(false)}>Cancel</button>
+              <button
+                onClick={() => {
+                  if (!uploadPost()) shakingAnimate();
+                }}
+              >
+                Upload
+              </button>
+              <button onClick={() => cancel()}>Cancel</button>
             </div>
           </div>
         </div>

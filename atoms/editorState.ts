@@ -1,5 +1,6 @@
-import { convertToRaw, EditorState } from "draft-js";
-import { atom, selector, useRecoilState } from "recoil";
+import { EditorState } from "draft-js";
+import { atom, selector, useRecoilState, useRecoilValue } from "recoil";
+import { convertToHTML } from "draft-convert";
 
 const editorState = atom<EditorState>({
   key: "EditorState",
@@ -10,12 +11,16 @@ export function useEditorState() {
   return useRecoilState(editorState);
 }
 
-export const editorContentSelector = selector({
+const editorContentSelector = selector({
   key: "EditorContentSelector",
   get: ({ get }) => {
     const state = get(editorState);
-    return convertToRaw(state.getCurrentContent()).blocks;
+    return convertToHTML(state.getCurrentContent());
   },
 });
+
+export function getContent() {
+  return useRecoilValue(editorContentSelector);
+}
 
 export default editorState;
