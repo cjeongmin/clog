@@ -7,9 +7,11 @@ import { getPostsSnapshot } from "../utils/firebase";
 const Sidebar = ({
   activatedEditor,
   editorHandler,
+  modalHandler,
 }: {
   activatedEditor: boolean;
   editorHandler: Dispatch<SetStateAction<boolean>>;
+  modalHandler: Dispatch<SetStateAction<boolean>>;
 }): ReactElement => {
   const [postList, setPostList] = usePostListState();
 
@@ -124,25 +126,13 @@ const Sidebar = ({
         {activatedEditor ? (
           <>
             <div className="buttons">
-              <button>Post</button>
+              <button onClick={() => modalHandler(true)}>Post</button>
               <div className="separator" />
-              <button
-                onClick={() => {
-                  editorHandler(false);
-                }}
-              >
-                Cancel
-              </button>
+              <button onClick={() => editorHandler(false)}>Cancel</button>
             </div>
           </>
         ) : (
-          <button
-            onClick={() => {
-              editorHandler(true);
-            }}
-          >
-            New Post
-          </button>
+          <button onClick={() => editorHandler(true)}>New Post</button>
         )}
       </nav>
     </>

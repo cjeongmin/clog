@@ -1,5 +1,6 @@
 import { convertToRaw, Editor, EditorState, RichUtils } from "draft-js";
 import React, { ReactElement, useEffect, useRef, useState } from "react";
+import { useEditorState } from "../atoms/editorState";
 
 const Button = ({
   active,
@@ -108,8 +109,7 @@ const InlineStyleControls = ({
 };
 
 const PostEditor = (): ReactElement => {
-  const [editorState, setEditorState] = useState(EditorState.createEmpty());
-
+  const [editorState, setEditorState] = useEditorState();
   const editor = useRef<Editor>(null);
 
   const focusEditor = () => {
@@ -117,20 +117,16 @@ const PostEditor = (): ReactElement => {
       editor.current.focus();
     }
   };
-
-  useEffect(() => {
-    focusEditor();
-  }, []);
-
   const toggleBlockType = (blockType: string) => {
     setEditorState(RichUtils.toggleBlockType(editorState, blockType));
   };
-
   const toggleInlineStyle = (inlineStyle: string) => {
     setEditorState(RichUtils.toggleInlineStyle(editorState, inlineStyle));
   };
 
-  const getContent = () => convertToRaw(editorState.getCurrentContent()).blocks;
+  useEffect(() => {
+    focusEditor();
+  }, []);
 
   return (
     <>

@@ -38,8 +38,10 @@ pre {
   font-family: monospace;
   background-color: #23272d;
   color: #7bb0f3;
-  padding: 2;
   margin: 0;
+
+  height: 1.5rem;
+  line-height: 1.5rem;
 }
 
 /* @media (prefers-color-scheme: dark) {
