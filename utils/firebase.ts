@@ -3,6 +3,7 @@ import { convertFromRaw, RawDraftContentBlock } from "draft-js";
 import { initializeApp } from "firebase/app";
 import {
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -60,4 +61,8 @@ export const addPost = async ({
     body,
     date: Timestamp.fromDate(new Date()),
   });
+};
+
+export const deletePost = async (id: number) => {
+  await deleteDoc(doc(firestore, "posts", `${id}`));
 };

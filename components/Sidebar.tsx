@@ -1,17 +1,23 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Dispatch, ReactElement, SetStateAction, useEffect } from "react";
+import { useRouter } from "next/router";
+import { ReactElement, useEffect } from "react";
 import {
   useActivatedEditorState,
   useActivatedModalState,
 } from "../atoms/activatedState";
 import { PostType, usePostListState } from "../atoms/postListState";
-import { getPostsSnapshot } from "../utils/firebase";
+import { deletePost, getPostsSnapshot } from "../utils/firebase";
 
-const Sidebar = ({}: {}): ReactElement => {
+const Sidebar = (): ReactElement => {
+  const router = useRouter();
   const [postList, setPostList] = usePostListState();
   const [_, setActivatedModal] = useActivatedModalState();
   const [activatedEditor, setActivatedEditor] = useActivatedEditorState();
+  const {
+    route,
+    query: { postId },
+  } = router;
 
   useEffect(() => {
     (async () => {
@@ -121,6 +127,22 @@ const Sidebar = ({}: {}): ReactElement => {
             </Link>
           ))}
         </div>
+        {route === "/posts/[postId]" ? (
+          <>
+            <button
+              onClick={() => {
+                (async () => {
+                  await deletePost(parseInt(postId as string));
+                  router.push("/");
+                })();
+              }}
+            >
+              Delete
+            </button>
+          </>
+        ) : (
+          <></>
+        )}
         {activatedEditor ? (
           <>
             <div className="buttons">
