@@ -9,13 +9,15 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "draft-js": "^0.11.7",
     "firebase": "^9.9.3",
     "next": "12.2.5",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "recoil": "^0.7.5"
   },
   "devDependencies": {
+    "@types/draft-js": "^0.11.9",
     "@types/node": "18.7.13",
     "@types/react": "18.0.17",
     "@types/react-dom": "18.0.6",

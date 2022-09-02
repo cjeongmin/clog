@@ -6,8 +6,9 @@ import {
   getDoc,
   getDocs,
   getFirestore,
+  setDoc,
+  Timestamp,
 } from "firebase/firestore";
-import { PostType } from "../atoms/postListState";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -42,4 +43,20 @@ export const getPost = async (postId: string) => {
   }
 
   return docSnap.data();
+};
+
+export const addPost = async ({
+  id,
+  title,
+  body,
+}: {
+  id: number;
+  title: string;
+  body: string;
+}) => {
+  await setDoc(doc(firestore, "posts", `${id}`), {
+    title,
+    body,
+    date: Timestamp.fromDate(new Date()),
+  });
 };
