@@ -18,16 +18,16 @@ const Modal = (): ReactElement => {
   const id = getNextId();
   const body = getContent();
 
-  const uploadPost = () => {
+  const uploadPost = async () => {
     if (title == "") {
       return false;
     }
 
-    addPost({ id, title, body });
+    await addPost({ id, title, body });
     setTitle("");
     setActivatedModal(false);
     setActivatedEditor(false);
-    router.push(`/posts/${id}`);
+    await router.push("/");
     return true;
   };
 
@@ -124,7 +124,7 @@ const Modal = (): ReactElement => {
         <div
           className="modal"
           onClick={(e) => {
-            if (e.target != e.currentTarget) {
+            if (e.target !== e.currentTarget) {
               return;
             }
             cancel();
@@ -140,7 +140,9 @@ const Modal = (): ReactElement => {
             <div className="buttons">
               <button
                 onClick={() => {
-                  if (!uploadPost()) shakingAnimate();
+                  (async () => {
+                    if (!(await uploadPost())) shakingAnimate();
+                  })();
                 }}
               >
                 Upload

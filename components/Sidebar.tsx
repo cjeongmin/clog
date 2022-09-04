@@ -1,3 +1,4 @@
+import { collection, onSnapshot } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -6,8 +7,8 @@ import {
   useActivatedEditorState,
   useActivatedModalState,
 } from "../atoms/activatedState";
-import { PostType, usePostListState } from "../atoms/postListState";
-import { deletePost, getPostsSnapshot } from "../utils/firebase";
+import { usePostListState } from "../atoms/postListState";
+import { deletePost, firestore } from "../utils/firebase";
 
 const Sidebar = (): ReactElement => {
   const router = useRouter();
@@ -19,21 +20,30 @@ const Sidebar = (): ReactElement => {
     query: { postId },
   } = router;
 
+  const onRemove = async (postId: string) => {
+    await deletePost(parseInt(postId));
+    await router.push("/");
+  };
+
   useEffect(() => {
-    (async () => {
-      const snapshot = await getPostsSnapshot();
-      let next: PostType[] = [];
-      snapshot.forEach((doc) => {
-        const { title, body, date } = doc.data();
-        next.push({
-          id: parseInt(doc.id),
-          title,
-          body,
-          date: new Date(date).toLocaleString(),
+    onSnapshot(
+      collection(firestore, "posts"),
+      (snapshot) => {
+        snapshot.docChanges().forEach((change) => {
+          const { body, title, date } = change.doc.data();
+          const id = parseInt(change.doc.id);
+          if (change.type === "added") {
+            setPostList((prev) => prev.concat({ id, body, title, date }));
+          } else if (change.type === "modified") {
+          } else if (change.type === "removed") {
+            setPostList((prev) => prev.filter((post) => post.id !== id));
+          }
         });
-      });
-      setPostList(next);
-    })();
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }, []);
 
   return (
@@ -131,10 +141,7 @@ const Sidebar = (): ReactElement => {
           <>
             <button
               onClick={() => {
-                (async () => {
-                  await deletePost(parseInt(postId as string));
-                  router.push("/");
-                })();
+                onRemove(postId as string);
               }}
             >
               Delete

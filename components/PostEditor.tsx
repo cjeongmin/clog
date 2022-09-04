@@ -1,5 +1,5 @@
-import { convertToRaw, Editor, EditorState, RichUtils } from "draft-js";
-import React, { ReactElement, useEffect, useRef, useState } from "react";
+import { Editor, EditorState, RichUtils } from "draft-js";
+import React, { ReactElement, useEffect, useRef } from "react";
 import { useActivatedEditorState } from "../atoms/activatedState";
 import { useEditorState } from "../atoms/editorState";
 

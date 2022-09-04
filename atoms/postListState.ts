@@ -17,7 +17,7 @@ const nextIdSelector = selector({
   get: ({ get }) => {
     const list = get(postListState);
     const length = list.length;
-    return length ? list[length - 1].id + 1 : 1;
+    return length ? list[length - 1].id + 1 : 0;
   },
 });
 
