@@ -1,6 +1,5 @@
 import { Editor, EditorState, RichUtils } from "draft-js";
 import React, { ReactElement, useEffect, useRef } from "react";
-import { useActivatedEditorState } from "../atoms/activatedState";
 import { useEditorState } from "../atoms/editorState";
 
 const Button = ({
@@ -110,7 +109,6 @@ const InlineStyleControls = ({
 };
 
 const PostEditor = (): ReactElement => {
-  const [activatedEditor, _] = useActivatedEditorState();
   const [editorState, setEditorState] = useEditorState();
   const editor = useRef<Editor>(null);
 
@@ -143,28 +141,24 @@ const PostEditor = (): ReactElement => {
         }
       `}</style>
 
-      {activatedEditor ? (
-        <div className="editor" onClick={focusEditor}>
-          <div className="toolbar">
-            <BlockStyleControls
-              editorState={editorState}
-              onToggle={toggleBlockType}
-            />
-            <InlineStyleControls
-              editorState={editorState}
-              onToggle={toggleInlineStyle}
-            />
-          </div>
-          <hr />
-          <Editor
-            ref={editor}
+      <div className="editor" onClick={focusEditor}>
+        <div className="toolbar">
+          <BlockStyleControls
             editorState={editorState}
-            onChange={(editorState) => setEditorState(editorState)}
+            onToggle={toggleBlockType}
+          />
+          <InlineStyleControls
+            editorState={editorState}
+            onToggle={toggleInlineStyle}
           />
         </div>
-      ) : (
-        <></>
-      )}
+        <hr />
+        <Editor
+          ref={editor}
+          editorState={editorState}
+          onChange={(editorState) => setEditorState(editorState)}
+        />
+      </div>
     </>
   );
 };

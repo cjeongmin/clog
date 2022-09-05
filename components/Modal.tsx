@@ -1,9 +1,6 @@
 import { useRouter } from "next/router";
 import { ReactElement, useRef, useState } from "react";
-import {
-  useActivatedEditorState,
-  useActivatedModalState,
-} from "../atoms/activatedState";
+import { useActivatedModalState } from "../atoms/activatedState";
 import { getContent } from "../atoms/editorState";
 import { getNextId } from "../atoms/postListState";
 import { addPost } from "../utils/firebase";
@@ -11,7 +8,6 @@ import { addPost } from "../utils/firebase";
 const Modal = (): ReactElement => {
   const router = useRouter();
   const [activatedModal, setActivatedModal] = useActivatedModalState();
-  const [_, setActivatedEditor] = useActivatedEditorState();
   const [title, setTitle] = useState("");
   const mainRef = useRef<HTMLDivElement>(null);
 
@@ -26,7 +22,6 @@ const Modal = (): ReactElement => {
     await addPost({ id, title, body });
     setTitle("");
     setActivatedModal(false);
-    setActivatedEditor(false);
     await router.push("/");
     return true;
   };

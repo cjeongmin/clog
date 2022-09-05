@@ -3,10 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ReactElement, useEffect } from "react";
-import {
-  useActivatedEditorState,
-  useActivatedModalState,
-} from "../atoms/activatedState";
+import { useActivatedModalState } from "../atoms/activatedState";
 import { usePostListState } from "../atoms/postListState";
 import { deletePost, firestore } from "../utils/firebase";
 
@@ -14,7 +11,6 @@ const Sidebar = (): ReactElement => {
   const router = useRouter();
   const [postList, setPostList] = usePostListState();
   const [_, setActivatedModal] = useActivatedModalState();
-  const [activatedEditor, setActivatedEditor] = useActivatedEditorState();
   const {
     route,
     query: { postId },
@@ -150,16 +146,29 @@ const Sidebar = (): ReactElement => {
         ) : (
           <></>
         )}
-        {activatedEditor ? (
+        {route === "/edit" ? (
           <>
             <div className="buttons">
-              <button onClick={() => setActivatedModal(true)}>Post</button>
+              <button
+                onClick={() => {
+                  /* 모달 띄우기 */
+                  setActivatedModal(true);
+                }}
+              >
+                Post
+              </button>
               <div className="separator" />
-              <button onClick={() => setActivatedEditor(false)}>Cancel</button>
+              <button onClick={() => router.back()}>Cancel</button>
             </div>
           </>
         ) : (
-          <button onClick={() => setActivatedEditor(true)}>New Post</button>
+          <button
+            onClick={() => {
+              (async () => await router.push("/edit"))();
+            }}
+          >
+            New Post
+          </button>
         )}
       </nav>
     </>

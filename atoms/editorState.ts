@@ -1,6 +1,6 @@
+import { convertToHTML } from "draft-convert";
 import { EditorState } from "draft-js";
 import { atom, selector, useRecoilState, useRecoilValue } from "recoil";
-import { convertToHTML } from "draft-convert";
 
 const editorState = atom<EditorState>({
   key: "EditorState",
