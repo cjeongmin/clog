@@ -70,13 +70,16 @@ const Sidebar = (): ReactElement => {
         }
 
         .post-list {
-          margin: 0 auto 0 auto;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          width: 100%;
           height: 100%;
           overflow-y: auto;
         }
 
         .post-list div {
-          margin-top: 10%;
+          margin-top: 5%;
         }
 
         hr {
@@ -134,7 +137,20 @@ const Sidebar = (): ReactElement => {
           ))}
         </div>
         {route === "/posts/[postId]" ? (
-          <>
+          <div className="buttons">
+            <button
+              onClick={() => {
+                (async () => {
+                  await router.push({
+                    pathname: "/edit",
+                    query: { id: postId },
+                  });
+                })();
+              }}
+            >
+              Update
+            </button>
+            <div className="separator" />
             <button
               onClick={() => {
                 onRemove(postId as string);
@@ -142,20 +158,15 @@ const Sidebar = (): ReactElement => {
             >
               Delete
             </button>
-          </>
+          </div>
         ) : (
           <></>
         )}
         {route === "/edit" ? (
           <>
             <div className="buttons">
-              <button
-                onClick={() => {
-                  /* 모달 띄우기 */
-                  setActivatedModal(true);
-                }}
-              >
-                Post
+              <button onClick={() => setActivatedModal(true)}>
+                {router.query.id ? "Update" : "Post"}
               </button>
               <div className="separator" />
               <button onClick={() => router.back()}>Cancel</button>

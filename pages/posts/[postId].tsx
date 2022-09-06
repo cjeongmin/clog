@@ -62,7 +62,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const { title, body, date } = post;
-
   return {
     props: {
       title,
