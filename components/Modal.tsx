@@ -1,11 +1,17 @@
 import { useRouter } from "next/router";
 import { ReactElement, useRef, useState } from "react";
 import { useActivatedModalState } from "../atoms/activatedState";
+import { useAdmin } from "../atoms/adminState";
 import { getContent } from "../atoms/editorState";
 import { getNextId } from "../atoms/postListState";
 import { addPost, updatePost } from "../utils/firebase";
 
 const Modal = ({ postTitle }: { postTitle: string | null }): ReactElement => {
+  const admin = useAdmin();
+  if (!admin) {
+    return <></>;
+  }
+
   const router = useRouter();
   const [activatedModal, setActivatedModal] = useActivatedModalState();
   const [title, setTitle] = useState("");

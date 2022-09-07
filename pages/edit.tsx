@@ -3,6 +3,7 @@ import { EditorState } from "draft-js";
 import { GetServerSideProps } from "next";
 import { useEffect } from "react";
 import { useActivatedModalState } from "../atoms/activatedState";
+import { useAdmin } from "../atoms/adminState";
 import { useEditorState } from "../atoms/editorState";
 import Modal from "../components/Modal";
 import PostEditor from "../components/PostEditor";
@@ -15,6 +16,11 @@ const Edit = ({
   body: string | null;
   title: string | null;
 }) => {
+  const admin = useAdmin();
+  if (!admin) {
+    return <></>;
+  }
+
   const [_, setEditor] = useEditorState();
 
   useEffect(() => {

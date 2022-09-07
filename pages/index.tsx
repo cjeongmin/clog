@@ -15,7 +15,7 @@ const PostItem = ({ id, title, body, date }: PostType) => {
     return tmp.textContent || tmp.innerText || "";
   };
 
-  const MAX_LENGTH = 200;
+  const MAX_LENGTH = 100;
   const filtered = stripHtml(body);
 
   return (
@@ -61,6 +61,7 @@ const PostItem = ({ id, title, body, date }: PostType) => {
 
         .body {
           font-size: 0.75rem;
+          margin-right: 5%;
           overflow-y: hidden;
         }
       `}</style>

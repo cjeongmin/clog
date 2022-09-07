@@ -1,5 +1,6 @@
 import { Editor, EditorState, RichUtils } from "draft-js";
 import React, { ReactElement, useEffect, useRef } from "react";
+import { useAdmin } from "../atoms/adminState";
 import { useEditorState } from "../atoms/editorState";
 
 const Button = ({
@@ -13,6 +14,11 @@ const Button = ({
   style: string;
   onToggle: (style: string) => void;
 }): ReactElement => {
+  const admin = useAdmin();
+  if (!admin) {
+    return <></>;
+  }
+
   const toggle: React.MouseEventHandler = (e) => {
     e.preventDefault();
     onToggle(style);

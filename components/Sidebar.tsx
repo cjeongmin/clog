@@ -4,12 +4,12 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { ReactElement, useEffect } from "react";
 import { useActivatedModalState } from "../atoms/activatedState";
+import { useAdmin } from "../atoms/adminState";
 import { usePostListState } from "../atoms/postListState";
 import { deletePost, firestore } from "../utils/firebase";
 
-const Sidebar = (): ReactElement => {
+const Buttons = (): ReactElement => {
   const router = useRouter();
-  const [postList, setPostList] = usePostListState();
   const [_, setActivatedModal] = useActivatedModalState();
   const {
     route,
@@ -20,6 +20,89 @@ const Sidebar = (): ReactElement => {
     await deletePost(parseInt(postId));
     await router.push("/");
   };
+
+  return (
+    <>
+      <style jsx>{`
+        .buttons {
+          width: 100%;
+          display: flex;
+        }
+
+        button {
+          background-color: #626262;
+          color: white;
+          border: none;
+          cursor: pointer;
+          transition: 0.2s;
+          min-height: 40px;
+          max-height: 40px;
+          width: 100%;
+        }
+
+        button:hover {
+          background-color: #222222;
+        }
+
+        .separator {
+          min-width: 2px;
+          max-width: 2px;
+        }
+
+        hr {
+          margin: 0;
+          border: 0.5px solid black;
+          width: 100%;
+        }
+      `}</style>
+
+      {route === "/posts/[postId]" ? (
+        <>
+          <div className="buttons">
+            <button
+              onClick={() => {
+                (async () => {
+                  await router.push({
+                    pathname: "/edit",
+                    query: { id: postId },
+                  });
+                })();
+              }}
+            >
+              Update
+            </button>
+            <div className="separator" />
+            <button onClick={() => onRemove(postId as string)}>Delete</button>
+          </div>
+          <hr />
+        </>
+      ) : (
+        <></>
+      )}
+      {route === "/edit" ? (
+        <div className="buttons">
+          <button onClick={() => setActivatedModal(true)}>
+            {router.query.id ? "Update" : "Post"}
+          </button>
+          <div className="separator" />
+          <button onClick={() => router.back()}>Cancel</button>
+        </div>
+      ) : (
+        <button
+          onClick={() => {
+            (async () => await router.push("/edit"))();
+          }}
+        >
+          New Post
+        </button>
+      )}
+    </>
+  );
+};
+
+const Sidebar = (): ReactElement => {
+  const [postList, setPostList] = usePostListState();
+  const admin = useAdmin();
 
   useEffect(() => {
     const q = query(collection(firestore, "posts"), orderBy("date", "desc"));
@@ -37,17 +120,9 @@ const Sidebar = (): ReactElement => {
             setPostList((prev) => prev.concat({ id, body, title, date }));
           } else if (change.type === "modified") {
             setPostList((prev) =>
-              prev.map((post) => {
-                if (post.id !== id) {
-                  return post;
-                }
-                return {
-                  ...post,
-                  title,
-                  body,
-                  date,
-                };
-              })
+              prev.map((post) =>
+                post.id !== id ? post : { ...post, title, body, date }
+              )
             );
           } else if (change.type === "removed") {
             setPostList((prev) => prev.filter((post) => post.id !== id));
@@ -106,28 +181,6 @@ const Sidebar = (): ReactElement => {
           border: 0.5px solid rgba(255, 255, 255, 0.5);
           width: 100%;
         }
-
-        .buttons {
-          display: flex;
-        }
-
-        button {
-          background-color: #626262;
-          color: white;
-          border: none;
-          cursor: pointer;
-          transition: 0.2s;
-          min-height: 40px;
-          max-height: 40px;
-        }
-
-        button:hover {
-          background-color: #222222;
-        }
-
-        .separator {
-          max-width: 2px;
-        }
       `}</style>
 
       <nav className="side-bar">
@@ -164,43 +217,7 @@ const Sidebar = (): ReactElement => {
             </Link>
           ))}
         </div>
-        {route === "/posts/[postId]" ? (
-          <div className="buttons">
-            <button
-              onClick={() => {
-                (async () => {
-                  await router.push({
-                    pathname: "/edit",
-                    query: { id: postId },
-                  });
-                })();
-              }}
-            >
-              Update
-            </button>
-            <div className="separator" />
-            <button onClick={() => onRemove(postId as string)}>Delete</button>
-          </div>
-        ) : (
-          <></>
-        )}
-        {route === "/edit" ? (
-          <div className="buttons">
-            <button onClick={() => setActivatedModal(true)}>
-              {router.query.id ? "Update" : "Post"}
-            </button>
-            <div className="separator" />
-            <button onClick={() => router.back()}>Cancel</button>
-          </div>
-        ) : (
-          <button
-            onClick={() => {
-              (async () => await router.push("/edit"))();
-            }}
-          >
-            New Post
-          </button>
-        )}
+        {admin && <Buttons />}
       </nav>
     </>
   );

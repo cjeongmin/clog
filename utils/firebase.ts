@@ -1,5 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
+import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import {
   deleteDoc,
   doc,
@@ -27,6 +28,7 @@ const app = initializeApp(firebaseConfig);
 
 export const firestore = getFirestore(app);
 
+// Database
 export const getPost = async (postId: string) => {
   const docRef = doc(firestore, "posts", postId);
   const docSnap = await getDoc(docRef);
@@ -73,4 +75,23 @@ export const updatePost = async ({
     body,
     date: Timestamp.fromDate(new Date()),
   });
+};
+
+// Auth
+const auth = getAuth(app);
+
+export const login = async ({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) => {
+  try {
+    const credential = await signInWithEmailAndPassword(auth, email, password);
+    const user = credential.user;
+    return user;
+  } catch (e) {
+    return null;
+  }
 };
