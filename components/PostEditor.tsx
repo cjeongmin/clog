@@ -133,7 +133,6 @@ const PostEditor = (): ReactElement => {
       <style jsx>{`
         .editor {
           height: 100%;
-          z-index: 1;
         }
 
         .toolbar {

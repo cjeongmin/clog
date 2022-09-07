@@ -1,6 +1,5 @@
 import { convertFromHTML } from "draft-convert";
 import { EditorState } from "draft-js";
-import { DocumentData } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import { useEffect } from "react";
 import { useActivatedModalState } from "../atoms/activatedState";
@@ -9,8 +8,15 @@ import Modal from "../components/Modal";
 import PostEditor from "../components/PostEditor";
 import { getPost } from "../utils/firebase";
 
-const Edit = ({ body }: { body: string | null }) => {
+const Edit = ({
+  body,
+  title,
+}: {
+  body: string | null;
+  title: string | null;
+}) => {
   const [_, setEditor] = useEditorState();
+
   useEffect(() => {
     if (body) {
       setEditor(EditorState.createWithContent(convertFromHTML(body)));
@@ -22,7 +28,7 @@ const Edit = ({ body }: { body: string | null }) => {
   const [activatedModal] = useActivatedModalState();
   return (
     <>
-      {activatedModal && <Modal />}
+      {activatedModal && <Modal postTitle={title} />}
       <PostEditor />
     </>
   );
@@ -32,7 +38,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const id = context.query.id;
   if (id === undefined || Array.isArray(id)) {
     return {
-      props: { body: null },
+      props: { title: null, body: null },
     };
   }
 
@@ -44,7 +50,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   return {
-    props: { body: post.body },
+    props: { title: post.title, body: post.body },
   };
 };
 

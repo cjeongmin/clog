@@ -10,7 +10,9 @@ import {
   getFirestore,
   setDoc,
   Timestamp,
+  updateDoc,
 } from "firebase/firestore";
+import { PostType } from "../atoms/postListState";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -65,4 +67,21 @@ export const addPost = async ({
 
 export const deletePost = async (id: number) => {
   await deleteDoc(doc(firestore, "posts", `${id}`));
+};
+
+export const updatePost = async ({
+  id,
+  title,
+  body,
+}: {
+  id: string;
+  title?: string;
+  body?: string;
+}) => {
+  const docRef = doc(firestore, "posts", id);
+  await updateDoc(docRef, {
+    title,
+    body,
+    date: Timestamp.fromDate(new Date()),
+  });
 };

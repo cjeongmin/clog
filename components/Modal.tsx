@@ -3,9 +3,9 @@ import { ReactElement, useRef, useState } from "react";
 import { useActivatedModalState } from "../atoms/activatedState";
 import { getContent } from "../atoms/editorState";
 import { getNextId } from "../atoms/postListState";
-import { addPost } from "../utils/firebase";
+import { addPost, updatePost } from "../utils/firebase";
 
-const Modal = (): ReactElement => {
+const Modal = ({ postTitle }: { postTitle: string | null }): ReactElement => {
   const router = useRouter();
   const [activatedModal, setActivatedModal] = useActivatedModalState();
   const [title, setTitle] = useState("");
@@ -15,15 +15,27 @@ const Modal = (): ReactElement => {
   const body = getContent();
 
   const uploadPost = async () => {
-    if (title == "") {
+    if (title === "") {
       return false;
     }
 
     await addPost({ id, title, body });
     setTitle("");
     setActivatedModal(false);
-    await router.push("/");
+    await router.push(`/posts/${id}`);
     return true;
+  };
+
+  const update = async () => {
+    const id = router.query.id as string;
+    await updatePost({
+      id,
+      title: title === "" && typeof postTitle === "string" ? postTitle : title,
+      body,
+    });
+    setTitle("");
+    setActivatedModal(false);
+    await router.push(`/posts/${id}`);
   };
 
   const cancel = () => {
@@ -136,7 +148,11 @@ const Modal = (): ReactElement => {
               <button
                 onClick={() => {
                   (async () => {
-                    if (!(await uploadPost())) shakingAnimate();
+                    if (router.query.id) {
+                      await update();
+                    } else {
+                      if (!(await uploadPost())) shakingAnimate();
+                    }
                   })();
                 }}
               >

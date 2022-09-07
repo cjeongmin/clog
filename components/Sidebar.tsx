@@ -31,6 +31,19 @@ const Sidebar = (): ReactElement => {
           if (change.type === "added") {
             setPostList((prev) => prev.concat({ id, body, title, date }));
           } else if (change.type === "modified") {
+            setPostList((prev) =>
+              prev.map((post) => {
+                if (post.id !== id) {
+                  return post;
+                }
+                return {
+                  ...post,
+                  title,
+                  body,
+                  date,
+                };
+              })
+            );
           } else if (change.type === "removed") {
             setPostList((prev) => prev.filter((post) => post.id !== id));
           }
@@ -72,14 +85,16 @@ const Sidebar = (): ReactElement => {
         .post-list {
           display: flex;
           flex-direction: column;
+          justift-content: flex-start;
           align-items: center;
           width: 100%;
           height: 100%;
           overflow-y: auto;
         }
 
-        .post-list div {
-          margin-top: 5%;
+        .post-list > a {
+          max-height: 1rem;
+          margin-top: 3%;
         }
 
         hr {
@@ -126,12 +141,20 @@ const Sidebar = (): ReactElement => {
         </div>
         <span className="text center">cjeongmin</span>
         <hr />
-        <span className="text center">Recent posts.</span>
+        <span
+          className="text center"
+          style={{
+            textDecoration: "underline",
+            textUnderlineOffset: "5px",
+          }}
+        >
+          Recent posts
+        </span>
         <div className="post-list">
           {postList.map(({ id, title }) => (
             <Link href={`/posts/${id}`} key={id}>
               <a>
-                <div className="post">{title}</div>
+                <span className="post">{title}</span>
               </a>
             </Link>
           ))}
@@ -151,27 +174,19 @@ const Sidebar = (): ReactElement => {
               Update
             </button>
             <div className="separator" />
-            <button
-              onClick={() => {
-                onRemove(postId as string);
-              }}
-            >
-              Delete
-            </button>
+            <button onClick={() => onRemove(postId as string)}>Delete</button>
           </div>
         ) : (
           <></>
         )}
         {route === "/edit" ? (
-          <>
-            <div className="buttons">
-              <button onClick={() => setActivatedModal(true)}>
-                {router.query.id ? "Update" : "Post"}
-              </button>
-              <div className="separator" />
-              <button onClick={() => router.back()}>Cancel</button>
-            </div>
-          </>
+          <div className="buttons">
+            <button onClick={() => setActivatedModal(true)}>
+              {router.query.id ? "Update" : "Post"}
+            </button>
+            <div className="separator" />
+            <button onClick={() => router.back()}>Cancel</button>
+          </div>
         ) : (
           <button
             onClick={() => {
