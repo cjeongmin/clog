@@ -4,7 +4,10 @@ export interface PostType {
   id: number;
   title: string;
   body: string;
-  date: string;
+  date: {
+    seconds: number;
+    nanoseconds: number;
+  };
 }
 
 const postListState = atom<PostType[]>({
@@ -16,8 +19,13 @@ const nextIdSelector = selector({
   key: "NextIdSelector",
   get: ({ get }) => {
     const list = get(postListState);
-    const length = list.length;
-    return length ? list[length - 1].id + 1 : 0;
+    const res = list.reduce<number>((max, curr) => {
+      if (max < curr.id) {
+        return curr.id;
+      }
+      return max;
+    }, 0);
+    return res + 1;
   },
 });
 

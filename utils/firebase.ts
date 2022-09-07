@@ -1,18 +1,14 @@
 // Import the functions you need from the SDKs you need
-import { convertFromRaw, RawDraftContentBlock } from "draft-js";
 import { initializeApp } from "firebase/app";
 import {
-  collection,
   deleteDoc,
   doc,
   getDoc,
-  getDocs,
   getFirestore,
   setDoc,
   Timestamp,
   updateDoc,
 } from "firebase/firestore";
-import { PostType } from "../atoms/postListState";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -30,13 +26,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 export const firestore = getFirestore(app);
-
-const postsCollection = collection(firestore, "posts");
-
-export const getPostsSnapshot = async () => {
-  const snapshot = await getDocs(postsCollection);
-  return snapshot;
-};
 
 export const getPost = async (postId: string) => {
   const docRef = doc(firestore, "posts", postId);

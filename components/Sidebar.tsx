@@ -1,4 +1,4 @@
-import { collection, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -22,13 +22,18 @@ const Sidebar = (): ReactElement => {
   };
 
   useEffect(() => {
+    const q = query(collection(firestore, "posts"), orderBy("date", "desc"));
     onSnapshot(
-      collection(firestore, "posts"),
+      q,
       (snapshot) => {
         snapshot.docChanges().forEach((change) => {
           const { body, title, date } = change.doc.data();
           const id = parseInt(change.doc.id);
           if (change.type === "added") {
+            if (change.newIndex === 0) {
+              setPostList((prev) => [{ id, body, title, date }, ...prev]);
+              return;
+            }
             setPostList((prev) => prev.concat({ id, body, title, date }));
           } else if (change.type === "modified") {
             setPostList((prev) =>

@@ -1,12 +1,19 @@
 import type { GetServerSideProps } from "next";
-import { PostType } from "../../atoms/postListState";
 import { getPost } from "../../utils/firebase";
 
 const Body = ({ body }: { body: string }) => {
   return <div dangerouslySetInnerHTML={{ __html: body }} />;
 };
 
-const Post = ({ title, body, date }: PostType) => {
+const Post = ({
+  title,
+  body,
+  date,
+}: {
+  title: string;
+  body: string;
+  date: string;
+}) => {
   return (
     <>
       <style jsx>{`
