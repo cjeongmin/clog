@@ -7,7 +7,7 @@ const Login = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [admin, setAdmin] = useUserState();
+  const [_, setAdmin] = useUserState();
 
   const onLogin = async () => {
     const user = await login({ email, password });

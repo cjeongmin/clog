@@ -22,7 +22,7 @@ const PostItem = ({ id, title, body, date }: PostType) => {
     <>
       <style jsx>{`
         .post-item {
-          max-height: 200px;
+          max-height: 350px;
           min-height: 200px;
           max-width: 250px;
           width: 85%;
