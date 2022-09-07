@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Fira+Code&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fira+Code&family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap");
 
 html,
 body {
@@ -28,7 +28,7 @@ a {
   box-sizing: border-box;
 }
 
-blockquote {
+.DraftEditor-editorContainer blockquote {
   border-left: 2px solid rgba(0, 0, 0, 0.5);
   color: #666;
   padding: 10px 20px;
@@ -36,7 +36,7 @@ blockquote {
   margin-bottom: 0px;
 }
 
-pre {
+.DraftEditor-editorContainer pre {
   font-family: monospace;
   background-color: #23272d;
   color: #7bb0f3;
@@ -44,6 +44,12 @@ pre {
 
   height: 1.5rem;
   line-height: 1.5rem;
+}
+
+.DraftEditor-editorContainer {
+  font-family: "Noto Sans KR", sans-serif;
+  font-size: 0.9rem;
+  padding: 1rem;
 }
 
 /* @media (prefers-color-scheme: dark) {
