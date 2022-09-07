@@ -2,6 +2,7 @@ import type { AppProps } from "next/app";
 import { RecoilRoot } from "recoil";
 import Sidebar from "../components/Sidebar";
 import "../styles/globals.css";
+import Header from "../components/Header";
 
 function App({ Component, pageProps }: AppProps) {
   return (
@@ -14,6 +15,7 @@ function App({ Component, pageProps }: AppProps) {
         }
       `}</style>
 
+      <Header />
       <RecoilRoot>
         <Sidebar />
         <main>

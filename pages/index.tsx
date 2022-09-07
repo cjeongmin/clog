@@ -95,7 +95,9 @@ const Home: NextPage = () => {
           justify-items: center;
           align-items: center;
 
-          gap: 1% 1%;
+          /* grid-row-gap: 1%;
+          grid-column-gap: 1%; */
+          grid-gap: 2% 1%;
         }
 
         @media (min-width: 1200px) {
