@@ -15,6 +15,7 @@ const PostItem = ({ id, title, body, date }: PostType) => {
     return tmp.textContent || tmp.innerText || "";
   };
 
+  const MAX_LENGTH = 200;
   const filtered = stripHtml(body);
 
   return (
@@ -70,7 +71,9 @@ const PostItem = ({ id, title, body, date }: PostType) => {
           {new Date(date.seconds * 1000).toLocaleDateString()}
         </span>
         <span className="body">
-          {filtered.length > 100 ? filtered.slice(0, 97) + "..." : filtered}
+          {filtered.length > MAX_LENGTH
+            ? filtered.slice(0, MAX_LENGTH - 3) + "..."
+            : filtered}
         </span>
       </div>
     </>

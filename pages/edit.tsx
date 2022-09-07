@@ -28,8 +28,20 @@ const Edit = ({
   const [activatedModal] = useActivatedModalState();
   return (
     <>
+      <style jsx>{`
+        .editor {
+          margin: 2%;
+          padding: 2%;
+          box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+            rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+          height: 96%;
+        }
+      `}</style>
+
       {activatedModal && <Modal postTitle={title} />}
-      <PostEditor />
+      <div className="editor">
+        <PostEditor />
+      </div>
     </>
   );
 };
