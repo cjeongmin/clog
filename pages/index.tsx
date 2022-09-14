@@ -15,6 +15,14 @@ const PostItem = ({ id, title, body, date }: PostType) => {
     return tmp.textContent || tmp.innerText || "";
   };
 
+  const getKST = (seconds: number) => {
+    const curr = new Date(seconds * 1000);
+    const utc = curr.getTime() + curr.getTimezoneOffset() * 60 * 1000;
+    const KR_TIME_DIFF = 9 * 60 * 60 * 1000;
+    const kr_curr = new Date(utc + KR_TIME_DIFF);
+    return kr_curr;
+  };
+
   const MAX_LENGTH = 100;
   const filtered = stripHtml(body);
 
@@ -69,7 +77,7 @@ const PostItem = ({ id, title, body, date }: PostType) => {
       <div className="post-item" onClick={onClick}>
         <span className="title">{title}</span>
         <span className="date">
-          {new Date(date.seconds * 1000).toLocaleDateString()}
+          {getKST(date.seconds).toLocaleDateString()}
         </span>
         <span className="body">
           {filtered.length > MAX_LENGTH

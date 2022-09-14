@@ -68,12 +68,20 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
+  const getKST = (seconds: number) => {
+    const curr = new Date(seconds * 1000);
+    const utc = curr.getTime() + curr.getTimezoneOffset() * 60 * 1000;
+    const KR_TIME_DIFF = 9 * 60 * 60 * 1000;
+    const kr_curr = new Date(utc + KR_TIME_DIFF);
+    return kr_curr;
+  };
+
   const { title, body, date } = post;
   return {
     props: {
       title,
       body,
-      date: new Date(date.seconds * 1000).toLocaleString(),
+      date: getKST(date.seconds).toLocaleString(),
     },
   };
 };
