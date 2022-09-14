@@ -7,11 +7,6 @@ import { getNextId } from "../atoms/postListState";
 import { addPost, updatePost } from "../utils/firebase";
 
 const Modal = ({ postTitle }: { postTitle: string | null }): ReactElement => {
-  const admin = useAdmin();
-  if (!admin) {
-    return <></>;
-  }
-
   const router = useRouter();
   const [activatedModal, setActivatedModal] = useActivatedModalState();
   const [title, setTitle] = useState("");
@@ -67,6 +62,11 @@ const Modal = ({ postTitle }: { postTitle: string | null }): ReactElement => {
       }
     );
   };
+
+  const admin = useAdmin();
+  if (!admin) {
+    return <></>;
+  }
 
   return (
     <>

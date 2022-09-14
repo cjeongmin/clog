@@ -16,11 +16,6 @@ const Edit = ({
   body: string | null;
   title: string | null;
 }) => {
-  const admin = useAdmin();
-  if (!admin) {
-    return <></>;
-  }
-
   const [_, setEditor] = useEditorState();
 
   useEffect(() => {
@@ -32,6 +27,12 @@ const Edit = ({
   }, []);
 
   const [activatedModal] = useActivatedModalState();
+
+  const admin = useAdmin();
+  if (!admin) {
+    return <></>;
+  }
+
   return (
     <>
       <style jsx>{`
