@@ -96,6 +96,7 @@ const Home: NextPage = () => {
       <style jsx>{`
         .post-container {
           height: ${postList.length * 10}vh;
+          padding-top: 2%;
 
           display: grid;
           grid-template-columns: repeat(3, 1fr);
