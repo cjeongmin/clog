@@ -12,6 +12,7 @@ const Container = styled.div`
   align-items: center;
   justify-content: space-around;
 
+  min-width: 200px;
   max-width: 200px;
   width: 20%;
   height: 100%;

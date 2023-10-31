@@ -7,7 +7,7 @@ import styles from "./styles/page.module.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "c-log",
+  title: "clog",
   description: "JM's blog",
 };
 
