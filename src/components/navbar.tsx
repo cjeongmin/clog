@@ -2,6 +2,7 @@
 
 import styled from "@emotion/styled";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 
 const Container = styled.div`
   display: flex;
@@ -28,13 +29,17 @@ const ProfileContainer = styled.div`
   height: 20%;
 `;
 
-const ProfileImage = styled.div`
+const ProfileImage = styled.a`
   width: 100%;
   min-width: 100%;
   height: 81%;
   min-height: 81%;
   border-radius: 50%;
   background-color: #f0f0f0;
+
+  :hover {
+    cursor: pointer;
+  }
 `;
 
 const Categories = styled.div`
@@ -67,10 +72,17 @@ const categorieItems: Category[] = [
 ];
 
 export default function Navbar() {
+  const pathname = usePathname();
+  const router = useRouter();
+
   return (
     <Container>
       <ProfileContainer>
-        <ProfileImage />
+        <ProfileImage
+          onClick={() => {
+            router.push("/");
+          }}
+        />
         <p>Choi Jeong-min</p>
       </ProfileContainer>
 
