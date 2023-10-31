@@ -3,6 +3,8 @@
 import styled from "@emotion/styled";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
+import profile from "/public/profile.jpeg";
 
 const Container = styled.div`
   display: flex;
@@ -66,6 +68,7 @@ class Category {
 }
 
 const categorieItems: Category[] = [
+  new Category("Home", ""),
   new Category("Recent Posts", "recent"),
   new Category("Posts", "posts"),
   new Category("About", "about"),
@@ -82,7 +85,17 @@ export default function Navbar() {
           onClick={() => {
             router.push("/");
           }}
-        />
+        >
+          <Image
+            src={profile}
+            style={{
+              width: "100%",
+              height: "100%",
+              borderRadius: "50%",
+            }}
+            alt="profile-image"
+          />
+        </ProfileImage>
         <p>Choi Jeong-min</p>
       </ProfileContainer>
 
