@@ -7,7 +7,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: space-around;
 
   max-width: 200px;
   width: 20%;
@@ -23,15 +23,18 @@ const ProfileContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+
+  width: 100%;
+  height: 20%;
 `;
 
 const ProfileImage = styled.div`
-  width: 150px;
-  height: 150px;
+  width: 100%;
+  min-width: 100%;
+  height: 81%;
+  min-height: 81%;
   border-radius: 50%;
   background-color: #f0f0f0;
-
-  margin-bottom: 15px;
 `;
 
 const Categories = styled.div`
@@ -68,7 +71,7 @@ export default function Navbar() {
     <Container>
       <ProfileContainer>
         <ProfileImage />
-        <p>Choi Jeongmin.</p>
+        <p>Choi Jeong-min</p>
       </ProfileContainer>
 
       <Categories>
@@ -81,8 +84,6 @@ export default function Navbar() {
           </CategoryItem>
         ))}
       </Categories>
-
-      <div />
     </Container>
   );
 }

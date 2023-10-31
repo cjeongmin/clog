@@ -1,13 +1,9 @@
 .main {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
   padding: 6rem;
+  width: 100vw;
   height: 100vh;
-}
-
-.nav {
-  min-width: 100%;
-  min-height: 100%;
 }
