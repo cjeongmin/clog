@@ -1,13 +1,5 @@
-import Navbar from "./components/navbar";
-import styles from "./styles/page.module.css";
+import Navbar from "../components/navbar";
 
 export default function Home() {
-  return (
-    <div className={styles.container}>
-      <Navbar />
-      <main className={styles.main}>
-        <div></div>
-      </main>
-    </div>
-  );
+  return <></>;
 }
