@@ -3,8 +3,11 @@ import styles from "./styles/page.module.css";
 
 export default function Home() {
   return (
-    <main className={styles.main}>
+    <div className={styles.container}>
       <Navbar />
-    </main>
+      <main className={styles.main}>
+        <div></div>
+      </main>
+    </div>
   );
 }
