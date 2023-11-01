@@ -33,7 +33,6 @@ export default function RootLayout({
         <div className={styles.container}>
           <main className={styles.main}>{children}</main>
         </div>
-
         <footer className={styles.footer}>
           <div className={styles.divider} />
           <p>© 2023 cjeongmin. All Rights Reserved.</p>
