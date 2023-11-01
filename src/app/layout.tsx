@@ -27,12 +27,17 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
+        <header className={styles.header}>
+          <Navbar />
+        </header>
         <div className={styles.container}>
-          <header className={styles.header}>
-            <Navbar />
-          </header>
           <main className={styles.main}>{children}</main>
         </div>
+
+        <footer className={styles.footer}>
+          <div className={styles.divider} />
+          <p>© 2023 cjeongmin. All Rights Reserved.</p>
+        </footer>
       </body>
     </html>
   );
