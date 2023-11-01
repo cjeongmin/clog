@@ -9,9 +9,9 @@ html,
 body {
   height: 100vh;
   width: 100vw;
-  overflow-x: hidden;
-  background-color: #191919;
+  background-color: #000000;
   color: #fdfdfd;
+  overscroll-behavior-y: none;
 }
 
 a {
