@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./styles/globals.css";
-import Navbar from "@/components/navbar";
 import styles from "./styles/page.module.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "c-log",
+  title: "clog",
   description: "JM's blog",
 };
 
@@ -28,7 +27,6 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <div className={styles.container}>
-          <Navbar />
           <main className={styles.main}>{children}</main>
         </div>
       </body>
