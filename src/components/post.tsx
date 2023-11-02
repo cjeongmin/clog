@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
+import Link from "next/link";
 
-const PostContainer = styled.div`
+const PostContainer = styled(Link)`
   display: flex;
   flex-direction: column;
 
@@ -36,7 +37,7 @@ export default function Post({
 }) {
   return (
     <>
-      <PostContainer>
+      <PostContainer href={{ pathname: `/posts/${title}` }}>
         <Title>{title}</Title>
         <Content>{content}</Content>
       </PostContainer>
