@@ -5,6 +5,8 @@ const PostContainer = styled.div`
   flex-direction: column;
 
   width: 47.5%;
+  min-height: 25vh;
+  height: 30%;
   border-radius: 10px;
   background-color: #10101080;
 
@@ -13,8 +15,7 @@ const PostContainer = styled.div`
   :hover {
     cursor: pointer;
     background-color: #101010;
-    transform: scale(1.01);
-    transition: ease-in-out 0.5s background-color transform;
+    transition: ease-in-out 0.2s background-color;
   }
 `;
 

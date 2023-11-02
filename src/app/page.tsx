@@ -14,6 +14,25 @@ const posts: PostModel[] = [
   new PostModel("title3", "content3"),
   new PostModel("title4", "content4"),
   new PostModel("title5", "content5"),
+  new PostModel("title5", "content5"),
+  new PostModel("title5", "content5"),
+  new PostModel("title5", "content5"),
+  new PostModel("title5", "content5"),
+  new PostModel("title5", "content5"),
+  new PostModel("title5", "content5"),
+  new PostModel("title5", "content5"),
+  new PostModel("title5", "content5"),
+  new PostModel("title5", "content5"),
+  new PostModel("title5", "content5"),
+  new PostModel("title5", "content5"),
+  new PostModel("title5", "content5"),
+  new PostModel("title5", "content5"),
+  new PostModel("title5", "content5"),
+  new PostModel("title5", "content5"),
+  new PostModel("title5", "content5"),
+  new PostModel("title5", "content5"),
+  new PostModel("title5", "content5"),
+  new PostModel("title5", "content5"),
 ];
 
 const RootPageContainer = styled.div`
@@ -23,12 +42,14 @@ const RootPageContainer = styled.div`
   gap: 1rem;
 `;
 
-const HorizontalPostLayout = styled.div`
+const VerticalPostLayout = styled.div`
   display: flex;
   flex-direction: row;
+  justify-content: center;
   flex-wrap: wrap;
   gap: 1rem;
   height: 100%;
+  overflow-y: auto;
 `;
 
 export default function RootPage() {
@@ -36,11 +57,11 @@ export default function RootPage() {
     <RecoilRoot>
       <RootPageContainer>
         <h4>Recent Posts</h4>
-        <HorizontalPostLayout>
+        <VerticalPostLayout>
           {posts.map((v, i) => (
             <Post key={i} title={v.title} content={v.content} />
           ))}
-        </HorizontalPostLayout>
+        </VerticalPostLayout>
       </RootPageContainer>
     </RecoilRoot>
   );
