@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./styles/globals.css";
 import styles from "./styles/page.module.css";
+import Navbar from "@/components/navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,9 +27,17 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
+        <header className={styles.header}>
+          <Navbar />
+        </header>
         <div className={styles.container}>
           <main className={styles.main}>{children}</main>
         </div>
+
+        <footer className={styles.footer}>
+          <div className={styles.divider} />
+          <p>© 2023 cjeongmin. All Rights Reserved.</p>
+        </footer>
       </body>
     </html>
   );
