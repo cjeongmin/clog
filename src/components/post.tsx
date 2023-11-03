@@ -35,9 +35,11 @@ export default function Post({
   title: string;
   content: string;
 }) {
+  const pathname = `/posts/${title}`;
+
   return (
     <>
-      <PostContainer href={{ pathname: `/posts/${title}` }}>
+      <PostContainer href={{ pathname }}>
         <Title>{title}</Title>
         <Content>{content}</Content>
       </PostContainer>
