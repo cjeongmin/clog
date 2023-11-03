@@ -3,6 +3,8 @@
 import styled from "@emotion/styled";
 import { marked } from "marked";
 import { useEffect, useRef } from "react";
+import hljs from "highlight.js";
+import "highlight.js/styles/github.css";
 
 const Divider = styled.div`
   height: 1px;
@@ -13,7 +15,38 @@ const Divider = styled.div`
 const PostPageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100%;
+
+  pre {
+    padding: 2rem;
+    background-color: #ededed;
+    border-radius: 10px;
+  }
+
+  code,
+  code * {
+    font-size: 0.8rem;
+    font-family: "Hack", monospace;
+  }
+
+  code * {
+    line-height: 1.5rem;
+  }
+
+  code {
+    background-color: #ededed;
+  }
+
+  hr {
+    background-color: #808080;
+    height: 1px;
+    border: 0;
+    border-radius: 2px;
+
+    :hover {
+      background-color: #ededed;
+      transition: 1s ease-in-out background-color;
+    }
+  }
 `;
 
 const Title = styled.h1`
@@ -44,6 +77,29 @@ const content = `
 
   **bold**  
   *italic*
+
+  \`\`\` python
+  cjm = "cjeongmin"
+  blog = "blog"
+
+  print(cjm + " " + blog) # cjeongmin blog
+  \`\`\`
+
+  ### Hello
+  ## Hi
+
+  1. one
+  2. two
+  3. three
+
+  - dash list1
+  - dash list2
+
+  \`\`\` html
+  <div>
+    <a href="https://www.naver.com">link</a>
+  </div>
+  \`\`\`
 `;
 
 function format(date: Date): string {
@@ -65,10 +121,12 @@ function format(date: Date): string {
 export default function PostPage({ params }: { params: { title: string } }) {
   const title = params.title;
   const contentRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const current = contentRef.current;
     if (current != null) {
       current.innerHTML = marked.parse(content);
+      hljs.highlightAll();
     }
   });
 
@@ -77,7 +135,7 @@ export default function PostPage({ params }: { params: { title: string } }) {
       <Title>{title}</Title>
       <PostDate>{format(new Date())}</PostDate>
       <Divider />
-      <ContentContainer ref={contentRef}></ContentContainer>
+      <ContentContainer ref={contentRef} />
     </PostPageContainer>
   );
 }
