@@ -28,14 +28,16 @@ export async function fetchPosts(): Promise<BlogPostFile[]> {
     if (response.status === 200) {
       const contentData = response.data;
       for (const data of contentData) {
-        res.push({
-          htmlURL: data.html_url,
-          name: data.name,
-          path: data.path,
-          type: data.path,
-          url: data.url,
-          date: (await getFileLastModified(data.path)) || new Date(),
-        });
+        if (data.name.endsWith(".md")) {
+          res.push({
+            htmlURL: data.html_url,
+            name: data.name,
+            path: data.path,
+            type: data.path,
+            url: data.url,
+            date: (await getFileLastModified(data.path)) || new Date(),
+          });
+        }
       }
     } else {
       console.error("Failed to fetch data from GitHub API");
