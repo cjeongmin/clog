@@ -15,12 +15,12 @@ const RootPageContainer = styled.div`
 const VerticalPostLayout = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: space-around;
   flex-wrap: wrap;
   gap: 1rem;
   height: 100%;
   overflow-y: auto;
-  padding: 1rem 0;
+  padding: 1rem 0rem;
 `;
 
 export function Index() {
