@@ -1,6 +1,6 @@
 "use client";
 
-import { fetchPosts, getFileContent } from "@/libs/post";
+import { fetchPosts, getFileContent, getMetaData } from "@/libs/post";
 import PostModel from "@/models/PostModel";
 import { postsState } from "@/states/posts";
 import styled from "@emotion/styled";
@@ -94,6 +94,10 @@ export default function PostPage({ params }: { params: { title: string } }) {
   const [date, setDate] = useState<Date | null>(null);
 
   useEffect(() => {
+    if (posts.find((v) => v.title === title + ".md")) {
+      return;
+    }
+
     (async () => {
       const res: PostModel[] = [];
       const postFiles = await fetchPosts();
@@ -109,8 +113,8 @@ export default function PostPage({ params }: { params: { title: string } }) {
     const post = posts.find((v) => v.title === title + ".md");
     const current = contentRef.current;
     if (current && post) {
-      setDate(post.date);
-      current.innerHTML = marked.parse(post.content);
+      const metadata = getMetaData(post.content);
+      current.innerHTML = marked.parse(metadata.content);
       hljs.highlightAll();
     }
   }, [posts]);

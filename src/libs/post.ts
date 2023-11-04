@@ -1,4 +1,5 @@
 import axios from "axios";
+import { parse } from "yaml";
 
 const githubUsername = process.env.NEXT_PUBLIC_USER_NAME;
 const githubRepository = process.env.NEXT_PUBLIC_REPOSITORY_NAME;
@@ -95,4 +96,41 @@ export async function getFileLastModified(
     console.error("An error occurred while fetching file content:", error);
   }
   return null;
+}
+
+type MetaData = {
+  data: {};
+  content: string;
+};
+
+export function getMetaData(fileContent: string): MetaData {
+  if (fileContent.startsWith("---")) {
+    const tokens = fileContent.split("---");
+    if (tokens.length < 2) {
+      return {
+        data: {},
+        content: fileContent,
+      };
+    }
+
+    const data = parse(tokens[1]);
+
+    let index = 3;
+    while (
+      index + 3 < fileContent.length &&
+      fileContent.slice(index, index + 3) != "---"
+    ) {
+      index += 1;
+    }
+
+    return {
+      data,
+      content: fileContent.slice(index + 3, fileContent.length).trim(),
+    };
+  }
+
+  return {
+    data: {},
+    content: fileContent,
+  };
 }
