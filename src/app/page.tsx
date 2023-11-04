@@ -1,7 +1,9 @@
 "use client";
 
 import Post from "@/components/post";
+import { fetchPosts, getFileContent } from "@/libs/post";
 import styled from "@emotion/styled";
+import { useEffect } from "react";
 import { RecoilRoot } from "recoil";
 
 class PostModel {
