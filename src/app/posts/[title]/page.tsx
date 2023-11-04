@@ -7,7 +7,7 @@ import styled from "@emotion/styled";
 import hljs from "highlight.js";
 import "highlight.js/styles/github.css";
 import { marked } from "marked";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 
 const Divider = styled.div`
@@ -91,22 +91,25 @@ export default function PostPage({ params }: { params: { title: string } }) {
 
   const [posts, setPosts] = useRecoilState(postsState);
 
+  const [date, setDate] = useState<Date | null>(null);
+
   useEffect(() => {
     (async () => {
       const res: PostModel[] = [];
       const postFiles = await fetchPosts();
       for (const post of postFiles) {
         const content = await getFileContent(post.path);
-        res.push(new PostModel(post.name, content, new Date()));
+        res.push(new PostModel(post.name, content, post.date));
       }
       setPosts(res);
     })();
-  });
+  }, []);
 
   useEffect(() => {
     const post = posts.find((v) => v.title === title + ".md");
     const current = contentRef.current;
     if (current && post) {
+      setDate(post.date);
       current.innerHTML = marked.parse(post.content);
       hljs.highlightAll();
     }
@@ -115,7 +118,7 @@ export default function PostPage({ params }: { params: { title: string } }) {
   return (
     <PostPageContainer>
       <Title>{title}</Title>
-      <PostDate>{format(new Date())}</PostDate>
+      <PostDate>{date != null ? format(date) : ""}</PostDate>
       <Divider />
       <ContentContainer ref={contentRef} />
     </PostPageContainer>

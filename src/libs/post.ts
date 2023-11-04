@@ -11,6 +11,7 @@ interface BlogPostFile {
   path: string;
   type: string;
   url: string;
+  date: Date;
 }
 
 export async function fetchPosts(): Promise<BlogPostFile[]> {
@@ -32,6 +33,7 @@ export async function fetchPosts(): Promise<BlogPostFile[]> {
           path: data.path,
           type: data.path,
           url: data.url,
+          date: (await getFileLastModified(data.path)) || new Date(),
         });
       }
     } else {
@@ -64,4 +66,33 @@ export async function getFileContent(filePath: string): Promise<string> {
   }
 
   return content;
+}
+
+export async function getFileLastModified(
+  filePath: string
+): Promise<Date | null> {
+  try {
+    const response = await axios.get(
+      `https://api.github.com/repos/${githubUsername}/${githubRepository}/commits`,
+      {
+        headers: {
+          Authorization: `token ${personalAccessToken}`,
+        },
+        params: {
+          path: filePath,
+          per_page: 1,
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      const data = response.data;
+      return new Date(data[0].commit.committer.date);
+    } else {
+      console.error("Failed to fetch file content from Github API");
+    }
+  } catch (error) {
+    console.error("An error occurred while fetching file content:", error);
+  }
+  return null;
 }

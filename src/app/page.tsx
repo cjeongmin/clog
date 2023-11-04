@@ -35,11 +35,11 @@ export default function RootPage() {
       const postFiles = await fetchPosts();
       for (const post of postFiles) {
         const content = await getFileContent(post.path);
-        res.push(new PostModel(post.name, content, new Date()));
+        res.push(new PostModel(post.name, content, post.date));
       }
       setPosts(res);
     })();
-  });
+  }, []);
 
   return (
     <RootPageContainer>
