@@ -1,41 +1,9 @@
 "use client";
 
 import Post from "@/components/post";
-import { fetchPosts, getFileContent } from "@/libs/post";
+import { postsSelector } from "@/states/posts";
 import styled from "@emotion/styled";
-import { useEffect } from "react";
-import { RecoilRoot } from "recoil";
-
-class PostModel {
-  constructor(public title: string, public content: string) {}
-}
-
-const posts: PostModel[] = [
-  new PostModel("title1", "content1"),
-  new PostModel("title2", "content2"),
-  new PostModel("title3", "content3"),
-  new PostModel("title4", "content4"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-];
+import { RecoilRoot, useRecoilValue } from "recoil";
 
 const RootPageContainer = styled.div`
   display: flex;
@@ -55,17 +23,29 @@ const VerticalPostLayout = styled.div`
   padding: 1rem 0;
 `;
 
-export default function RootPage() {
+export function Index() {
+  const posts = useRecoilValue(postsSelector);
+
   return (
     <RecoilRoot>
       <RootPageContainer>
         <h4>Recent Posts</h4>
         <VerticalPostLayout>
-          {posts.map((v, i) => (
-            <Post key={i} title={v.title} content={v.content} />
-          ))}
+          {posts.length > 0
+            ? posts.map((v, i) => (
+                <Post key={i} title={v.title} content={v.content} />
+              ))
+            : "글을 기다리고 있어요."}
         </VerticalPostLayout>
       </RootPageContainer>
+    </RecoilRoot>
+  );
+}
+
+export default function RootPage() {
+  return (
+    <RecoilRoot>
+      <Index />
     </RecoilRoot>
   );
 }
