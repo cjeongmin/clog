@@ -1,36 +1,7 @@
-import { fetchPosts, getFileContent } from "@/libs/post";
 import PostModel from "@/models/PostModel";
-import { selector, selectorFamily } from "recoil";
+import { atom } from "recoil";
 
-export const postsState = selector({
-  key: "posts",
-  get: async ({ get }) => {
-    const postFiles = await fetchPosts();
-
-    const res: PostModel[] = [];
-    for (const file of postFiles) {
-      const content: string = await getFileContent(file.path);
-      for (let i = 0; i < 2; i++)
-        res.push(new PostModel(file.name, content, new Date()));
-    }
-
-    return res;
-  },
-});
-
-export const postState = selectorFamily({
-  key: "post",
-  get:
-    (title: string) =>
-    ({ get }) => {
-      const posts = get(postsState);
-
-      for (const post of posts) {
-        if (post.title === title) {
-          return post;
-        }
-      }
-
-      return null;
-    },
+export const postsState = atom<PostModel[]>({
+  key: "postsState",
+  default: [],
 });

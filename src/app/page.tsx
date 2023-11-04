@@ -1,11 +1,12 @@
 "use client";
 
 import Post from "@/components/post";
+import { fetchPosts, getFileContent } from "@/libs/post";
 import PostModel from "@/models/PostModel";
 import { postsState } from "@/states/posts";
 import styled from "@emotion/styled";
 import { useEffect } from "react";
-import { RecoilRoot, useRecoilValue } from "recoil";
+import { RecoilRoot, useRecoilState, useRecoilValue } from "recoil";
 
 const RootPageContainer = styled.div`
   display: flex;
@@ -26,21 +27,31 @@ const VerticalPostLayout = styled.div`
 `;
 
 export function Index() {
-  const posts = useRecoilValue(postsState);
+  const [posts, setPosts] = useRecoilState(postsState);
+
+  useEffect(() => {
+    (async () => {
+      const res: PostModel[] = [];
+      const postFiles = await fetchPosts();
+      for (const post of postFiles) {
+        const content = await getFileContent(post.path);
+        res.push(new PostModel(post.name, post.path, new Date()));
+      }
+      setPosts(res);
+    })();
+  });
 
   return (
-    <RecoilRoot>
-      <RootPageContainer>
-        <h4>Recent Posts</h4>
-        <VerticalPostLayout>
-          {posts.length > 0
-            ? posts.map((v, i) => (
-                <Post key={i} title={v.title} content={v.content} />
-              ))
-            : "글을 기다리고 있어요."}
-        </VerticalPostLayout>
-      </RootPageContainer>
-    </RecoilRoot>
+    <RootPageContainer>
+      <h4>Recent Posts</h4>
+      <VerticalPostLayout>
+        {posts.length > 0
+          ? posts.map((v, i) => (
+              <Post key={i} title={v.title} content={v.content} />
+            ))
+          : "글을 기다리고 있어요."}
+      </VerticalPostLayout>
+    </RootPageContainer>
   );
 }
 

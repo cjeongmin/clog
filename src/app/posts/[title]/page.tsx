@@ -1,13 +1,14 @@
 "use client";
 
-import { postState } from "@/states/posts";
+import { fetchPosts, getFileContent } from "@/libs/post";
+import PostModel from "@/models/PostModel";
+import { postsState } from "@/states/posts";
 import styled from "@emotion/styled";
 import hljs from "highlight.js";
 import "highlight.js/styles/github.css";
 import { marked } from "marked";
-import { GetStaticPropsContext } from "next";
 import { useEffect, useRef } from "react";
-import { RecoilRoot, useRecoilValue } from "recoil";
+import { RecoilRoot, useRecoilState } from "recoil";
 
 const Divider = styled.div`
   height: 1px;
@@ -92,7 +93,22 @@ function format(date: Date): string {
 export function PostPage({ params }: { params: { title: string } }) {
   const title = params.title;
   const contentRef = useRef<HTMLDivElement>(null);
-  const post = useRecoilValue(postState(title + ".md"));
+
+  const [posts, setPosts] = useRecoilState(postsState);
+
+  useEffect(() => {
+    (async () => {
+      const res: PostModel[] = [];
+      const postFiles = await fetchPosts();
+      for (const post of postFiles) {
+        const content = await getFileContent(post.path);
+        res.push(new PostModel(post.name, content, new Date()));
+      }
+      setPosts(res);
+    })();
+  });
+
+  const post = posts.find((v) => v.title === title + ".md");
 
   useEffect(() => {
     const current = contentRef.current;
