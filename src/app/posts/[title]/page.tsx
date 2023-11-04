@@ -1,5 +1,7 @@
 "use client";
 
+import { fetchPosts, getFileContent } from "@/libs/post";
+import PostModel from "@/models/PostModel";
 import { postsState } from "@/states/posts";
 import styled from "@emotion/styled";
 import hljs from "highlight.js";
@@ -43,11 +45,6 @@ const PostPageContainer = styled.div`
     height: 1px;
     border: 0;
     border-radius: 2px;
-
-    :hover {
-      background-color: #ededed;
-      transition: 1s ease-in-out background-color;
-    }
   }
 `;
 
@@ -92,16 +89,28 @@ export default function PostPage({ params }: { params: { title: string } }) {
   const title = params.title;
   const contentRef = useRef<HTMLDivElement>(null);
 
-  const [posts, _] = useRecoilState(postsState);
-  const post = posts.find((v) => v.title === title + ".md");
+  const [posts, setPosts] = useRecoilState(postsState);
 
   useEffect(() => {
+    (async () => {
+      const res: PostModel[] = [];
+      const postFiles = await fetchPosts();
+      for (const post of postFiles) {
+        const content = await getFileContent(post.path);
+        res.push(new PostModel(post.name, content, new Date()));
+      }
+      setPosts(res);
+    })();
+  });
+
+  useEffect(() => {
+    const post = posts.find((v) => v.title === title + ".md");
     const current = contentRef.current;
     if (current && post) {
       current.innerHTML = marked.parse(post.content);
       hljs.highlightAll();
     }
-  });
+  }, [posts]);
 
   return (
     <PostPageContainer>
