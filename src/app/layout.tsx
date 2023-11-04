@@ -1,4 +1,5 @@
 import Navbar from "@/components/navbar";
+import RecoilRootProvider from "@/components/recoilRootProvider";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./styles/globals.css";
@@ -41,7 +42,9 @@ export default function RootLayout({
           <header className={styles.header}>
             <Navbar />
           </header>
-          <main className={styles.main}>{children}</main>
+          <RecoilRootProvider>
+            <main className={styles.main}>{children}</main>
+          </RecoilRootProvider>
           <footer className={styles.footer}>
             <div className={styles.divider} />
             <p>© 2023 cjeongmin. All Rights Reserved.</p>

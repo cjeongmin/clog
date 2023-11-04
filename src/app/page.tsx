@@ -6,7 +6,7 @@ import PostModel from "@/models/PostModel";
 import { postsState } from "@/states/posts";
 import styled from "@emotion/styled";
 import { useEffect } from "react";
-import { RecoilRoot, useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 
 const RootPageContainer = styled.div`
   display: flex;
@@ -26,7 +26,7 @@ const VerticalPostLayout = styled.div`
   padding: 1rem 0rem;
 `;
 
-export function Index() {
+export default function RootPage() {
   const [posts, setPosts] = useRecoilState(postsState);
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export function Index() {
       const postFiles = await fetchPosts();
       for (const post of postFiles) {
         const content = await getFileContent(post.path);
-        res.push(new PostModel(post.name, post.path, new Date()));
+        res.push(new PostModel(post.name, content, new Date()));
       }
       setPosts(res);
     })();
@@ -52,13 +52,5 @@ export function Index() {
           : "글을 기다리고 있어요."}
       </VerticalPostLayout>
     </RootPageContainer>
-  );
-}
-
-export default function RootPage() {
-  return (
-    <RecoilRoot>
-      <Index />
-    </RecoilRoot>
   );
 }

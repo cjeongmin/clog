@@ -1,14 +1,12 @@
 "use client";
 
-import { fetchPosts, getFileContent } from "@/libs/post";
-import PostModel from "@/models/PostModel";
 import { postsState } from "@/states/posts";
 import styled from "@emotion/styled";
 import hljs from "highlight.js";
 import "highlight.js/styles/github.css";
 import { marked } from "marked";
 import { useEffect, useRef } from "react";
-import { RecoilRoot, useRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 
 const Divider = styled.div`
   height: 1px;
@@ -90,24 +88,11 @@ function format(date: Date): string {
   )}:${paddingZero(minute)}`;
 }
 
-export function PostPage({ params }: { params: { title: string } }) {
+export default function PostPage({ params }: { params: { title: string } }) {
   const title = params.title;
   const contentRef = useRef<HTMLDivElement>(null);
 
-  const [posts, setPosts] = useRecoilState(postsState);
-
-  useEffect(() => {
-    (async () => {
-      const res: PostModel[] = [];
-      const postFiles = await fetchPosts();
-      for (const post of postFiles) {
-        const content = await getFileContent(post.path);
-        res.push(new PostModel(post.name, content, new Date()));
-      }
-      setPosts(res);
-    })();
-  });
-
+  const [posts, _] = useRecoilState(postsState);
   const post = posts.find((v) => v.title === title + ".md");
 
   useEffect(() => {
@@ -125,17 +110,5 @@ export function PostPage({ params }: { params: { title: string } }) {
       <Divider />
       <ContentContainer ref={contentRef} />
     </PostPageContainer>
-  );
-}
-
-export default function Page({ params }: { params: { title: string } }) {
-  const title = params.title;
-
-  return (
-    <>
-      <RecoilRoot>
-        <PostPage params={{ title }} />
-      </RecoilRoot>
-    </>
   );
 }
