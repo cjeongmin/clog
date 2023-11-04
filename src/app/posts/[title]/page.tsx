@@ -1,10 +1,10 @@
 "use client";
 
 import styled from "@emotion/styled";
-import { marked } from "marked";
-import { useEffect, useRef } from "react";
 import hljs from "highlight.js";
 import "highlight.js/styles/github.css";
+import { marked } from "marked";
+import { useEffect, useRef } from "react";
 
 const Divider = styled.div`
   height: 1px;
@@ -17,7 +17,7 @@ const PostPageContainer = styled.div`
   flex-direction: column;
 
   pre {
-    padding: 2rem;
+    padding: 1.5rem;
     background-color: #ededed;
     border-radius: 10px;
   }
@@ -113,6 +113,7 @@ function format(date: Date): string {
     date.getDay(),
   ];
   const [hour, minute] = [date.getHours(), date.getMinutes()];
+
   return `${year}.${paddingZero(month)}.${paddingZero(day)} - ${paddingZero(
     hour
   )}:${paddingZero(minute)}`;

@@ -17,6 +17,11 @@ const PostContainer = styled(Link)`
     cursor: pointer;
     background-color: #101010;
     transition: ease-in-out 0.2s background-color;
+    transition: ease-in-out 0.3s box-shadow;
+
+    -moz-box-shadow: 0 0 5px #fdfdfd30;
+    -webkit-box-shadow: 0 0 5px #fdfdfd30;
+    box-shadow: 0px 0px 5px 1px #fdfdfd30;
   }
 `;
 
