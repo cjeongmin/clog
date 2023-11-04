@@ -113,6 +113,7 @@ export default function PostPage({ params }: { params: { title: string } }) {
     const post = posts.find((v) => v.title === title + ".md");
     const current = contentRef.current;
     if (current && post) {
+      setDate(post.date);
       const metadata = getMetaData(post.content);
       current.innerHTML = marked.parse(metadata.content);
       hljs.highlightAll();
