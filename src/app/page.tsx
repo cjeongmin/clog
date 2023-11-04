@@ -1,8 +1,10 @@
 "use client";
 
 import Post from "@/components/post";
-import { postsSelector } from "@/states/posts";
+import PostModel from "@/models/PostModel";
+import { postsState } from "@/states/posts";
 import styled from "@emotion/styled";
+import { useEffect } from "react";
 import { RecoilRoot, useRecoilValue } from "recoil";
 
 const RootPageContainer = styled.div`
@@ -24,7 +26,7 @@ const VerticalPostLayout = styled.div`
 `;
 
 export function Index() {
-  const posts = useRecoilValue(postsSelector);
+  const posts = useRecoilValue(postsState);
 
   return (
     <RecoilRoot>

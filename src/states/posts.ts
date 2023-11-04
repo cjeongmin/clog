@@ -1,8 +1,8 @@
 import { fetchPosts, getFileContent } from "@/libs/post";
 import PostModel from "@/models/PostModel";
-import { selector } from "recoil";
+import { selector, selectorFamily } from "recoil";
 
-export const postsSelector = selector({
+export const postsState = selector({
   key: "posts",
   get: async ({ get }) => {
     const postFiles = await fetchPosts();
@@ -16,4 +16,21 @@ export const postsSelector = selector({
 
     return res;
   },
+});
+
+export const postState = selectorFamily({
+  key: "post",
+  get:
+    (title: string) =>
+    ({ get }) => {
+      const posts = get(postsState);
+
+      for (const post of posts) {
+        if (post.title === title) {
+          return post;
+        }
+      }
+
+      return null;
+    },
 });

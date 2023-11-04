@@ -40,13 +40,13 @@ export default function Post({
   title: string;
   content: string;
 }) {
-  const pathname = `/posts/${title}`;
+  const removeExtTitle = title.replace(".md", "");
+  const pathname = `/posts/${removeExtTitle}`;
 
   return (
     <>
       <PostContainer href={{ pathname }}>
-        <Title>{title}</Title>
-        <Content>{content}</Content>
+        <Title>{removeExtTitle}</Title>
       </PostContainer>
     </>
   );

@@ -1,10 +1,13 @@
 "use client";
 
+import { postState } from "@/states/posts";
 import styled from "@emotion/styled";
 import hljs from "highlight.js";
 import "highlight.js/styles/github.css";
 import { marked } from "marked";
+import { GetStaticPropsContext } from "next";
 import { useEffect, useRef } from "react";
+import { RecoilRoot, useRecoilValue } from "recoil";
 
 const Divider = styled.div`
   height: 1px;
@@ -69,39 +72,6 @@ const ContentContainer = styled.div`
   gap: 1rem;
 `;
 
-const content = `
-  # Hello
-  ---
-  - this is list item1
-  - this is list item2
-
-  **bold**  
-  *italic*
-
-  \`\`\` python
-  cjm = "cjeongmin"
-  blog = "blog"
-
-  print(cjm + " " + blog) # cjeongmin blog
-  \`\`\`
-
-  ### Hello
-  ## Hi
-
-  1. one
-  2. two
-  3. three
-
-  - dash list1
-  - dash list2
-
-  \`\`\` html
-  <div>
-    <a href="https://www.naver.com">link</a>
-  </div>
-  \`\`\`
-`;
-
 function format(date: Date): string {
   const paddingZero = (x: number) => {
     return x.toString().padStart(2, "0");
@@ -119,14 +89,15 @@ function format(date: Date): string {
   )}:${paddingZero(minute)}`;
 }
 
-export default function PostPage({ params }: { params: { title: string } }) {
+export function PostPage({ params }: { params: { title: string } }) {
   const title = params.title;
   const contentRef = useRef<HTMLDivElement>(null);
+  const post = useRecoilValue(postState(title + ".md"));
 
   useEffect(() => {
     const current = contentRef.current;
-    if (current != null) {
-      current.innerHTML = marked.parse(content);
+    if (current && post) {
+      current.innerHTML = marked.parse(post.content);
       hljs.highlightAll();
     }
   });
@@ -138,5 +109,17 @@ export default function PostPage({ params }: { params: { title: string } }) {
       <Divider />
       <ContentContainer ref={contentRef} />
     </PostPageContainer>
+  );
+}
+
+export default function Page({ params }: { params: { title: string } }) {
+  const title = params.title;
+
+  return (
+    <>
+      <RecoilRoot>
+        <PostPage params={{ title }} />
+      </RecoilRoot>
+    </>
   );
 }
