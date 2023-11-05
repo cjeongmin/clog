@@ -1,6 +1,11 @@
 "use client";
 
-import { fetchPosts, getFileContent, getMetaData } from "@/libs/post";
+import {
+  fetchPosts,
+  getFileContent,
+  getMetaData,
+  replaceLinks,
+} from "@/libs/post";
 import PostModel from "@/models/PostModel";
 import { postsState } from "@/states/posts";
 import styled from "@emotion/styled";
@@ -46,6 +51,19 @@ const PostPageContainer = styled.div`
     border: 0;
     border-radius: 2px;
   }
+
+  a {
+    color: #808080;
+    text-decoration: underline;
+    text-underline-position: below;
+    text-underline-offset: 2px;
+  }
+
+  img {
+    max-width: 100%;
+    border-radius: 10px;
+    margin: 1rem 0;
+  }
 `;
 
 const Title = styled.h1`
@@ -76,11 +94,11 @@ function format(date: Date): string {
   const [year, month, day] = [
     date.getFullYear(),
     date.getMonth(),
-    date.getDay(),
+    date.getDate(),
   ];
   const [hour, minute] = [date.getHours(), date.getMinutes()];
 
-  return `${year}.${paddingZero(month)}.${paddingZero(day)} - ${paddingZero(
+  return `${year}.${paddingZero(month + 1)}.${paddingZero(day)} - ${paddingZero(
     hour
   )}:${paddingZero(minute)}`;
 }
@@ -102,7 +120,7 @@ export default function PostPage({ params }: { params: { title: string } }) {
       const res: PostModel[] = [];
       const postFiles = await fetchPosts();
       for (const post of postFiles) {
-        const content = await getFileContent(post.path);
+        const content = replaceLinks(await getFileContent(post.path));
         res.push(new PostModel(post.name, content, post.date));
       }
       setPosts(res);

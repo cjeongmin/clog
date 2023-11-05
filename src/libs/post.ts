@@ -4,7 +4,7 @@ import { parse } from "yaml";
 const githubUsername = process.env.NEXT_PUBLIC_USER_NAME;
 const githubRepository = process.env.NEXT_PUBLIC_REPOSITORY_NAME;
 const apiUrl = `https://api.github.com/repos/${githubUsername}/${githubRepository}/contents/`;
-const personalAccessToken = process.env.NEXT_PUBLIC_GITHUB_TOKEN;
+const contentUrl = `https://raw.githubusercontent.com/cjeongmin/blog-posts/main/`;
 
 interface BlogPostFile {
   htmlURL: string;
@@ -21,23 +21,25 @@ export async function fetchPosts(): Promise<BlogPostFile[]> {
   try {
     const response = await axios.get(apiUrl, {
       headers: {
-        Authorization: `token ${personalAccessToken}`,
+        // Authorization: `token ${personalAccessToken}`,
       },
     });
 
     if (response.status === 200) {
       const contentData = response.data;
       for (const data of contentData) {
-        if (data.name.endsWith(".md")) {
-          res.push({
-            htmlURL: data.html_url,
-            name: data.name,
-            path: data.path,
-            type: data.path,
-            url: data.url,
-            date: (await getFileLastModified(data.path)) || new Date(),
-          });
+        if (!data.name.endsWith(".md") || data.name == "README.md") {
+          continue;
         }
+
+        res.push({
+          htmlURL: data.html_url,
+          name: data.name,
+          path: data.path,
+          type: data.path,
+          url: data.url,
+          date: (await getFileLastModified(data.path)) || new Date(),
+        });
       }
     } else {
       console.error("Failed to fetch data from GitHub API");
@@ -55,7 +57,7 @@ export async function getFileContent(filePath: string): Promise<string> {
   try {
     const response = await axios.get(apiUrl + filePath, {
       headers: {
-        Authorization: `token ${personalAccessToken}`,
+        // Authorization: `token ${personalAccessToken}`,
       },
     });
 
@@ -79,7 +81,7 @@ export async function getFileLastModified(
       `https://api.github.com/repos/${githubUsername}/${githubRepository}/commits`,
       {
         headers: {
-          Authorization: `token ${personalAccessToken}`,
+          // Authorization: `token ${personalAccessToken}`,
         },
         params: {
           path: filePath,
@@ -144,8 +146,11 @@ export function replaceLinks(content: string): string {
     const str = result[0];
     const path = result[1];
 
-    // TODO: github file api 확인하고 해야 함
-    content = content.replace(str, `[${path}](${path})`);
+    if (path.includes(".")) {
+      content = content.replace(str, `[${path}](${contentUrl + path})`);
+    } else {
+      content = content.replace(str, `[${path}](${path})`);
+    }
   }
 
   return content;
