@@ -1,7 +1,7 @@
 "use client";
 
 import Post from "@/components/post";
-import { fetchPosts, getFileContent } from "@/libs/post";
+import { fetchPosts, getFileContent, replaceLinks } from "@/libs/post";
 import PostModel from "@/models/PostModel";
 import { postsState } from "@/states/posts";
 import styled from "@emotion/styled";
@@ -34,6 +34,7 @@ export default function RootPage() {
       const postFiles = await fetchPosts();
       for (const post of postFiles) {
         const content = await getFileContent(post.path);
+        replaceLinks(content);
         res.push(new PostModel(post.name, content, post.date));
       }
       setPosts(res);

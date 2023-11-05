@@ -136,3 +136,18 @@ export function getMetaData(fileContent: string): MetaData {
     content: fileContent,
   };
 }
+
+export function replaceLinks(content: string): string {
+  const linkPattern = /\[\[(.*)\]\]/g;
+
+  for (const result of content.matchAll(linkPattern)) {
+    const str = result[0];
+    const path = result[1];
+
+    // TODO: github file api 확인하고 해야 함
+    content = content.replace(str, `[${path}](${path})`);
+  }
+
+  console.log(content);
+  return content;
+}
