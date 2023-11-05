@@ -1,39 +1,12 @@
 "use client";
 
 import Post from "@/components/post";
+import { fetchPosts, getFileContent, replaceLinks } from "@/libs/post";
+import PostModel from "@/models/PostModel";
+import { postsState } from "@/states/posts";
 import styled from "@emotion/styled";
-import { RecoilRoot } from "recoil";
-
-class PostModel {
-  constructor(public title: string, public content: string) {}
-}
-
-const posts: PostModel[] = [
-  new PostModel("title1", "content1"),
-  new PostModel("title2", "content2"),
-  new PostModel("title3", "content3"),
-  new PostModel("title4", "content4"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-  new PostModel("title5", "content5"),
-];
+import { useEffect } from "react";
+import { useRecoilState } from "recoil";
 
 const RootPageContainer = styled.div`
   display: flex;
@@ -45,24 +18,38 @@ const RootPageContainer = styled.div`
 const VerticalPostLayout = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: center;
   flex-wrap: wrap;
   gap: 1rem;
   height: 100%;
   overflow-y: auto;
+  padding: 1rem 0 1rem 1rem;
 `;
 
 export default function RootPage() {
+  const [posts, setPosts] = useRecoilState(postsState);
+
+  useEffect(() => {
+    (async () => {
+      const res: PostModel[] = [];
+      const postFiles = await fetchPosts();
+      for (const post of postFiles) {
+        const content = replaceLinks(await getFileContent(post.path));
+        res.push(new PostModel(post.name, content, post.date));
+      }
+      setPosts(res);
+    })();
+  }, []);
+
   return (
-    <RecoilRoot>
-      <RootPageContainer>
-        <h4>Recent Posts</h4>
-        <VerticalPostLayout>
-          {posts.map((v, i) => (
-            <Post key={i} title={v.title} content={v.content} />
-          ))}
-        </VerticalPostLayout>
-      </RootPageContainer>
-    </RecoilRoot>
+    <RootPageContainer>
+      <h4>Recent Posts</h4>
+      <VerticalPostLayout>
+        {posts.length > 0
+          ? posts.map((v, i) => (
+              <Post key={i} title={v.title} content={v.content} />
+            ))
+          : "글을 기다리고 있어요."}
+      </VerticalPostLayout>
+    </RootPageContainer>
   );
 }

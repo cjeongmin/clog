@@ -1,8 +1,9 @@
+import Navbar from "@/components/navbar";
+import RecoilRootProvider from "@/components/recoilRootProvider";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./styles/globals.css";
 import styles from "./styles/page.module.css";
-import Navbar from "@/components/navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,20 +20,31 @@ export default function RootLayout({
   return (
     <html lang="ko-kr">
       <head>
+        {/* Noto Sans KR font */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" />
         <link
           href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap"
           rel="stylesheet"
         />
+        <link
+          rel="stylesheet"
+          href="//cdn.jsdelivr.net/npm/hack-font@3.3.0/build/web/hack.css"
+        />
+        {/* hack font */}
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css"
+        />
       </head>
       <body className={inter.className}>
-        <header className={styles.header}>
-          <Navbar />
-        </header>
         <div className={styles.container}>
-          <main className={styles.main}>{children}</main>
-
+          <header className={styles.header}>
+            <Navbar />
+          </header>
+          <RecoilRootProvider>
+            <main className={styles.main}>{children}</main>
+          </RecoilRootProvider>
           <footer className={styles.footer}>
             <div className={styles.divider} />
             <p>© 2023 cjeongmin. All Rights Reserved.</p>
