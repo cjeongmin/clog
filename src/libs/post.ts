@@ -148,6 +148,5 @@ export function replaceLinks(content: string): string {
     content = content.replace(str, `[${path}](${path})`);
   }
 
-  console.log(content);
   return content;
 }
