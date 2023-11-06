@@ -1,17 +1,20 @@
+import { postDateFormatter } from "@/libs/post";
+import PostModel from "@/models/PostModel";
 import styled from "@emotion/styled";
 import Link from "next/link";
 
 const PostContainer = styled(Link)`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
 
-  width: 47.5%;
-  min-height: 25vh;
+  width: 100%;
   height: 30%;
   border-radius: 10px;
   background-color: #10101080;
 
-  padding: 1rem;
+  padding: 1.5rem 1rem;
 
   :hover {
     cursor: pointer;
@@ -29,17 +32,11 @@ const Title = styled.p`
   font-weight: bold;
 `;
 
-const Content = styled.p`
-  font-size: 0.75rem;
+const PostDate = styled.p`
+  font-size: 0.7rem;
 `;
 
-export default function Post({
-  title,
-  content,
-}: {
-  title: string;
-  content: string;
-}) {
+export default function Post({ title, date }: PostModel) {
   const removeExtTitle = title.replace(".md", "");
   const pathname = `/posts/${removeExtTitle}`;
 
@@ -47,6 +44,7 @@ export default function Post({
     <>
       <PostContainer href={{ pathname }}>
         <Title>{removeExtTitle}</Title>
+        <PostDate>{postDateFormatter(date)}</PostDate>
       </PostContainer>
     </>
   );

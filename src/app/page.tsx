@@ -17,8 +17,7 @@ const RootPageContainer = styled.div`
 
 const VerticalPostLayout = styled.div`
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 1rem;
   height: 100%;
   overflow-y: auto;
@@ -36,7 +35,7 @@ export default function RootPage() {
         const content = replaceLinks(await getFileContent(post.path));
         res.push(new PostModel(post.name, content, post.date));
       }
-      setPosts(res);
+      setPosts(res.reverse());
     })();
   }, []);
 
@@ -46,7 +45,7 @@ export default function RootPage() {
       <VerticalPostLayout>
         {posts.length > 0
           ? posts.map((v, i) => (
-              <Post key={i} title={v.title} content={v.content} />
+              <Post key={i} title={v.title} content={v.content} date={v.date} />
             ))
           : "글을 기다리고 있어요."}
       </VerticalPostLayout>
