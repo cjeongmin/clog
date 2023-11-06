@@ -155,3 +155,20 @@ export function replaceLinks(content: string): string {
 
   return content;
 }
+
+export function postDateFormatter(date: Date): string {
+  const paddingZero = (x: number) => {
+    return x.toString().padStart(2, "0");
+  };
+
+  const [year, month, day] = [
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+  ];
+  const [hour, minute] = [date.getHours(), date.getMinutes()];
+
+  return `${year}.${paddingZero(month + 1)}.${paddingZero(day)} - ${paddingZero(
+    hour
+  )}:${paddingZero(minute)}`;
+}

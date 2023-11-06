@@ -4,6 +4,7 @@ import {
   fetchPosts,
   getFileContent,
   getMetaData,
+  postDateFormatter,
   replaceLinks,
 } from "@/libs/post";
 import PostModel from "@/models/PostModel";
@@ -34,7 +35,7 @@ const PostPageContainer = styled.div`
   code,
   code * {
     font-size: 0.8rem;
-    font-family: "Hack", monospace;
+    font-family: "Hack", "Nanum Gothic Coding", monospace;
   }
 
   code * {
@@ -86,23 +87,6 @@ const ContentContainer = styled.div`
   gap: 1rem;
 `;
 
-function format(date: Date): string {
-  const paddingZero = (x: number) => {
-    return x.toString().padStart(2, "0");
-  };
-
-  const [year, month, day] = [
-    date.getFullYear(),
-    date.getMonth(),
-    date.getDate(),
-  ];
-  const [hour, minute] = [date.getHours(), date.getMinutes()];
-
-  return `${year}.${paddingZero(month + 1)}.${paddingZero(day)} - ${paddingZero(
-    hour
-  )}:${paddingZero(minute)}`;
-}
-
 export default function PostPage({ params }: { params: { title: string } }) {
   const title = params.title;
   const contentRef = useRef<HTMLDivElement>(null);
@@ -141,7 +125,7 @@ export default function PostPage({ params }: { params: { title: string } }) {
   return (
     <PostPageContainer>
       <Title>{title}</Title>
-      <PostDate>{date != null ? format(date) : ""}</PostDate>
+      <PostDate>{date != null ? postDateFormatter(date) : ""}</PostDate>
       <Divider />
       <ContentContainer ref={contentRef} />
     </PostPageContainer>

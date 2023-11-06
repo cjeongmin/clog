@@ -31,6 +31,7 @@ const TagContainer = styled.div`
 `;
 
 const Title = styled.p`
+  font-family: "Nanum Gothic Coding", monospace;
   font-weight: bold;
   font-size: 2rem;
 `;
