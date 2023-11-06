@@ -20,16 +20,12 @@ export default function RootLayout({
   return (
     <html lang="ko-kr">
       <head>
-        {/* Noto Sans KR font */}
+        {/* Noto Sans KR font & Nanum Gothic Coding */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding:wght@400;700&family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap"
           rel="stylesheet"
-        />
-        <link
-          rel="stylesheet"
-          href="//cdn.jsdelivr.net/npm/hack-font@3.3.0/build/web/hack.css"
         />
         {/* hack font */}
         <link
