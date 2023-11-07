@@ -20,7 +20,7 @@ const VerticalPostLayout = styled.div`
   gap: 1rem;
   height: 100%;
   overflow-y: auto;
-  padding: 1rem 1rem 1rem 1rem;
+  padding: 1rem;
 `;
 
 export default function RootPage() {

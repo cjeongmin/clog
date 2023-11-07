@@ -43,7 +43,7 @@ export default function RootLayout({
           </RecoilRootProvider>
           <footer className={styles.footer}>
             <div className={styles.divider} />
-            <p>© 2023 cjeongmin. All Rights Reserved.</p>
+            <p>© 2023 cjeongmin.</p>
           </footer>
         </div>
       </body>
