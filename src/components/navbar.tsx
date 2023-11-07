@@ -9,7 +9,6 @@ class Category {
 
 const categories: Category[] = [
   new Category("Home", ""),
-  new Category("Posts", "posts"),
   new Category("Tags", "tags"),
   new Category("About", "about"),
 ];

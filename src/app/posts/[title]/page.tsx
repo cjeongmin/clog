@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  fetchPosts,
-  getFileContent,
-  getMetaData,
-  postDateFormatter,
-  replaceLinks,
-} from "@/libs/post";
-import PostModel from "@/models/PostModel";
+import { getMetaData, getPosts, postDateFormatter } from "@/libs/post";
 import { postsState } from "@/states/posts";
 import styled from "@emotion/styled";
 import hljs from "highlight.js";
@@ -92,8 +85,8 @@ export default function PostPage({ params }: { params: { title: string } }) {
   const contentRef = useRef<HTMLDivElement>(null);
 
   const [posts, setPosts] = useRecoilState(postsState);
-
   const [date, setDate] = useState<Date | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     if (posts.find((v) => v.title === title + ".md")) {
@@ -101,13 +94,7 @@ export default function PostPage({ params }: { params: { title: string } }) {
     }
 
     (async () => {
-      const res: PostModel[] = [];
-      const postFiles = await fetchPosts();
-      for (const post of postFiles) {
-        const content = replaceLinks(await getFileContent(post.path));
-        res.push(new PostModel(post.name, content, post.date));
-      }
-      setPosts(res);
+      setPosts(await getPosts());
     })();
   }, []);
 
@@ -118,6 +105,7 @@ export default function PostPage({ params }: { params: { title: string } }) {
       setDate(post.date);
       const metadata = getMetaData(post.content);
       current.innerHTML = marked.parse(metadata.content);
+      setIsLoading(false);
       hljs.highlightAll();
     }
   }, [posts]);
@@ -125,9 +113,17 @@ export default function PostPage({ params }: { params: { title: string } }) {
   return (
     <PostPageContainer>
       <Title>{title}</Title>
-      <PostDate>{date != null ? postDateFormatter(date) : ""}</PostDate>
+      <PostDate>
+        {date != null ? postDateFormatter(date) : "데이터를 불러오고 있습니다."}
+      </PostDate>
       <Divider />
-      <ContentContainer ref={contentRef} />
+      <p style={{ textAlign: "center", display: isLoading ? "" : "none" }}>
+        글을 불러오고 있습니다.
+      </p>
+      <ContentContainer
+        style={{ display: isLoading ? "none" : "" }}
+        ref={contentRef}
+      />
     </PostPageContainer>
   );
 }
