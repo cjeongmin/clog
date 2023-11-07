@@ -113,7 +113,9 @@ export default function PostPage({ params }: { params: { title: string } }) {
   return (
     <PostPageContainer>
       <Title>{title}</Title>
-      <PostDate>{date != null ? postDateFormatter(date) : ""}</PostDate>
+      <PostDate>
+        {date != null ? postDateFormatter(date) : "데이터를 불러오고 있습니다."}
+      </PostDate>
       <Divider />
       <p style={{ textAlign: "center", display: isLoading ? "" : "none" }}>
         글을 불러오고 있습니다.
