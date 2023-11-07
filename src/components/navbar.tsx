@@ -1,11 +1,8 @@
 "use client";
 
+import Category from "@/models/Category";
 import styled from "@emotion/styled";
 import Link from "next/link";
-
-class Category {
-  constructor(public content: string, public url: string) {}
-}
 
 const categories: Category[] = [
   new Category("Home", ""),
