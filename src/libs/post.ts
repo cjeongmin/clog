@@ -1,3 +1,4 @@
+import PostModel from "@/models/PostModel";
 import axios from "axios";
 import { parse } from "yaml";
 
@@ -171,4 +172,14 @@ export function postDateFormatter(date: Date): string {
   return `${year}.${paddingZero(month + 1)}.${paddingZero(day)} - ${paddingZero(
     hour
   )}:${paddingZero(minute)}`;
+}
+
+export async function getPosts(): Promise<PostModel[]> {
+  const res: PostModel[] = [];
+  const postFiles = await fetchPosts();
+  for (const post of postFiles) {
+    const content = replaceLinks(await getFileContent(post.path));
+    res.push(new PostModel(post.name, content, post.date));
+  }
+  return res.reverse();
 }

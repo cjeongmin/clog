@@ -1,8 +1,7 @@
 "use client";
 
 import Post from "@/components/post";
-import { fetchPosts, getFileContent, replaceLinks } from "@/libs/post";
-import PostModel from "@/models/PostModel";
+import { getPosts } from "@/libs/post";
 import { postsState } from "@/states/posts";
 import styled from "@emotion/styled";
 import { useEffect } from "react";
@@ -29,13 +28,7 @@ export default function RootPage() {
 
   useEffect(() => {
     (async () => {
-      const res: PostModel[] = [];
-      const postFiles = await fetchPosts();
-      for (const post of postFiles) {
-        const content = replaceLinks(await getFileContent(post.path));
-        res.push(new PostModel(post.name, content, post.date));
-      }
-      setPosts(res.reverse());
+      setPosts(await getPosts());
     })();
   }, []);
 

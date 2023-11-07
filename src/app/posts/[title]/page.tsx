@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  fetchPosts,
-  getFileContent,
-  getMetaData,
-  postDateFormatter,
-  replaceLinks,
-} from "@/libs/post";
-import PostModel from "@/models/PostModel";
+import { getMetaData, getPosts, postDateFormatter } from "@/libs/post";
 import { postsState } from "@/states/posts";
 import styled from "@emotion/styled";
 import hljs from "highlight.js";
@@ -101,13 +94,7 @@ export default function PostPage({ params }: { params: { title: string } }) {
     }
 
     (async () => {
-      const res: PostModel[] = [];
-      const postFiles = await fetchPosts();
-      for (const post of postFiles) {
-        const content = replaceLinks(await getFileContent(post.path));
-        res.push(new PostModel(post.name, content, post.date));
-      }
-      setPosts(res);
+      setPosts(await getPosts());
     })();
   }, []);
 
