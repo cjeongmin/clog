@@ -10,21 +10,20 @@ export async function GET(
 ) {
   const { name } = params;
 
-  const files = await glob("**/*.md");
-  const file = files.find((v) => trimFileName(v) === name + ".md");
+  // 현재 정적 파일을 찾지 못하는 문제가 있음
+  const files = await glob("public/posts/*.md");
+  const responseFiles = [];
+
+  for (const filename in files) {
+    responseFiles.push(filename);
+  }
+
+  const file = responseFiles.find((v) => trimFileName(v) === name + ".md");
 
   if (!file) {
-    return new NextResponse(
-      JSON.stringify({
-        success: false,
-        error: "파일을 찾지 못했습니다.",
-        name,
-        files,
-      }),
-      {
-        status: 400,
-      }
-    );
+    return new NextResponse(JSON.stringify({ success: false, responseFiles }), {
+      status: 400,
+    });
   }
 
   try {
