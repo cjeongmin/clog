@@ -14,9 +14,17 @@ export async function GET(
   const file = files.find((v) => trimFileName(v) === name + ".md");
 
   if (!file) {
-    return new NextResponse(JSON.stringify({ success: false }), {
-      status: 400,
-    });
+    return new NextResponse(
+      JSON.stringify({
+        success: false,
+        error: "파일을 찾지 못했습니다.",
+        name,
+        files,
+      }),
+      {
+        status: 400,
+      }
+    );
   }
 
   try {
