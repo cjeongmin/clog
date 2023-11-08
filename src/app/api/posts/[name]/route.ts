@@ -12,16 +12,10 @@ export async function GET(
 
   // 현재 정적 파일을 찾지 못하는 문제가 있음
   const files = await glob("public/posts/*.md");
-  const responseFiles = [];
-
-  for (const filename in files) {
-    responseFiles.push(filename);
-  }
-
-  const file = responseFiles.find((v) => trimFileName(v) === name + ".md");
+  const file = files.find((v) => trimFileName(v) === name + ".md");
 
   if (!file) {
-    return new NextResponse(JSON.stringify({ success: false, responseFiles }), {
+    return new NextResponse(JSON.stringify({ success: false }), {
       status: 400,
     });
   }

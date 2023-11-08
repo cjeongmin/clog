@@ -7,6 +7,10 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
   const files = await glob("public/posts/*.md");
 
+  if (files.length) {
+    return new NextResponse(JSON.stringify({ files }));
+  }
+
   const result: { [name: string]: MarkDownFile } = {};
   for (const file of files) {
     try {
