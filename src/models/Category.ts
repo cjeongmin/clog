@@ -1,3 +1,4 @@
-export default class Category {
-  constructor(public content: string, public url: string) {}
+export default interface Category {
+  content: string;
+  url: string;
 }

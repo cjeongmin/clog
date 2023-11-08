@@ -1,5 +1,5 @@
-import PostModel from "./PostModel";
+import MarkDownFile from "./MarkDownFile";
 
 export class Tag {
-  constructor(public name: string, public posts: PostModel[] = []) {}
+  constructor(public name: string, public posts: MarkDownFile[] = []) {}
 }

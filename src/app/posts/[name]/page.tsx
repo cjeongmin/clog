@@ -1,11 +1,14 @@
 "use client";
 
-import { getMetaData, getPosts, postDateFormatter } from "@/libs/post";
+import { getMetaData, loadPosts, postDateFormatter } from "@/libs/post";
+import MarkDownFile from "@/models/MarkDownFile";
 import { postsState } from "@/states/posts";
 import styled from "@emotion/styled";
+import axios from "axios";
 import hljs from "highlight.js";
 import "highlight.js/styles/github.css";
 import { marked } from "marked";
+import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 
@@ -80,50 +83,47 @@ const ContentContainer = styled.div`
   gap: 1rem;
 `;
 
-export default function PostPage({ params }: { params: { title: string } }) {
-  const title = params.title;
+export default function PostPage() {
+  const { name } = useParams();
   const contentRef = useRef<HTMLDivElement>(null);
 
-  const [posts, setPosts] = useRecoilState(postsState);
-  const [date, setDate] = useState<Date | null>(null);
+  const [post, setPost] = useState<MarkDownFile | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    if (posts.find((v) => v.title === title + ".md")) {
-      return;
-    }
-
     (async () => {
-      setPosts(await getPosts());
+      const response = await axios.get(`/api/posts/${name}`);
+      const post = response.data as MarkDownFile;
+      const current = contentRef.current;
+      if (current) {
+        setPost({
+          name: post.name,
+          content: post.content,
+          createAt: new Date(post.createAt),
+          lastModified: new Date(post.lastModified),
+        });
+        setIsLoading(false);
+      }
     })();
   }, []);
 
   useEffect(() => {
-    const post = posts.find((v) => v.title === title + ".md");
     const current = contentRef.current;
     if (current && post) {
-      setDate(post.date);
       const metadata = getMetaData(post.content);
       current.innerHTML = marked.parse(metadata.content);
-      setIsLoading(false);
       hljs.highlightAll();
     }
-  }, [posts]);
+  }, [post]);
 
   return (
-    <PostPageContainer>
-      <Title>{title}</Title>
-      <PostDate>
-        {date != null ? postDateFormatter(date) : "데이터를 불러오고 있습니다."}
-      </PostDate>
-      <Divider />
-      <p style={{ textAlign: "center", display: isLoading ? "" : "none" }}>
-        글을 불러오고 있습니다.
-      </p>
-      <ContentContainer
-        style={{ display: isLoading ? "none" : "" }}
-        ref={contentRef}
-      />
-    </PostPageContainer>
+    <>
+      <PostPageContainer>
+        <Title>{post?.name ?? "글을 불러오고 있어요"}</Title>
+        <PostDate>{postDateFormatter(post?.createAt ?? new Date())}</PostDate>
+        <Divider />
+        <ContentContainer ref={contentRef} />
+      </PostPageContainer>
+    </>
   );
 }
