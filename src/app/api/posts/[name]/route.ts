@@ -10,8 +10,7 @@ export async function GET(
 ) {
   const { name } = params;
 
-  // 현재 정적 파일을 찾지 못하는 문제가 있음
-  const files = await glob("public/posts/*.md");
+  const files = await glob(`${process.env.PWD}/public/posts/*.md`);
   const file = files.find((v) => trimFileName(v) === name + ".md");
 
   if (!file) {
