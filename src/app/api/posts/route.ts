@@ -22,9 +22,15 @@ export async function GET(request: NextRequest) {
       result[file] = data;
     } catch (err) {
       console.error(err);
-      return new NextResponse(JSON.stringify({ success: false }), {
-        status: 204,
-      });
+      return new NextResponse(
+        JSON.stringify({
+          success: false,
+          path: `${process.env.PWD}/public/posts/*.md`,
+        }),
+        {
+          status: 204,
+        }
+      );
     }
   }
 

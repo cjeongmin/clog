@@ -14,9 +14,15 @@ export async function GET(
   const file = files.find((v) => trimFileName(v) === name + ".md");
 
   if (!file) {
-    return new NextResponse(JSON.stringify({ success: false }), {
-      status: 400,
-    });
+    return new NextResponse(
+      JSON.stringify({
+        success: false,
+        path: `${process.env.PWD}/public/posts/*.md`,
+      }),
+      {
+        status: 400,
+      }
+    );
   }
 
   try {
