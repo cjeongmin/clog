@@ -47,4 +47,4 @@ image test
 obsidian link parsing test  
 [[Post2]]  
 [[Post3]]  
-![[static/profile.jpeg]]
+![[profile.jpeg]]

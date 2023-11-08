@@ -1,8 +1,7 @@
 "use client";
 
-import { getMetaData, loadPosts, postDateFormatter } from "@/libs/post";
+import { getMetaData, postDateFormatter, replaceLinks } from "@/libs/post";
 import MarkDownFile from "@/models/MarkDownFile";
-import { postsState } from "@/states/posts";
 import styled from "@emotion/styled";
 import axios from "axios";
 import hljs from "highlight.js";
@@ -10,7 +9,6 @@ import "highlight.js/styles/github.css";
 import { marked } from "marked";
 import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { useRecoilState } from "recoil";
 
 const Divider = styled.div`
   height: 1px;
@@ -88,22 +86,17 @@ export default function PostPage() {
   const contentRef = useRef<HTMLDivElement>(null);
 
   const [post, setPost] = useState<MarkDownFile | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     (async () => {
       const response = await axios.get(`/api/posts/${name}`);
       const post = response.data as MarkDownFile;
-      const current = contentRef.current;
-      if (current) {
-        setPost({
-          name: post.name,
-          content: post.content,
-          createAt: new Date(post.createAt),
-          lastModified: new Date(post.lastModified),
-        });
-        setIsLoading(false);
-      }
+      setPost({
+        name: post.name,
+        content: post.content,
+        createAt: new Date(post.createAt),
+        lastModified: new Date(post.lastModified),
+      });
     })();
   }, []);
 
@@ -111,7 +104,8 @@ export default function PostPage() {
     const current = contentRef.current;
     if (current && post) {
       const metadata = getMetaData(post.content);
-      current.innerHTML = marked.parse(metadata.content);
+      const content = replaceLinks(metadata.content);
+      current.innerHTML = marked.parse(content);
       hljs.highlightAll();
     }
   }, [post]);
@@ -119,10 +113,18 @@ export default function PostPage() {
   return (
     <>
       <PostPageContainer>
-        <Title>{post?.name ?? "글을 불러오고 있어요"}</Title>
-        <PostDate>{postDateFormatter(post?.createAt ?? new Date())}</PostDate>
-        <Divider />
-        <ContentContainer ref={contentRef} />
+        {post ? (
+          <>
+            <Title>{post.name}</Title>
+            <PostDate>{postDateFormatter(post.createAt)}</PostDate>
+            <Divider />
+            <ContentContainer ref={contentRef} />
+          </>
+        ) : (
+          <>
+            <p style={{ textAlign: "center" }}>글을 불러오고 있어요</p>
+          </>
+        )}
       </PostPageContainer>
     </>
   );

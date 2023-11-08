@@ -46,11 +46,11 @@ export function replaceLinks(content: string): string {
     const str = result[0];
     const path = result[1];
 
-    // if (path.includes(".")) {
-    //   content = content.replace(str, `[${path}](${contentUrl + path})`);
-    // } else {
-    //   content = content.replace(str, `[${path}](${path})`);
-    // }
+    if (path.includes(".")) {
+      content = content.replace(str, `[${path}](${`/static/${path}`})`);
+    } else {
+      content = content.replace(str, `[${path}](${path})`);
+    }
   }
 
   return content;
