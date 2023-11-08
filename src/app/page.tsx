@@ -1,10 +1,8 @@
 "use client";
 import Post from "@/components/post";
 import { loadPosts } from "@/libs/post";
-import MarkDownFile from "@/models/MarkDownFile";
 import { postsState } from "@/states/posts";
 import styled from "@emotion/styled";
-import axios from "axios";
 import { useEffect } from "react";
 import { useRecoilState } from "recoil";
 
