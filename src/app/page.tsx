@@ -1,9 +1,9 @@
 "use client";
-
 import Post from "@/components/post";
 import { getPosts } from "@/libs/post";
 import { postsState } from "@/states/posts";
 import styled from "@emotion/styled";
+import axios from "axios";
 import { useEffect } from "react";
 import { useRecoilState } from "recoil";
 
@@ -29,6 +29,13 @@ export default function RootPage() {
   useEffect(() => {
     (async () => {
       setPosts(await getPosts());
+    })();
+
+    (async () => {
+      const response = await axios.get("/api/posts");
+      const data = response.data;
+
+      console.log(data);
     })();
   }, []);
 
