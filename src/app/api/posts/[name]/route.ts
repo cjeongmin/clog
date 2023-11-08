@@ -6,40 +6,43 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { name: string } }
+  { params: { name } }: { params: { name: string } }
 ) {
-  const { name } = params;
-
   const files = await glob(`**/*.md`, {
     ignore: ["README.md", "node_modules/**"],
   });
-  const file = files.find((v) => trimFileName(v) === name + ".md");
 
-  if (!file) {
-    return new NextResponse(
-      JSON.stringify({
-        success: false,
-      }),
-      {
-        status: 400,
-      }
-    );
-  }
+  return new NextResponse(JSON.stringify(files));
 
-  try {
-    const content = fs.readFileSync(file, "utf8");
-    const stat = fs.statSync(file);
-    const data: MarkDownFile = {
-      name: trimFileName(name),
-      content,
-      lastModified: new Date(stat.mtime),
-      createAt: new Date(stat.ctime),
-    };
-    return new NextResponse(JSON.stringify(data));
-  } catch (err) {
-    console.error(err);
-    return new NextResponse(JSON.stringify({ success: false }), {
-      status: 204,
-    });
-  }
+  // const file = files.find((v) => trimFileName(v) === name + ".md");
+
+  // if (!file) {
+  //   return new NextResponse(
+  //     JSON.stringify({
+  //       success: false,
+  //       files,
+  //       file,
+  //     }),
+  //     {
+  //       status: 400,
+  //     }
+  //   );
+  // }
+
+  // try {
+  //   const content = fs.readFileSync(file, "utf8");
+  //   const stat = fs.statSync(file);
+  //   const data: MarkDownFile = {
+  //     name: trimFileName(name),
+  //     content,
+  //     lastModified: new Date(stat.mtime),
+  //     createAt: new Date(stat.ctime),
+  //   };
+  //   return new NextResponse(JSON.stringify(data));
+  // } catch (err) {
+  //   console.error(err);
+  //   return new NextResponse(JSON.stringify({ success: false }), {
+  //     status: 204,
+  //   });
+  // }
 }
