@@ -5,7 +5,9 @@ import { glob } from "glob";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
-  const files = await glob(`${process.env.PWD}/public/posts/*.md`);
+  const files = await glob(`**/*.md`, {
+    ignore: ["README.md", "node_modules/**"],
+  });
 
   const result: { [name: string]: MarkDownFile } = {};
   for (const file of files) {
@@ -22,15 +24,9 @@ export async function GET(request: NextRequest) {
       result[file] = data;
     } catch (err) {
       console.error(err);
-      return new NextResponse(
-        JSON.stringify({
-          success: false,
-          path: `${process.env.PWD}/public/posts/*.md`,
-        }),
-        {
-          status: 204,
-        }
-      );
+      return new NextResponse(JSON.stringify({ success: false }), {
+        status: 204,
+      });
     }
   }
 

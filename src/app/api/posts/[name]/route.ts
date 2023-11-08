@@ -10,14 +10,15 @@ export async function GET(
 ) {
   const { name } = params;
 
-  const files = await glob(`${process.env.PWD}/public/posts/*.md`);
+  const files = await glob(`**/*.md`, {
+    ignore: ["README.md", "node_modules/**"],
+  });
   const file = files.find((v) => trimFileName(v) === name + ".md");
 
   if (!file) {
     return new NextResponse(
       JSON.stringify({
         success: false,
-        path: `${process.env.PWD}/public/posts/*.md`,
       }),
       {
         status: 400,
