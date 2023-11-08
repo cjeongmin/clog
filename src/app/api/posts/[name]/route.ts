@@ -10,7 +10,7 @@ export async function GET(
 ) {
   const { name } = params;
 
-  const files = await glob("public/posts/*.md");
+  const files = await glob("**/*.md");
   const file = files.find((v) => trimFileName(v) === name + ".md");
 
   if (!file) {
