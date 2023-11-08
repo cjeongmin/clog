@@ -1,9 +1,10 @@
 "use client";
-
 import Post from "@/components/post";
-import { getPosts } from "@/libs/post";
+import { loadPosts } from "@/libs/post";
+import MarkDownFile from "@/models/MarkDownFile";
 import { postsState } from "@/states/posts";
 import styled from "@emotion/styled";
+import axios from "axios";
 import { useEffect } from "react";
 import { useRecoilState } from "recoil";
 
@@ -28,7 +29,7 @@ export default function RootPage() {
 
   useEffect(() => {
     (async () => {
-      setPosts(await getPosts());
+      setPosts(await loadPosts());
     })();
   }, []);
 
@@ -38,7 +39,13 @@ export default function RootPage() {
       <VerticalPostLayout>
         {posts.length > 0
           ? posts.map((v, i) => (
-              <Post key={i} title={v.title} content={v.content} date={v.date} />
+              <Post
+                key={i}
+                name={v.name}
+                content={v.content}
+                createAt={v.createAt}
+                lastModified={v.lastModified}
+              />
             ))
           : "글을 기다리고 있어요."}
       </VerticalPostLayout>

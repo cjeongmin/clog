@@ -1,107 +1,6 @@
-import PostModel from "@/models/PostModel";
+import MarkDownFile from "@/models/MarkDownFile";
 import axios from "axios";
 import { parse } from "yaml";
-
-const githubUsername = process.env.NEXT_PUBLIC_USER_NAME;
-const githubRepository = process.env.NEXT_PUBLIC_REPOSITORY_NAME;
-const apiUrl = `https://api.github.com/repos/${githubUsername}/${githubRepository}/contents/`;
-const contentUrl = `https://raw.githubusercontent.com/cjeongmin/blog-posts/main/`;
-
-interface BlogPostFile {
-  htmlURL: string;
-  name: string;
-  path: string;
-  type: string;
-  url: string;
-  date: Date;
-}
-
-export async function fetchPosts(): Promise<BlogPostFile[]> {
-  const res: BlogPostFile[] = [];
-
-  try {
-    const response = await axios.get(apiUrl, {
-      headers: {
-        // Authorization: `token ${personalAccessToken}`,
-      },
-    });
-
-    if (response.status === 200) {
-      const contentData = response.data;
-      for (const data of contentData) {
-        if (!data.name.endsWith(".md") || data.name == "README.md") {
-          continue;
-        }
-
-        res.push({
-          htmlURL: data.html_url,
-          name: data.name,
-          path: data.path,
-          type: data.path,
-          url: data.url,
-          date: (await getFileLastModified(data.path)) || new Date(),
-        });
-      }
-    } else {
-      console.error("Failed to fetch data from GitHub API");
-    }
-  } catch (error) {
-    console.error("An error occurred while fetching data:", error);
-  }
-
-  return res;
-}
-
-export async function getFileContent(filePath: string): Promise<string> {
-  let content: string = "";
-
-  try {
-    const response = await axios.get(apiUrl + filePath, {
-      headers: {
-        // Authorization: `token ${personalAccessToken}`,
-      },
-    });
-
-    if (response.status === 200) {
-      content = Buffer.from(response.data.content, "base64").toString("utf-8");
-    } else {
-      console.error("Failed to fetch file content from GitHub API");
-    }
-  } catch (error) {
-    console.error("An error occurred while fetching file content:", error);
-  }
-
-  return content;
-}
-
-export async function getFileLastModified(
-  filePath: string
-): Promise<Date | null> {
-  try {
-    const response = await axios.get(
-      `https://api.github.com/repos/${githubUsername}/${githubRepository}/commits`,
-      {
-        headers: {
-          // Authorization: `token ${personalAccessToken}`,
-        },
-        params: {
-          path: filePath,
-          per_page: 1,
-        },
-      }
-    );
-
-    if (response.status === 200) {
-      const data = response.data;
-      return new Date(data[0].commit.committer.date);
-    } else {
-      console.error("Failed to fetch file content from Github API");
-    }
-  } catch (error) {
-    console.error("An error occurred while fetching file content:", error);
-  }
-  return null;
-}
 
 type MetaData = {
   data: {};
@@ -148,7 +47,7 @@ export function replaceLinks(content: string): string {
     const path = result[1];
 
     if (path.includes(".")) {
-      content = content.replace(str, `[${path}](${contentUrl + path})`);
+      content = content.replace(str, `[${path}](${`/static/${path}`})`);
     } else {
       content = content.replace(str, `[${path}](${path})`);
     }
@@ -174,12 +73,32 @@ export function postDateFormatter(date: Date): string {
   )}:${paddingZero(minute)}`;
 }
 
-export async function getPosts(): Promise<PostModel[]> {
-  const res: PostModel[] = [];
-  const postFiles = await fetchPosts();
-  for (const post of postFiles) {
-    const content = replaceLinks(await getFileContent(post.path));
-    res.push(new PostModel(post.name, content, post.date));
+export function trimFileName(fileName: string): string {
+  let ret = "";
+  for (let i = fileName.length - 1; i >= 0; i--) {
+    if (fileName[i] == "/") {
+      break;
+    }
+    ret = fileName[i] + ret;
   }
-  return res.reverse();
+  return ret;
+}
+
+export async function loadPosts(): Promise<MarkDownFile[]> {
+  const ret: MarkDownFile[] = [];
+
+  const response = await axios.get("/api/posts");
+  const data: { [name: string]: MarkDownFile } = response.data;
+
+  for (const key in data) {
+    const value = data[key];
+    ret.push({
+      name: value.name,
+      content: value.content,
+      createAt: new Date(value.createAt),
+      lastModified: new Date(value.lastModified),
+    });
+  }
+
+  return ret;
 }

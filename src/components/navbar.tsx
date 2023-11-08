@@ -1,16 +1,13 @@
 "use client";
 
+import Category from "@/models/Category";
 import styled from "@emotion/styled";
 import Link from "next/link";
 
-class Category {
-  constructor(public content: string, public url: string) {}
-}
-
 const categories: Category[] = [
-  new Category("Home", ""),
-  new Category("Tags", "tags"),
-  new Category("About", "about"),
+  { content: "Home", url: "" },
+  { content: "Tags", url: "tags" },
+  { content: "About", url: "about" },
 ];
 
 const NavContainer = styled.div`
