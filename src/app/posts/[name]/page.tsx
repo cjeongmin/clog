@@ -19,6 +19,7 @@ const Divider = styled.div`
 const PostPageContainer = styled.div`
   display: flex;
   flex-direction: column;
+  line-height: 1.75rem;
 
   pre {
     padding: 1.5rem;
@@ -26,26 +27,15 @@ const PostPageContainer = styled.div`
     border-radius: 10px;
   }
 
-  pre > code,
-  pre > code * {
+  code,
+  code * {
     font-size: 0.8rem;
     font-family: "'Hack', 'Nanum Gothic Coding'", monospace;
-  }
-
-  pre > code * {
     line-height: 1.5rem;
   }
 
   pre > code {
     background-color: #ededed;
-  }
-
-  code {
-    font-family: "'Hack', 'Nanum Gothic Coding'", monospace;
-    background-color: #202020;
-    color: #ff3232;
-    padding: 0.25rem 0.5rem;
-    border-radius: 10px;
   }
 
   hr {
