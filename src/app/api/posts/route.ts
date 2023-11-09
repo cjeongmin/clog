@@ -4,6 +4,8 @@ import fs from "fs";
 import { glob } from "glob";
 import { NextRequest, NextResponse } from "next/server";
 
+const root = process.env.PWD;
+
 function getMarkDownFile(file: string): MarkDownFile {
   const content = fs.readFileSync(file, "utf8");
   const stat = fs.statSync(file);
@@ -21,7 +23,12 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const name = searchParams.get("name");
 
-  const files = await glob(`**/*.md`, {
+  let pattern: string = "";
+  if (root) {
+    pattern = root + (root[root.length - 1] === "/" ? "**/*.md" : "/**/*.md");
+  }
+
+  const files = await glob(pattern, {
     ignore: ["README.md", "node_modules/**"],
   });
 
@@ -45,7 +52,7 @@ export async function GET(request: NextRequest) {
   } else {
     const file = files.find((v) => trimFileName(v) == name + ".md");
     if (!file) {
-      return new NextResponse(JSON.stringify({ sucess: false }), {
+      return new NextResponse(JSON.stringify({ success: false }), {
         status: 400,
       });
     }
