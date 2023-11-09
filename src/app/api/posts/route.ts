@@ -32,10 +32,6 @@ export async function GET(request: NextRequest) {
     ignore: ["README.md", "node_modules/**"],
   });
 
-  if (files.length) {
-    return new NextResponse(JSON.stringify(files));
-  }
-
   if (!name) {
     const result: { [name: string]: MarkDownFile } = {};
     for (const file of files) {
