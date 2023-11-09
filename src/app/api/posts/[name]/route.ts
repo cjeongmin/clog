@@ -13,6 +13,10 @@ export async function GET(
   const files = await glob("public/posts/*.md");
   const file = files.find((v) => v === "public/posts/" + name + ".md");
 
+  if (files.length) {
+    return new NextResponse(JSON.stringify({ files }));
+  }
+
   if (!file) {
     return new NextResponse(JSON.stringify({ success: false }), {
       status: 400,
