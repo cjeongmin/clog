@@ -30,3 +30,33 @@ export async function GET(request: NextRequest) {
 
   return new NextResponse(JSON.stringify(result));
 }
+
+export async function POST(request: NextRequest) {
+  const { name } = (await request.json()) as { name: string };
+
+  const files = await glob("public/posts/*.md");
+  const file = files.find((v) => v === "public/posts/" + name + ".md");
+
+  if (!file) {
+    return new NextResponse(JSON.stringify({ success: false }), {
+      status: 400,
+    });
+  }
+
+  try {
+    const content = fs.readFileSync(file, "utf8");
+    const stat = fs.statSync(file);
+    const data: MarkDownFile = {
+      name: trimFileName(name),
+      content,
+      lastModified: new Date(stat.mtime),
+      createAt: new Date(stat.ctime),
+    };
+    return new NextResponse(JSON.stringify(data));
+  } catch (err) {
+    console.error(err);
+    return new NextResponse(JSON.stringify({ success: false }), {
+      status: 204,
+    });
+  }
+}
