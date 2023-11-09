@@ -4,8 +4,6 @@ import fs from "fs";
 import { glob } from "glob";
 import { NextRequest, NextResponse } from "next/server";
 
-const root = process.env.PWD;
-
 function getMarkDownFile(file: string): MarkDownFile {
   const content = fs.readFileSync(file, "utf8");
   const stat = fs.statSync(file);
@@ -24,8 +22,11 @@ export async function GET(request: NextRequest) {
   const name = searchParams.get("name");
 
   let pattern: string = "";
-  if (root) {
-    pattern = root + (root[root.length - 1] === "/" ? "**/*.md" : "/**/*.md");
+  const env = process.env.NODE_ENV;
+  if (env === "development") {
+    pattern = "**/*.md";
+  } else if (env === "production") {
+    pattern = `${process.env.STATIC_URL}/**/*.md`;
   }
 
   const files = await glob(pattern, {
