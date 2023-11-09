@@ -33,35 +33,3 @@ export async function GET(request: NextRequest) {
 
   return new NextResponse(JSON.stringify(result));
 }
-
-export async function POST(request: NextRequest) {
-  const { name } = (await request.json()) as { name: string };
-
-  const url = path.resolve("public/posts");
-  const files = await glob(path.resolve(`${url}/*.md`));
-  const file = files.find((v) => v === `${url}/${name}.md`);
-
-  if (!file) {
-    return new NextResponse(JSON.stringify({ success: false }), {
-      status: 400,
-    });
-  }
-
-  try {
-    const fileName = trimFileName(name);
-    const content = fs.readFileSync(file, "utf8");
-    const stat = fs.statSync(file);
-    const data: MarkDownFile = {
-      name: fileName,
-      content,
-      lastModified: new Date(stat.mtime),
-      createAt: new Date(stat.ctime),
-    };
-    return new NextResponse(JSON.stringify(data));
-  } catch (err) {
-    console.error(err);
-    return new NextResponse(JSON.stringify({ success: false }), {
-      status: 204,
-    });
-  }
-}

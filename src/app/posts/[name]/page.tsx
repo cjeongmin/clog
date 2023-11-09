@@ -89,9 +89,7 @@ export default function PostPage() {
 
   useEffect(() => {
     (async () => {
-      const response = await axios.post(`/api/posts`, {
-        name: name,
-      });
+      const response = await axios.get(`/api/posts/${name}`);
       const post = response.data as MarkDownFile;
       setPost({
         name: post.name,
