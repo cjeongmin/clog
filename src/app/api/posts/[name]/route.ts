@@ -1,13 +1,12 @@
-import fs from "fs";
 import { trimFileName } from "@/libs/post";
-import { glob } from "glob";
-import { NextApiRequest } from "next";
-import { NextResponse } from "next/server";
-import path from "path";
 import MarkDownFile from "@/models/MarkDownFile";
+import fs from "fs";
+import { glob } from "glob";
+import { NextRequest, NextResponse } from "next/server";
+import path from "path";
 
 export async function GET(
-  request: NextApiRequest,
+  request: NextRequest,
   { params: { name } }: { params: { name: string } }
 ) {
   const url = path.resolve("public/posts");
