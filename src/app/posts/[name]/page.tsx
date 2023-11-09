@@ -26,18 +26,26 @@ const PostPageContainer = styled.div`
     border-radius: 10px;
   }
 
-  code,
-  code * {
+  pre > code,
+  pre > code * {
     font-size: 0.8rem;
-    font-family: "Hack", "Nanum Gothic Coding", monospace;
+    font-family: "'Hack', 'Nanum Gothic Coding'", monospace;
   }
 
-  code * {
+  pre > code * {
     line-height: 1.5rem;
   }
 
-  code {
+  pre > code {
     background-color: #ededed;
+  }
+
+  code {
+    font-family: "'Hack', 'Nanum Gothic Coding'", monospace;
+    background-color: #202020;
+    color: #ff3232;
+    padding: 0.25rem 0.5rem;
+    border-radius: 10px;
   }
 
   hr {
