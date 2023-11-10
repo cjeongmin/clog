@@ -61,6 +61,7 @@ const PostPageContainer = styled.div`
 
 const Title = styled.h1`
   text-align: center;
+  margin-bottom: 1rem;
 `;
 
 const PostDate = styled.p`
@@ -71,6 +72,18 @@ const PostDate = styled.p`
     transition: 0.25s color ease-in-out;
     color: #fdfdfd;
   }
+`;
+
+const TagsContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 0.5rem;
+`;
+
+const Tag = styled.span`
+  color: #808080;
 `;
 
 const ContentContainer = styled.div`
@@ -84,6 +97,7 @@ export default function PostPage() {
   const contentRef = useRef<HTMLDivElement>(null);
 
   const [post, setPost] = useState<MarkDownFile | null>(null);
+  const [tags, setTags] = useState<string[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -102,6 +116,10 @@ export default function PostPage() {
     const current = contentRef.current;
     if (current && post) {
       const metadata = getMetaData(post.content);
+      const tags = metadata.data["tags"] as string[];
+      if (tags) {
+        setTags(tags);
+      }
       const content = replaceLinks(metadata.content);
       current.innerHTML = marked.parse(content);
       hljs.highlightAll();
@@ -115,6 +133,15 @@ export default function PostPage() {
           <>
             <Title>{post.name}</Title>
             <PostDate>{postDateFormatter(post.createAt)}</PostDate>
+            {tags.length ? (
+              <TagsContainer>
+                {tags.map((v, i) => (
+                  <Tag key={i}>{`#${v}`}</Tag>
+                ))}
+              </TagsContainer>
+            ) : (
+              <></>
+            )}
             <Divider />
             <ContentContainer ref={contentRef} />
           </>

@@ -4,7 +4,7 @@ import { parse } from "yaml";
 import path from "path";
 
 type MetaData = {
-  data: {};
+  data: { [key: string]: any };
   content: string;
 };
 
