@@ -1,6 +1,6 @@
 "use client";
 import Post from "@/components/post";
-import { loadPosts } from "@/libs/post";
+import { getMetaData, loadPosts } from "@/libs/post";
 import { postsState } from "@/states/posts";
 import styled from "@emotion/styled";
 import { useEffect } from "react";
@@ -27,7 +27,17 @@ export default function RootPage() {
 
   useEffect(() => {
     (async () => {
-      setPosts(await loadPosts());
+      const res = await loadPosts();
+      setPosts(
+        res.filter((post) => {
+          const metadata = getMetaData(post.content);
+          const publish = metadata.data["publish"];
+          if (publish === false) {
+            return false;
+          }
+          return true;
+        })
+      );
     })();
   }, []);
 

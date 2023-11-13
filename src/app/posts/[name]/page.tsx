@@ -98,6 +98,7 @@ export default function PostPage() {
 
   const [post, setPost] = useState<MarkDownFile | null>(null);
   const [tags, setTags] = useState<string[]>([]);
+  const [publish, setPublish] = useState<boolean>(true);
 
   useEffect(() => {
     (async () => {
@@ -116,10 +117,17 @@ export default function PostPage() {
     const current = contentRef.current;
     if (current && post) {
       const metadata = getMetaData(post.content);
+
       const tags = metadata.data["tags"] as string[];
       if (tags) {
         setTags(tags);
       }
+
+      const publish = metadata.data["publish"] as boolean;
+      if (publish === false) {
+        setPublish(publish);
+      }
+
       const content = replaceLinks(metadata.content);
       current.innerHTML = marked.parse(content);
       hljs.highlightAll();
@@ -129,7 +137,7 @@ export default function PostPage() {
   return (
     <>
       <PostPageContainer>
-        {post ? (
+        {post && publish ? (
           <>
             <Title>{post.name}</Title>
             <PostDate>{postDateFormatter(post.createAt)}</PostDate>
@@ -147,7 +155,9 @@ export default function PostPage() {
           </>
         ) : (
           <>
-            <p style={{ textAlign: "center" }}>글을 불러오고 있어요</p>
+            <p style={{ textAlign: "center" }}>
+              {publish === false ? "비공개 글입니다." : "글을 불러오고 있어요."}
+            </p>
           </>
         )}
       </PostPageContainer>
