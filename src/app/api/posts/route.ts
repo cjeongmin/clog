@@ -1,4 +1,3 @@
-import { trimFileName } from "@/libs/post";
 import MarkDownFile from "@/models/MarkDownFile";
 import fs from "fs";
 import { glob } from "glob";
@@ -12,7 +11,7 @@ export async function GET(request: NextRequest) {
   const result: { [name: string]: MarkDownFile } = {};
   for (const file of files) {
     try {
-      const fileName = trimFileName(file);
+      const fileName = path.basename(file);
       const content = fs.readFileSync(file, "utf8");
       const stat = fs.statSync(file);
       const data: MarkDownFile = {

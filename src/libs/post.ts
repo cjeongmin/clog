@@ -1,9 +1,10 @@
 import MarkDownFile from "@/models/MarkDownFile";
 import axios from "axios";
 import { parse } from "yaml";
+import path from "path";
 
 type MetaData = {
-  data: {};
+  data: { [key: string]: any };
   content: string;
 };
 
@@ -44,13 +45,42 @@ export function replaceLinks(content: string): string {
 
   for (const result of content.matchAll(linkPattern)) {
     const str = result[0];
-    const path = result[1];
+    const filePath = result[1];
 
-    if (path.includes(".")) {
-      content = content.replace(str, `[${path}](${`/static/${path}`})`);
+    if (filePath.includes(".")) {
+      if (path.extname(filePath) === ".pdf") {
+        content = content.replace(
+          `!${str}`,
+          `<embed src="/static/${filePath.replaceAll(
+            " ",
+            "%20"
+          )}" type="application/pdf" width="100%" height="500px">`
+        );
+      } else {
+        content = content.replace(
+          str,
+          `[${filePath}](${`/static/${filePath.replaceAll(" ", "%20")}`})`
+        );
+      }
     } else {
-      content = content.replace(str, `[${path}](${path})`);
+      content = content.replace(
+        str,
+        `[${filePath}](${filePath.replaceAll(" ", "%20")})`
+      );
     }
+  }
+
+  return content;
+}
+
+export function changeLatexFormat(content: string): string {
+  const pattern = /\$(.*?)\$/g;
+
+  for (const token of content.matchAll(pattern)) {
+    const str = token[0];
+    const expr = token[1];
+
+    content = content.replace(str, `\\\\(${expr}\\\\)`);
   }
 
   return content;
@@ -71,17 +101,6 @@ export function postDateFormatter(date: Date): string {
   return `${year}.${paddingZero(month + 1)}.${paddingZero(day)} - ${paddingZero(
     hour
   )}:${paddingZero(minute)}`;
-}
-
-export function trimFileName(fileName: string): string {
-  let ret = "";
-  for (let i = fileName.length - 1; i >= 0; i--) {
-    if (fileName[i] == "/") {
-      break;
-    }
-    ret = fileName[i] + ret;
-  }
-  return ret;
 }
 
 export async function loadPosts(): Promise<MarkDownFile[]> {

@@ -1,6 +1,11 @@
 "use client";
 
-import { getMetaData, postDateFormatter, replaceLinks } from "@/libs/post";
+import {
+  changeLatexFormat,
+  getMetaData,
+  postDateFormatter,
+  replaceLinks,
+} from "@/libs/post";
 import MarkDownFile from "@/models/MarkDownFile";
 import styled from "@emotion/styled";
 import axios from "axios";
@@ -19,6 +24,7 @@ const Divider = styled.div`
 const PostPageContainer = styled.div`
   display: flex;
   flex-direction: column;
+  line-height: 1.75rem;
 
   pre {
     padding: 1.5rem;
@@ -29,14 +35,11 @@ const PostPageContainer = styled.div`
   code,
   code * {
     font-size: 0.8rem;
-    font-family: "Hack", "Nanum Gothic Coding", monospace;
-  }
-
-  code * {
+    font-family: "'Hack', 'Nanum Gothic Coding'", monospace;
     line-height: 1.5rem;
   }
 
-  code {
+  pre > code {
     background-color: #ededed;
   }
 
@@ -63,6 +66,7 @@ const PostPageContainer = styled.div`
 
 const Title = styled.h1`
   text-align: center;
+  margin-bottom: 1rem;
 `;
 
 const PostDate = styled.p`
@@ -73,6 +77,18 @@ const PostDate = styled.p`
     transition: 0.25s color ease-in-out;
     color: #fdfdfd;
   }
+`;
+
+const TagsContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 0.5rem;
+`;
+
+const Tag = styled.span`
+  color: #808080;
 `;
 
 const ContentContainer = styled.div`
@@ -86,6 +102,8 @@ export default function PostPage() {
   const contentRef = useRef<HTMLDivElement>(null);
 
   const [post, setPost] = useState<MarkDownFile | null>(null);
+  const [tags, setTags] = useState<string[]>([]);
+  const [publish, setPublish] = useState<boolean>(true);
 
   useEffect(() => {
     (async () => {
@@ -104,8 +122,25 @@ export default function PostPage() {
     const current = contentRef.current;
     if (current && post) {
       const metadata = getMetaData(post.content);
-      const content = replaceLinks(metadata.content);
+
+      const tags = metadata.data["tags"] as string[];
+      if (tags) {
+        setTags(tags);
+      }
+
+      const publish = metadata.data["publish"] as boolean;
+      if (publish === false) {
+        setPublish(publish);
+      }
+
+      const content = changeLatexFormat(replaceLinks(metadata.content));
       current.innerHTML = marked.parse(content);
+
+      if (typeof window?.MathJax !== "undefined") {
+        window.MathJax.typesetClear();
+        window.MathJax.typeset();
+      }
+
       hljs.highlightAll();
     }
   }, [post]);
@@ -113,19 +148,36 @@ export default function PostPage() {
   return (
     <>
       <PostPageContainer>
-        {post ? (
+        {post && publish ? (
           <>
             <Title>{post.name}</Title>
             <PostDate>{postDateFormatter(post.createAt)}</PostDate>
+            {tags.length ? (
+              <TagsContainer>
+                {tags.map((v, i) => (
+                  <Tag key={i}>{`#${v}`}</Tag>
+                ))}
+              </TagsContainer>
+            ) : (
+              <></>
+            )}
             <Divider />
             <ContentContainer ref={contentRef} />
           </>
         ) : (
           <>
-            <p style={{ textAlign: "center" }}>글을 불러오고 있어요</p>
+            <p style={{ textAlign: "center" }}>
+              {publish === false ? "비공개 글입니다." : "글을 불러오고 있어요."}
+            </p>
           </>
         )}
       </PostPageContainer>
     </>
   );
+}
+
+declare global {
+  interface Window {
+    MathJax: any;
+  }
 }
