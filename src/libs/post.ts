@@ -73,6 +73,19 @@ export function replaceLinks(content: string): string {
   return content;
 }
 
+export function changeLatexFormat(content: string): string {
+  const pattern = /\$(.*?)\$/g;
+
+  for (const token of content.matchAll(pattern)) {
+    const str = token[0];
+    const expr = token[1];
+
+    content = content.replace(str, `\\\\(${expr}\\\\)`);
+  }
+
+  return content;
+}
+
 export function postDateFormatter(date: Date): string {
   const paddingZero = (x: number) => {
     return x.toString().padStart(2, "0");

@@ -1,6 +1,11 @@
 "use client";
 
-import { getMetaData, postDateFormatter, replaceLinks } from "@/libs/post";
+import {
+  changeLatexFormat,
+  getMetaData,
+  postDateFormatter,
+  replaceLinks,
+} from "@/libs/post";
 import MarkDownFile from "@/models/MarkDownFile";
 import styled from "@emotion/styled";
 import axios from "axios";
@@ -128,8 +133,14 @@ export default function PostPage() {
         setPublish(publish);
       }
 
-      const content = replaceLinks(metadata.content);
+      const content = changeLatexFormat(replaceLinks(metadata.content));
       current.innerHTML = marked.parse(content);
+
+      if (typeof window?.MathJax !== "undefined") {
+        window.MathJax.typesetClear();
+        window.MathJax.typeset();
+      }
+
       hljs.highlightAll();
     }
   }, [post]);
@@ -163,4 +174,10 @@ export default function PostPage() {
       </PostPageContainer>
     </>
   );
+}
+
+declare global {
+  interface Window {
+    MathJax: any;
+  }
 }
