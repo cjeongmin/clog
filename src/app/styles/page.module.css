@@ -12,8 +12,8 @@
   top: 0;
   position: sticky;
   position: -webkit-sticky; /* for safari */
-  opacity: 0.975;
-  backdrop-filter: blur(1rem);
+  backdrop-filter: blur(0.8rem);
+  z-index: 1;
 
   border-bottom: 1px solid #272727;
 }
