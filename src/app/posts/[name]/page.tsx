@@ -56,6 +56,12 @@ const PostPageContainer = styled.div`
     border-radius: 10px;
     margin: 1rem 0;
   }
+
+  blockquote {
+    padding: 1rem;
+    background-color: #282828;
+    border-radius: 10px;
+  }
 `;
 
 const Title = styled.h1`
