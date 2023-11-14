@@ -17,19 +17,31 @@ const NavContainer = styled.div`
   padding: 1rem 20%;
 
   width: 100%;
+
+  @media (max-width: 768px) {
+    padding: 1rem 10%;
+  }
 `;
 
-const TagContainer = styled.div`
+const CategoriesContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 20px;
+
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+  }
 `;
 
 const Title = styled.p`
   font-family: "Nanum Gothic Coding", monospace;
   font-weight: bold;
   font-size: 2rem;
+
+  @media (max-width: 768px) {
+    font-size: 1.25rem;
+  }
 `;
 
 export default function Navbar() {
@@ -39,13 +51,13 @@ export default function Navbar() {
         <Link href="/">
           <Title>clog</Title>
         </Link>
-        <TagContainer>
+        <CategoriesContainer>
           {categories.map((v, i) => (
             <Link key={i} href={{ pathname: `/${v.url}` }}>
               {v.content}
             </Link>
           ))}
-        </TagContainer>
+        </CategoriesContainer>
       </NavContainer>
     </>
   );
