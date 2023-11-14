@@ -5,7 +5,7 @@ import Link from "next/link";
 const PostContainer = styled(Link)`
   display: flex;
   flex-direction: row;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
 
   width: 100%;
