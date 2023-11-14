@@ -24,6 +24,10 @@ const PostPageContainer = styled.div`
     padding: 1.5rem;
     background-color: #ededed;
     border-radius: 10px;
+
+    @media (max-width: 768px) {
+      padding: 0.5rem;
+    }
   }
 
   code,
@@ -62,11 +66,26 @@ const PostPageContainer = styled.div`
     background-color: #282828;
     border-radius: 10px;
   }
+
+  @media (max-width: 768px) {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-size: 1.5rem;
+    }
+  }
 `;
 
 const Title = styled.h1`
   text-align: center;
   margin-bottom: 1rem;
+
+  @media (max-width: 768px) {
+    margin-bottom: 0;
+  }
 `;
 
 const PostDate = styled.p`
