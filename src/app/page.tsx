@@ -1,6 +1,6 @@
 "use client";
 import Post from "@/components/post";
-import { getMetaData, loadPosts } from "@/libs/post";
+import { loadPosts } from "@/libs/post";
 import { postsState } from "@/states/posts";
 import styled from "@emotion/styled";
 import { useEffect } from "react";
@@ -30,12 +30,7 @@ export default function RootPage() {
       const res = await loadPosts();
       setPosts(
         res.filter((post) => {
-          const metadata = getMetaData(post.content);
-          const publish = metadata.data["publish"];
-          if (publish === false) {
-            return false;
-          }
-          return true;
+          return post.publish;
         })
       );
     })();
@@ -51,8 +46,9 @@ export default function RootPage() {
                 key={i}
                 name={v.name}
                 content={v.content}
-                createAt={v.createAt}
-                lastModified={v.lastModified}
+                date={v.date}
+                publish={v.publish}
+                tags={v.tags}
               />
             ))
           : "글을 기다리고 있어요."}
