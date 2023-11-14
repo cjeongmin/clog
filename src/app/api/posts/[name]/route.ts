@@ -1,3 +1,4 @@
+import { changeLatexFormat, getMetaData, replaceLinks } from "@/libs/post";
 import MarkDownFile from "@/models/MarkDownFile";
 import fs from "fs";
 import { glob } from "glob";
@@ -21,12 +22,14 @@ export async function GET(
   try {
     const fileName = path.basename(name);
     const content = fs.readFileSync(file, "utf8");
-    const stat = fs.statSync(file);
+    const metadata = getMetaData(content);
+
     const data: MarkDownFile = {
       name: fileName,
-      content,
-      lastModified: new Date(stat.mtime),
-      createAt: new Date(stat.ctime),
+      content: changeLatexFormat(replaceLinks(metadata.content)),
+      date: metadata.data["date"] ?? "...",
+      publish: metadata.data["publish"] ?? true,
+      tags: metadata.data["tags"] ?? [],
     };
     return new NextResponse(JSON.stringify(data));
   } catch (err) {

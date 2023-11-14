@@ -3,7 +3,7 @@ tags:
   - tag1
   - tag2
   - tag3
-date: 2023.11.04
+date: 2023-11-14
 ---
 
 # first post1.md

@@ -1,4 +1,3 @@
-import { postDateFormatter } from "@/libs/post";
 import MarkDownFile from "@/models/MarkDownFile";
 import styled from "@emotion/styled";
 import Link from "next/link";
@@ -36,7 +35,7 @@ const PostDate = styled.p`
   font-size: 0.7rem;
 `;
 
-export default function Post({ name, createAt }: MarkDownFile) {
+export default function Post({ name, date }: MarkDownFile) {
   const removeExtTitle = name.replace(".md", "");
   const pathname = `/posts/${removeExtTitle}`;
 
@@ -44,7 +43,7 @@ export default function Post({ name, createAt }: MarkDownFile) {
     <>
       <PostContainer href={{ pathname }}>
         <Title>{removeExtTitle}</Title>
-        <PostDate>{postDateFormatter(createAt)}</PostDate>
+        <PostDate>{date}</PostDate>
       </PostContainer>
     </>
   );

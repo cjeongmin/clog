@@ -1,11 +1,5 @@
 "use client";
 
-import {
-  changeLatexFormat,
-  getMetaData,
-  postDateFormatter,
-  replaceLinks,
-} from "@/libs/post";
 import MarkDownFile from "@/models/MarkDownFile";
 import styled from "@emotion/styled";
 import axios from "axios";
@@ -62,6 +56,12 @@ const PostPageContainer = styled.div`
     border-radius: 10px;
     margin: 1rem 0;
   }
+
+  blockquote {
+    padding: 1rem;
+    background-color: #282828;
+    border-radius: 10px;
+  }
 `;
 
 const Title = styled.h1`
@@ -102,39 +102,19 @@ export default function PostPage() {
   const contentRef = useRef<HTMLDivElement>(null);
 
   const [post, setPost] = useState<MarkDownFile | null>(null);
-  const [tags, setTags] = useState<string[]>([]);
-  const [publish, setPublish] = useState<boolean>(true);
 
   useEffect(() => {
     (async () => {
       const response = await axios.get(`/api/posts/${name}`);
       const post = response.data as MarkDownFile;
-      setPost({
-        name: post.name,
-        content: post.content,
-        createAt: new Date(post.createAt),
-        lastModified: new Date(post.lastModified),
-      });
+      setPost(post);
     })();
   }, []);
 
   useEffect(() => {
     const current = contentRef.current;
     if (current && post) {
-      const metadata = getMetaData(post.content);
-
-      const tags = metadata.data["tags"] as string[];
-      if (tags) {
-        setTags(tags);
-      }
-
-      const publish = metadata.data["publish"] as boolean;
-      if (publish === false) {
-        setPublish(publish);
-      }
-
-      const content = changeLatexFormat(replaceLinks(metadata.content));
-      current.innerHTML = marked.parse(content);
+      current.innerHTML = marked.parse(post.content);
 
       if (typeof window?.MathJax !== "undefined") {
         window.MathJax.typesetClear();
@@ -148,13 +128,13 @@ export default function PostPage() {
   return (
     <>
       <PostPageContainer>
-        {post && publish ? (
+        {post && post.publish ? (
           <>
             <Title>{post.name}</Title>
-            <PostDate>{postDateFormatter(post.createAt)}</PostDate>
-            {tags.length ? (
+            <PostDate>{post.date}</PostDate>
+            {post.tags.length ? (
               <TagsContainer>
-                {tags.map((v, i) => (
+                {post.tags.map((v, i) => (
                   <Tag key={i}>{`#${v}`}</Tag>
                 ))}
               </TagsContainer>
@@ -167,7 +147,9 @@ export default function PostPage() {
         ) : (
           <>
             <p style={{ textAlign: "center" }}>
-              {publish === false ? "비공개 글입니다." : "글을 불러오고 있어요."}
+              {post?.publish === false
+                ? "비공개 글입니다."
+                : "글을 불러오고 있어요."}
             </p>
           </>
         )}

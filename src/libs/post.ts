@@ -1,7 +1,7 @@
 import MarkDownFile from "@/models/MarkDownFile";
 import axios from "axios";
-import { parse } from "yaml";
 import path from "path";
+import { parse } from "yaml";
 
 type MetaData = {
   data: { [key: string]: any };
@@ -86,23 +86,6 @@ export function changeLatexFormat(content: string): string {
   return content;
 }
 
-export function postDateFormatter(date: Date): string {
-  const paddingZero = (x: number) => {
-    return x.toString().padStart(2, "0");
-  };
-
-  const [year, month, day] = [
-    date.getFullYear(),
-    date.getMonth(),
-    date.getDate(),
-  ];
-  const [hour, minute] = [date.getHours(), date.getMinutes()];
-
-  return `${year}.${paddingZero(month + 1)}.${paddingZero(day)} - ${paddingZero(
-    hour
-  )}:${paddingZero(minute)}`;
-}
-
 export async function loadPosts(): Promise<MarkDownFile[]> {
   const ret: MarkDownFile[] = [];
 
@@ -110,13 +93,7 @@ export async function loadPosts(): Promise<MarkDownFile[]> {
   const data: { [name: string]: MarkDownFile } = response.data;
 
   for (const key in data) {
-    const value = data[key];
-    ret.push({
-      name: value.name,
-      content: value.content,
-      createAt: new Date(value.createAt),
-      lastModified: new Date(value.lastModified),
-    });
+    ret.push(data[key]);
   }
 
   return ret;
