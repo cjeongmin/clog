@@ -30,6 +30,11 @@ export default function RootLayout({
         {/* hack font */}
         <link
           rel="stylesheet"
+          href="//cdn.jsdelivr.net/npm/hack-font@3.3.0/build/web/hack.css"
+        ></link>
+        {/* highlight.js */}
+        <link
+          rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css"
         />
         {/* MathJax */}
