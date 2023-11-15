@@ -11,20 +11,42 @@ const PostContainer = styled(Link)`
   width: 100%;
   height: 30%;
   border-radius: 10px;
-  background-color: #10101080;
+
+  @media (prefers-color-scheme: dark) {
+    background-color: #10101080;
+
+    @media (min-width: 1025px) {
+      :hover {
+        cursor: pointer;
+        background-color: #101010;
+        transition: ease-in-out 0.2s background-color;
+        transition: ease-in-out 0.3s box-shadow;
+
+        -moz-box-shadow: 0 0 5px #fdfdfd30;
+        -webkit-box-shadow: 0 0 5px #fdfdfd30;
+        box-shadow: 0px 0px 5px 1px #fdfdfd30;
+      }
+    }
+  }
+
+  @media (prefers-color-scheme: light) {
+    background-color: #f0f0f0;
+
+    @media (min-width: 1025px) {
+      :hover {
+        cursor: pointer;
+        background-color: #e0e0e0;
+        transition: ease-in-out 0.2s background-color;
+        transition: ease-in-out 0.3s box-shadow;
+
+        -moz-box-shadow: 0 0 5px #a0a0a0;
+        -webkit-box-shadow: 0 0 5px #a0a0a0;
+        box-shadow: 0px 0px 5px 1px #a0a0a0;
+      }
+    }
+  }
 
   padding: 1.5rem 1rem;
-
-  :hover {
-    cursor: pointer;
-    background-color: #101010;
-    transition: ease-in-out 0.2s background-color;
-    transition: ease-in-out 0.3s box-shadow;
-
-    -moz-box-shadow: 0 0 5px #fdfdfd30;
-    -webkit-box-shadow: 0 0 5px #fdfdfd30;
-    box-shadow: 0px 0px 5px 1px #fdfdfd30;
-  }
 `;
 
 const Title = styled.p`
