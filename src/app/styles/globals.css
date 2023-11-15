@@ -9,8 +9,16 @@ html,
 body {
   height: 100vh;
   width: 100vw;
-  background-color: #18181b;
-  color: #fdfdfd;
+
+  @media (prefers-color-scheme: dark) {
+    background-color: #18181b;
+    color: #fdfdfd;
+  }
+
+  @media (prefers-color-scheme: light) {
+    background-color: white;
+    color: #191919;
+  }
 }
 
 a {
