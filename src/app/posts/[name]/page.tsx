@@ -33,7 +33,7 @@ const PostPageContainer = styled.div`
   code,
   code * {
     font-size: 0.8rem;
-    font-family: "'Hack', 'Nanum Gothic Coding'", monospace;
+    font-family: "Hack", "Nanum Gothic Coding", monospace;
     line-height: 1.5rem;
   }
 
