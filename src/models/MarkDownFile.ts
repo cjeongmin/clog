@@ -5,3 +5,9 @@ export default interface MarkDownFile {
   publish: boolean;
   tags: string[];
 }
+
+export const DateValue = {
+  NoDate: "...",
+} as const;
+
+export type DateValue = (typeof DateValue)[keyof typeof DateValue];

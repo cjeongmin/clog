@@ -1,5 +1,5 @@
 import { changeLatexFormat, getMetaData, replaceLinks } from "@/libs/post";
-import MarkDownFile from "@/models/MarkDownFile";
+import MarkDownFile, { DateValue } from "@/models/MarkDownFile";
 import fs from "fs";
 import { glob } from "glob";
 import { NextRequest, NextResponse } from "next/server";
@@ -27,7 +27,7 @@ export async function GET(
     const data: MarkDownFile = {
       name: fileName,
       content: changeLatexFormat(replaceLinks(metadata.content)),
-      date: metadata.data["date"] ?? "...",
+      date: metadata.data["date"] ?? DateValue.NoDate,
       publish: metadata.data["publish"] ?? true,
       tags: metadata.data["tags"] ?? [],
     };

@@ -1,4 +1,4 @@
-import MarkDownFile from "@/models/MarkDownFile";
+import MarkDownFile, { DateValue } from "@/models/MarkDownFile";
 import axios from "axios";
 import path from "path";
 import { parse } from "yaml";
@@ -86,14 +86,28 @@ export function changeLatexFormat(content: string): string {
   return content;
 }
 
-export async function loadPosts(): Promise<MarkDownFile[]> {
-  const ret: MarkDownFile[] = [];
+export async function loadPosts(): Promise<{
+  date: MarkDownFile[];
+  noDate: MarkDownFile[];
+}> {
+  const ret: { date: MarkDownFile[]; noDate: MarkDownFile[] } = {
+    date: [],
+    noDate: [],
+  };
 
   const response = await axios.get("/api/posts");
   const data: { [name: string]: MarkDownFile } = response.data;
 
   for (const key in data) {
-    ret.push(data[key]);
+    if (!data[key].publish) {
+      continue;
+    }
+
+    if (data[key].date != DateValue.NoDate) {
+      ret.date.push(data[key]);
+    } else {
+      ret.noDate.push(data[key]);
+    }
   }
 
   return ret;

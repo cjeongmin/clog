@@ -1,14 +1,9 @@
 "use client";
 import Post from "@/components/post";
 import { loadPosts } from "@/libs/post";
-import {
-  postsState,
-  postsWithDateSelector,
-  postsWithoutDateSelector,
-} from "@/states/posts";
+import { usePostsState } from "@/states/posts";
 import styled from "@emotion/styled";
 import { useEffect } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
 
 const RootPageContainer = styled.div`
   display: flex;
@@ -31,27 +26,20 @@ const VerticalPostLayout = styled.div`
 `;
 
 export default function RootPage() {
-  const [posts, setPosts] = useRecoilState(postsState);
-  const postsWithDate = useRecoilValue(postsWithDateSelector);
-  const postsWithoutDate = useRecoilValue(postsWithoutDateSelector);
+  const { posts, setPosts } = usePostsState();
 
   useEffect(() => {
     (async () => {
-      const res = await loadPosts();
-      setPosts(
-        res.filter((post) => {
-          return post.publish;
-        })
-      );
+      setPosts(await loadPosts());
     })();
   }, []);
 
   return (
     <RootPageContainer>
-      <h4>Recent Posts</h4>
+      <h4>Recent Posts.</h4>
       <VerticalPostLayout>
-        {postsWithDate.length > 0
-          ? postsWithDate.map((v, i) => (
+        {posts.date.length > 0
+          ? posts.date.map((v, i) => (
               <Post
                 key={i}
                 name={v.name}
@@ -63,10 +51,10 @@ export default function RootPage() {
             ))
           : "글을 기다리고 있어요."}
       </VerticalPostLayout>
-      <h4 style={{ marginTop: "1rem" }}>No Date</h4>
+      <h4 style={{ marginTop: "1rem" }}>No Date.</h4>
       <VerticalPostLayout>
-        {postsWithoutDate.length > 0
-          ? postsWithoutDate.map((v, i) => (
+        {posts.noDate.length > 0
+          ? posts.noDate.map((v, i) => (
               <Post
                 key={i}
                 name={v.name}

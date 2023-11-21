@@ -1,7 +1,7 @@
 ---
 tags:
   - data-structure
-date: 2023.07.30
+date: 2023-07-30
 ---
 
 [[Segment Tree]]

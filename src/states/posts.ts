@@ -1,33 +1,41 @@
 import MarkDownFile from "@/models/MarkDownFile";
-import { atom, selector } from "recoil";
+import { atom, useRecoilState } from "recoil";
 
-export const postsState = atom<MarkDownFile[]>({
+interface Posts {
+  date: MarkDownFile[];
+  noDate: MarkDownFile[];
+}
+
+const postsState = atom<Posts>({
   key: "postsState",
-  default: [],
-});
-
-export const postsWithDateSelector = selector<MarkDownFile[]>({
-  key: "postsWithDate",
-  get({ get }) {
-    const posts = get(postsState);
-    return posts
-      .filter((post) => post.date !== "...")
-      .sort((post1, post2) => {
-        if (post1.date > post2.date) return -1;
-        return 1;
-      });
+  default: {
+    date: [],
+    noDate: [],
   },
 });
 
-export const postsWithoutDateSelector = selector<MarkDownFile[]>({
-  key: "postsWithoutDate",
-  get({ get }) {
-    const posts = get(postsState);
-    return posts
-      .filter((post) => post.date === "...")
-      .sort((post1, post2) => {
-        if (post1.name > post2.date) return -1;
+export const usePostsState = () => {
+  const [posts, setter] = useRecoilState(postsState);
+
+  const setPosts = (valOrUpdater: Posts | ((currVal: Posts) => Posts)) => {
+    let alt: Posts =
+      typeof valOrUpdater === "function" ? valOrUpdater(posts) : valOrUpdater;
+
+    setter({
+      date: alt.date.toSorted((a, b) => {
+        if (a.date < b.date) {
+          return 1;
+        }
+        return -1;
+      }),
+      noDate: alt.noDate.toSorted((a, b) => {
+        if (a.name < b.name) {
+          return -1;
+        }
         return 1;
-      });
-  },
-});
+      }),
+    });
+  };
+
+  return { posts, setPosts };
+};
