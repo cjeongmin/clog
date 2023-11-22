@@ -89,24 +89,40 @@ export function changeLatexFormat(content: string): string {
 export async function loadPosts(): Promise<{
   date: MarkDownFile[];
   noDate: MarkDownFile[];
+  tags: { [key: string]: MarkDownFile[] };
 }> {
-  const ret: { date: MarkDownFile[]; noDate: MarkDownFile[] } = {
+  const ret: {
+    date: MarkDownFile[];
+    noDate: MarkDownFile[];
+    tags: { [key: string]: MarkDownFile[] };
+  } = {
     date: [],
     noDate: [],
+    tags: {},
   };
 
   const response = await axios.get("/api/posts");
   const data: { [name: string]: MarkDownFile } = response.data;
 
   for (const key in data) {
-    if (!data[key].publish) {
+    const file = data[key];
+
+    if (!file.publish) {
       continue;
     }
 
-    if (data[key].date != DateValue.NoDate) {
-      ret.date.push(data[key]);
+    if (file.date != DateValue.NoDate) {
+      ret.date.push(file);
     } else {
-      ret.noDate.push(data[key]);
+      ret.noDate.push(file);
+    }
+
+    for (const tag of file.tags) {
+      if (tag in ret.tags) {
+        ret.tags[tag].push(file);
+      } else {
+        ret.tags[tag] = [file];
+      }
     }
   }
 

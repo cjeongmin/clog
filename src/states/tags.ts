@@ -1,18 +1,48 @@
-import { Tag } from "@/models/Tag";
-import { atom, selectorFamily } from "recoil";
+import MarkDownFile, { DateValue } from "@/models/MarkDownFile";
+import { atom, selectorFamily, useRecoilState } from "recoil";
 
-export const tagsState = atom<{ [key: string]: Tag }>({
+interface Tags {
+  [key: string]: MarkDownFile[];
+}
+
+const tagsState = atom<Tags>({
   key: "tagsState",
   default: {},
 });
 
-export const tagSelector = selectorFamily({
-  key: "tagSelector",
-  get(name: string) {
-    return ({ get }) => {
-      const tags = get(tagsState);
-      const tag = tags[name];
-      return tag;
-    };
-  },
-});
+export const useTagsState = () => {
+  const [tags, setter] = useRecoilState(tagsState);
+
+  const setTags = (valOrUpdater: Tags | ((currVal: Tags) => Tags)) => {
+    const alt: Tags =
+      typeof valOrUpdater === "function" ? valOrUpdater(tags) : valOrUpdater;
+
+    for (const key in tags) {
+      const files = tags[key];
+      tags[key] = files.toSorted((a, b) => {
+        if (a.date != DateValue.NoDate && b.date != DateValue.NoDate) {
+          if (a.date < b.date) {
+            return 1;
+          }
+          return -1;
+        }
+
+        if (a.date != DateValue.NoDate) {
+          return -1;
+        }
+        if (b.date != DateValue.NoDate) {
+          return 1;
+        }
+
+        if (a.name < b.name) {
+          return -1;
+        }
+        return 1;
+      });
+    }
+
+    setter(alt);
+  };
+
+  return { tags, setTags };
+};

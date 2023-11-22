@@ -18,7 +18,7 @@ export const usePostsState = () => {
   const [posts, setter] = useRecoilState(postsState);
 
   const setPosts = (valOrUpdater: Posts | ((currVal: Posts) => Posts)) => {
-    let alt: Posts =
+    const alt: Posts =
       typeof valOrUpdater === "function" ? valOrUpdater(posts) : valOrUpdater;
 
     setter({

@@ -2,6 +2,7 @@
 import Post from "@/components/post";
 import { loadPosts } from "@/libs/post";
 import { usePostsState } from "@/states/posts";
+import { useTagsState } from "@/states/tags";
 import styled from "@emotion/styled";
 import { useEffect } from "react";
 
@@ -27,10 +28,13 @@ const VerticalPostLayout = styled.div`
 
 export default function RootPage() {
   const { posts, setPosts } = usePostsState();
+  const { tags, setTags } = useTagsState();
 
   useEffect(() => {
     (async () => {
-      setPosts(await loadPosts());
+      const result = await loadPosts();
+      setPosts({ date: result.date, noDate: result.noDate });
+      setTags(result.tags);
     })();
   }, []);
 
