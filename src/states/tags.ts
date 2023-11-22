@@ -17,9 +17,11 @@ export const useTagsState = () => {
     const alt: Tags =
       typeof valOrUpdater === "function" ? valOrUpdater(tags) : valOrUpdater;
 
-    for (const key in tags) {
-      const files = tags[key];
-      tags[key] = files.toSorted((a, b) => {
+    const sorted: Tags = {};
+
+    for (const key in alt) {
+      const files = alt[key];
+      sorted[key] = files.toSorted((a, b) => {
         if (a.date != DateValue.NoDate && b.date != DateValue.NoDate) {
           if (a.date < b.date) {
             return 1;
@@ -41,7 +43,7 @@ export const useTagsState = () => {
       });
     }
 
-    setter(alt);
+    setter(sorted);
   };
 
   return { tags, setTags };

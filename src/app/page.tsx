@@ -19,7 +19,7 @@ const VerticalPostLayout = styled.div`
   gap: 1rem;
   height: 100%;
   overflow-y: auto;
-  padding: 1rem;
+  padding: 0.5rem;
 
   @media (max-width: 768px) {
     padding: 0;
@@ -28,13 +28,13 @@ const VerticalPostLayout = styled.div`
 
 export default function RootPage() {
   const { posts, setPosts } = usePostsState();
-  const { tags, setTags } = useTagsState();
+  const { setTags } = useTagsState();
 
   useEffect(() => {
     (async () => {
-      const result = await loadPosts();
-      setPosts({ date: result.date, noDate: result.noDate });
-      setTags(result.tags);
+      const { date, noDate, tags } = await loadPosts();
+      setPosts({ date, noDate });
+      setTags(tags);
     })();
   }, []);
 
@@ -53,7 +53,7 @@ export default function RootPage() {
                 tags={v.tags}
               />
             ))
-          : "글을 기다리고 있어요."}
+          : "글을 불러오고 있어요."}
       </VerticalPostLayout>
       <h4 style={{ marginTop: "1rem" }}>No Date.</h4>
       <VerticalPostLayout>
@@ -68,7 +68,7 @@ export default function RootPage() {
                 tags={v.tags}
               />
             ))
-          : "글을 기다리고 있어요."}
+          : "글을 불러오고 있어요."}
       </VerticalPostLayout>
     </RootPageContainer>
   );
