@@ -59,8 +59,12 @@ export default function TagsPage() {
       <PageContainer>
         <h4 style={{ margin: "1rem 0" }}>Tags.</h4>
         <TagsContainer>
-          {Object.keys(tags).map((tag) => (
-            <Tag selected={selected === tag} onClick={() => setSelected(tag)}>
+          {Object.keys(tags).map((tag, i) => (
+            <Tag
+              key={i}
+              selected={selected === tag}
+              onClick={() => setSelected(tag)}
+            >
               {`#${tag}`}
             </Tag>
           ))}
