@@ -9,7 +9,7 @@ export const parsePostFile = (filePath: string): Post => {
   return {
     title: data.title,
     date: data.date,
-    thumbnail: '/test.png',
+    thumbnail: data.thumbnail,
     content,
   };
 };
