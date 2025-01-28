@@ -1,0 +1,87 @@
+.prose code {
+  background-color: #f7fafc;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  font-family: monospace;
+}
+
+.prose pre {
+  background-color: #f7fafc;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+.parent-container-of-pre {
+  display: grid;
+}
+
+pre,
+pre code {
+  background-color: var(--color-code-background);
+
+  direction: ltr;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  line-height: 1.2;
+  tab-size: 2;
+  hyphens: none;
+}
+
+pre {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--color-text-weak);
+  border-radius: 5px;
+
+  overflow-x: auto;
+}
+
+pre > code {
+  float: left;
+  min-width: 100%;
+}
+
+.code-line {
+  padding-left: 12px;
+  padding-right: 12px;
+  margin-left: -12px;
+  margin-right: -12px;
+  border-left: 4px solid transparent;
+}
+
+div.code-line:empty {
+  height: 15.5938px;
+}
+
+span.code-line {
+  min-width: 100%;
+  display: inline-block;
+}
+
+.code-line.inserted {
+  background-color: var(--color-inserted-line);
+}
+
+.code-line.deleted {
+  background-color: var(--color-deleted-line);
+}
+
+.highlighted-code-line {
+  background-color: var(--color-highlighted-line);
+  border-left: 4px solid var(--color-highlighted-line-indicator);
+}
+
+.numbered-code-line::before {
+  content: attr(data-line-number);
+
+  margin-left: -8px;
+  margin-right: 16px;
+  width: 1rem;
+  color: var(--color-text-weak);
+  text-align: right;
+
+  display: inline-block;
+}
