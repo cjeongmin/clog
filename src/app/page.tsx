@@ -9,7 +9,7 @@ function PostCard({ title, thumbnail }: Pick<Post, 'title' | 'thumbnail'>) {
       key={title}
       href={`/posts/${encodeURIComponent(title)}`}
     >
-      <div className='aspect-video h-48 border'>
+      <div className='aspect-video h-48 rounded-md border'>
         {thumbnail ? (
           <img src={thumbnail} alt={title} className='h-full w-full object-cover' />
         ) : (
@@ -25,7 +25,7 @@ export default async function Home() {
   const posts = getPosts();
 
   return (
-    <div className='grid w-full grid-cols-2 gap-6'>
+    <div className='grid w-full grid-cols-1 gap-6 sm:grid-cols-2'>
       {posts.map((post) => (
         <PostCard key={post.title} title={post.title} thumbnail={post.thumbnail} />
       ))}
