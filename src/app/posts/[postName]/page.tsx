@@ -12,9 +12,9 @@ import './post.css';
 export default async function Page({ params }: { params: Promise<{ postName: string }> }) {
   const postName = (await params).postName;
 
-  const file = getPost(postName);
+  const post = getPost(postName);
 
-  const post = await unified()
+  const markdown = await unified()
     .use(remarkParse)
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeRaw)
@@ -24,7 +24,16 @@ export default async function Page({ params }: { params: Promise<{ postName: str
     .use(rehypeHighlightCodeLines, {
       showLineNumbers: true,
     })
-    .process(file.content);
+    .process(post.content);
 
-  return <article className='prose' dangerouslySetInnerHTML={{ __html: post.value }}></article>;
+  return (
+    <section>
+      <header className='flex flex-col gap-2 text-slate-800'>
+        <h1 className='text-3xl font-bold'>{post.title}</h1>
+        <p className='text-sm text-slate-500'>{post.date}</p>
+      </header>
+      <hr className='my-4 w-full' />
+      <article className='prose' dangerouslySetInnerHTML={{ __html: markdown.value }}></article>
+    </section>
+  );
 }

@@ -27,10 +27,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className={`${inter.className} h-full w-full overflow-auto font-sans`}>
         <div className='flex min-h-full flex-col gap-4'>
-          <header className='mt-4 h-8 w-full px-4 sm:h-16 sm:px-0'>
+          <header className='mt-4 h-fit w-full px-4 sm:px-0'>
             <div className='mx-auto h-full max-w-3xl'>
-              <div className='flex h-full flex-row items-end justify-between gap-2 sm:flex-col sm:items-start sm:justify-center'>
-                <h1 className='font-mono text-xl font-bold'>@cjeongmin</h1>
+              <div className='flex h-full flex-row items-center justify-between'>
+                <Link href='/' className='font-mono text-xl font-bold'>
+                  @cjeongmin
+                </Link>
                 <nav className='mt-1'>
                   <Link href='/' className='mr-4 text-slate-600 hover:text-slate-900'>
                     Home
@@ -51,7 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
           <hr className='w-full' />
 
-          <footer className='mb-4 h-8 w-full px-4 sm:h-16 sm:px-0'>
+          <footer className='mb-4 h-8 w-full px-4 sm:px-0'>
             <div className='mx-auto flex h-full max-w-3xl items-center justify-center'>
               <div className='text-sm text-gray-600'>© 2025 cjeongmin</div>
             </div>
