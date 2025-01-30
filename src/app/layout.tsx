@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import Link from 'next/link';
+import { CommandPalette } from '@/feature/command-palette';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -33,13 +34,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Link href='/' className='font-mono text-xl font-bold'>
                   @cjeongmin
                 </Link>
-                <nav className='mt-1'>
+                <nav className='mt-1 flex flex-row items-center gap-2'>
                   <Link href='/' className='mr-4 text-slate-600 hover:text-slate-900'>
                     Home
                   </Link>
                   <Link href='/about' className='mr-4 text-slate-600 hover:text-slate-900'>
                     About
                   </Link>
+                  <CommandPalette />
                 </nav>
               </div>
             </div>
