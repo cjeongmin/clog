@@ -1,5 +1,3 @@
-'use client';
-
 import { PostList } from '@/widget/post-list';
 
 export default function HomePage() {
