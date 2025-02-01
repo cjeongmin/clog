@@ -1,3 +1,5 @@
-export default async function AboutPage() {
-  return <div></div>;
+import { AboutPage } from '@/page/about';
+
+export default async function Page() {
+  return <AboutPage />;
 }
