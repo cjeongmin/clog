@@ -13,45 +13,6 @@
   margin: 1.5rem 0;
 }
 
-.parent-container-of-pre {
-  display: grid;
-}
-
-pre,
-pre code {
-  background-color: var(--color-code-background);
-
-  direction: ltr;
-  text-align: left;
-  white-space: pre;
-  word-spacing: normal;
-  word-break: normal;
-  line-height: 1.2;
-  tab-size: 2;
-  hyphens: none;
-}
-
-pre {
-  padding: 0.5rem 1rem;
-  border: 1px solid var(--color-text-weak);
-  border-radius: 5px;
-
-  overflow-x: auto;
-}
-
-pre > code {
-  float: left;
-  min-width: 100%;
-}
-
-.code-line {
-  padding-left: 12px;
-  padding-right: 12px;
-  margin-left: -12px;
-  margin-right: -12px;
-  border-left: 4px solid transparent;
-}
-
 div.code-line:empty {
   height: 15.5938px;
 }
