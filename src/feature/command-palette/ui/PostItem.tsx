@@ -15,9 +15,9 @@ export default function PostItem({ post, onClick }: PostItemProps) {
   };
 
   return (
-    <div className='flex flex-row items-end gap-2 rounded-md border p-3' onClick={handleClick}>
+    <button className='flex flex-row items-end gap-2 rounded-md border p-3' onClick={handleClick}>
       <h3 className='text-base text-slate-600'>{post.title}</h3>
       <p className='text-sm text-slate-400'>{post.date}</p>
-    </div>
+    </button>
   );
 }
