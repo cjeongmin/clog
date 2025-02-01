@@ -8,6 +8,20 @@ import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import { unified } from 'unified';
 import './post.css';
+import { ResolvingMetadata, Metadata } from 'next';
+
+type Props = {
+  params: Promise<{ postName: string }>;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function generateMetadata({ params }: Props, parent: ResolvingMetadata): Promise<Metadata> {
+  const postName = (await params).postName;
+
+  return {
+    title: decodeURIComponent(postName),
+  };
+}
 
 export default async function Page({ params }: { params: Promise<{ postName: string }> }) {
   const postName = (await params).postName;

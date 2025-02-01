@@ -7,7 +7,10 @@ import { CommandPalette } from '@/feature/command-palette';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'clog',
+  title: {
+    template: '%s | cjeongmin',
+    default: 'cjeongmin',
+  },
   description: 'A blog about cjeongmin',
 };
 
