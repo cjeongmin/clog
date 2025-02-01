@@ -4,12 +4,8 @@ import { Post } from '../model/post.type';
 
 export default function PostCard({ title, thumbnail, date }: Pick<Post, 'title' | 'thumbnail' | 'date'>) {
   return (
-    <Link
-      className='flex flex-col gap-2 transition-all sm:hover:scale-105'
-      key={title}
-      href={`/posts/${encodeURIComponent(title)}`}
-    >
-      <div className='aspect-video h-48 rounded-md border hover:border-slate-400'>
+    <Link className='flex flex-col gap-2' key={title} href={`/posts/${encodeURIComponent(title)}`}>
+      <div className='aspect-video h-48 rounded-md border sm:transition-all sm:hover:border-slate-400'>
         {thumbnail ? (
           <Image
             src={thumbnail}
