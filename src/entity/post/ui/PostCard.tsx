@@ -10,6 +10,7 @@ export default function PostCard({ title, thumbnail, date }: Pick<Post, 'title' 
           <Image
             src={thumbnail}
             alt={title}
+            priority={true}
             width={0}
             height={0}
             sizes='100vw'
