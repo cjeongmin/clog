@@ -15,7 +15,10 @@ export default function PostItem({ post, onClick }: PostItemProps) {
   };
 
   return (
-    <button className='flex flex-row items-end gap-2 rounded-md border p-3' onClick={handleClick}>
+    <button
+      className='flex w-full flex-row items-end gap-2 rounded-md border p-3 sm:transition-all sm:hover:border-slate-400'
+      onClick={handleClick}
+    >
       <h3 className='text-base text-slate-600'>{post.title}</h3>
       <p className='text-sm text-slate-400'>{post.date}</p>
     </button>
