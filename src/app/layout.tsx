@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import Link from 'next/link';
 import { CommandPalette } from '@/feature/command-palette';
+import { Alert } from '@/feature/alert';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -63,6 +64,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <div className='text-sm text-gray-600'>© 2025 cjeongmin</div>
             </div>
           </footer>
+
+          <Alert />
         </div>
       </body>
     </html>
