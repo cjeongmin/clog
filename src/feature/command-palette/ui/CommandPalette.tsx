@@ -1,10 +1,10 @@
 'use client';
 
+import { Post } from '@/entity/post';
 import { usePostStore } from '@/entity/post/model/post.store';
 import { useEffect, useRef, useState } from 'react';
-import PostItem from './PostItem';
 import { IoIosSearch } from 'react-icons/io';
-import { Post } from '@/entity/post';
+import PostItem from './PostItem';
 
 export default function CommandPalette() {
   const inputRef = useRef<HTMLInputElement>(null);
