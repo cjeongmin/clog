@@ -4,6 +4,7 @@ import './globals.css';
 import Link from 'next/link';
 import { CommandPalette } from '@/feature/command-palette';
 import { Alert } from '@/feature/alert';
+import { GoogleAnalytics } from '@/feature/google-analytics';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -19,6 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang='ko-kr' className='h-full w-full'>
       <head>
+        <GoogleAnalytics />
         <link
           rel='stylesheet'
           href='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css'
