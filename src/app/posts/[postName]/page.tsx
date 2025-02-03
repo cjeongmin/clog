@@ -47,13 +47,13 @@ export default async function Page({ params }: { params: Promise<{ postName: str
     .process(post.content);
 
   return (
-    <section>
+    <section className='w-full'>
       <header className='flex flex-col gap-2 text-slate-800'>
         <h1 className='text-3xl font-bold'>{post.title}</h1>
         <p className='text-sm text-slate-500'>{post.date}</p>
       </header>
       <hr className='my-4 w-full' />
-      <article className='prose' dangerouslySetInnerHTML={{ __html: markdown.value }}></article>
+      <article className='prose w-full !max-w-none' dangerouslySetInnerHTML={{ __html: markdown.value }}></article>
     </section>
   );
 }
