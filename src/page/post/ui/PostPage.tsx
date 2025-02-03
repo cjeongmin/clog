@@ -23,7 +23,7 @@ export default function PostPage({ post, markdown }: PostPageProps) {
         <hr className='my-4 w-full' />
         <Markdown content={markdown.value as string} />
       </div>
-      <aside className='hidden sm:block'>
+      <aside className='hidden xl:block'>
         <TableOfContents className='sticky top-4 ml-8 max-h-[calc(100vh-2rem)] overflow-auto' content={post.content} />
       </aside>
     </section>
