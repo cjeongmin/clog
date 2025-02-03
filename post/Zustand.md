@@ -1,0 +1,353 @@
+---
+title: 'Zustand'
+date: '2025-02-03'
+thumbnail: '/post/zustand/thumbnail.png'
+---
+
+## Zustand
+
+> A small, fast, and scalable bearbones state management solution. Zustand has a comfy API based on hooks. It isn't boilerplatey or opinionated, but has enough convention to be explicit and flux-like.
+
+Zustand는 위에서 적힌대로 과도한 보일러플레이트 코드가 없고 경량화되어 있는 것이 특징인 상태 관리 라이브러리이다.
+
+## Zustand - vanilla
+
+Zustand의 코드를 직접 보며 특징과 어떤 식으로 구현되어있나 살펴보자.
+
+처음에, `vanilla.ts` 파일을 열게 되면 많은 타입 지정들을 볼 수 있다. 해당 내용들을 간략하게 살펴보자.
+
+### SetStateInternal
+
+```ts
+type SetStateInternal<T> = {
+  _(partial: T | Partial<T> | { _(state: T): T | Partial<T> }['_'], replace?: false): void;
+  _(state: T | { _(state: T): T }['_'], replace: true): void;
+}['_'];
+```
+
+이름에서 나와있는 것처럼, 상태를 지정할 때 사용되는 타입인 것 같다. `replace`값이 어떤 값이냐에 따라 오버로딩되어 있다.
+
+`replace`가 `undefined`, `false` 와 같은 값을 가질 때면, 전체적인 상태, 또는 부분 상태, 함수형 업데이트를 통해 업데이트를 지원한다고 시그니처가 정의되어있다.
+
+반면에, `replace`가 `true`일 때는 부분 상태를 통해서 업데이트는 가능하지 않다고 정의되어있다.
+
+### StoreApi
+
+```ts
+export interface StoreApi<T> {
+  setState: SetStateInternal<T>;
+  getState: () => T;
+  getInitialState: () => T;
+  subscribe: (listener: (state: T, prevState: T) => void) => () => void;
+}
+```
+
+그리고 `StoreApi` 인터페이스는 Zustand store의 핵심 API들을 정의하고 있다.
+
+- `setState`: 앞서 살펴본 타입대로 상태를 업데이트하는 함수
+- `getState`: 현재 상태를 반환하는 함수
+- `getInitialState`: 초기 상태를 반환하는 함수
+- `subscribe`: 상태 변화를 구독할 수 있는 함수로, 상태가 변경될 때마다 리스너가 호출되며 현재 상태와 이전 상태를 매개변수로 받는다. 구독을 해제하는 함수를 반환한다.
+
+이러한 API들을 통해 Zustand는 단순하면서도 효과적인 상태 관리를 가능하게 한다.
+
+### ExtractState, Get
+
+```ts
+export type ExtractState<S> = S extends { getState: () => infer T } ? T : never;
+
+type Get<T, K, F> = K extends keyof T ? T[K] : F;
+```
+
+`ExtractState`타입은 스토어에서 상태의 타입을 추출하는데 사용된다.
+
+`Get`타입은 `T`에서 `K`를 키로 가지는 값을 추출하는데 사용하는데 사용된다. 만약 추출할 수 없다면, `F` 타입으로 fallback 값이 설정되어 있다.
+
+### StoreMutators, StoreMutatorIdentifier
+
+```ts
+export interface StoreMutators<S, A> {}
+export type StoreMutatorIdentifier = keyof StoreMutators<unknown, unknown>;
+```
+
+`StoreMutators`는 스토어 변경자(mutator)를 정의하는 인터페이스이다. 제네릭 타입 `S`는 스토어의 상태 타입을, `A`는 액션의 타입을 나타낸다. 이 인터페이스를 통해 스토어의 상태를 변경하는 다양한 mutator들을 정의할 수 있다.
+
+### Mutate
+
+```ts
+export type Mutate<S, Ms> = number extends Ms['length' & keyof Ms]
+  ? S
+  : Ms extends []
+    ? S
+    : Ms extends [[infer Mi, infer Ma], ...infer Mrs]
+      ? Mutate<StoreMutators<S, Ma>[Mi & StoreMutatorIdentifier], Mrs>
+      : never;
+```
+
+`Mutate` 타입은 스토어의 타입 변형을 다루기 위한 복잡한 타입 시스템을 구현한다. 여기서는 재귀적인 타입 변환을 수행한다
+
+1. 만약 `Ms`의 길이가 number 타입으로 확장 가능하다면(길이를 알 수 없는 경우), 원본 상태 `S`를 반환
+2. 만약 `Ms`가 empty array라면, 원본 상태 `S`를 반환
+3. `Ms`가 mutator 튜플 배열이라면, 각 mutator를 순차적으로 적용
+4. 각 mutator는 `[identifier, configuration]` 형태의 튜플로 구성
+5. 재귀적으로 각 mutator를 적용하여 최종 상태 타입을 생성
+
+이 타입은 Zustand의 미들웨어와 같은 스토어 변형을 타입 안전하게 처리하는데 사용된다.
+
+### StateCreator
+
+```ts
+export type StateCreator<
+  T,
+  Mis extends [StoreMutatorIdentifier, unknown][] = [],
+  Mos extends [StoreMutatorIdentifier, unknown][] = [],
+  U = T,
+> = ((
+  setState: Get<Mutate<StoreApi<T>, Mis>, 'setState', never>,
+  getState: Get<Mutate<StoreApi<T>, Mis>, 'getState', never>,
+  store: Mutate<StoreApi<T>, Mis>,
+) => U) & { $$storeMutators?: Mos };
+```
+
+`StateCreator` 타입은 Zustand 스토어를 생성할 때 사용되는 핵심 타입이다.
+
+T(상태), Mis(입력 뮤테이터), Mos(출력 뮤테이터), U(반환 타입) 같은 제네릭으로 상태와 미들웨어 적용을 타입 안전하게 구성할 수 있다.
+
+생성 함수에서 `setState`, `getState` 등을 받아 원하는 형태의 상태를 반환하는 구조로 설계되어 있다.
+
+### CreateStore, CreateStoreImpl
+
+```ts
+type CreateStore = {
+  <T, Mos extends [StoreMutatorIdentifier, unknown][] = []>(
+    initializer: StateCreator<T, [], Mos>,
+  ): Mutate<StoreApi<T>, Mos>;
+
+  <T>(): <Mos extends [StoreMutatorIdentifier, unknown][] = []>(
+    initializer: StateCreator<T, [], Mos>,
+  ) => Mutate<StoreApi<T>, Mos>;
+};
+
+type CreateStoreImpl = <T, Mos extends [StoreMutatorIdentifier, unknown][] = []>(
+  initializer: StateCreator<T, [], Mos>,
+) => Mutate<StoreApi<T>, Mos>;
+```
+
+`CreateStore` 타입은 오버로드된 함수 타입을 정의하고 있다. 두 가지의 호출 방식을 지원하고 있다.
+
+1. 직접 호출 방식
+2. 커링 방식
+
+`CreateStoreImpl` 타입은 실제 구현에 사용되는 단일 시그니처 타입이다. CreateStore의 첫 번째 오버로드와 동일한 시그니처를 가진다.
+
+이러한 방식으로 두 가지 타입이 선언된 이유는 실제 구현을 보면 알 수 있다.
+
+### createStoreImpl
+
+```ts
+const createStoreImpl: CreateStoreImpl = (createState) => {
+  type TState = ReturnType<typeof createState>;
+  type Listener = (state: TState, prevState: TState) => void;
+  let state: TState;
+  const listeners: Set<Listener> = new Set();
+
+  const setState: StoreApi<TState>['setState'] = (partial, replace) => {
+    const nextState = typeof partial === 'function' ? (partial as (state: TState) => TState)(state) : partial;
+    if (!Object.is(nextState, state)) {
+      const previousState = state;
+      state =
+        (replace ?? (typeof nextState !== 'object' || nextState === null))
+          ? (nextState as TState)
+          : Object.assign({}, state, nextState);
+      listeners.forEach((listener) => listener(state, previousState));
+    }
+  };
+
+  const getState: StoreApi<TState>['getState'] = () => state;
+
+  const getInitialState: StoreApi<TState>['getInitialState'] = () => initialState;
+
+  const subscribe: StoreApi<TState>['subscribe'] = (listener) => {
+    listeners.add(listener);
+    // Unsubscribe
+    return () => listeners.delete(listener);
+  };
+
+  const api = { setState, getState, getInitialState, subscribe };
+  const initialState = (state = createState(setState, getState, api));
+  return api as any;
+};
+```
+
+이 부분이 상태 관리 스토어를 구현하는 핵심 함수이다.
+
+`state`라는 변수로 현재 상태를 저장하고, `listeners`변수에 상태 변경에 대해 구독하고 있는 함수들을 따로 관리하고 있다.
+
+```ts
+  const setState: StoreApi<TState>['setState'] = (partial, replace) => {
+    const nextState =
+      typeof partial === 'function'
+        ? (partial as (state: TState) => TState)(state)
+        : partial
+```
+
+`setState` 함수는 새로운 상태를 설정하는 함수이다. 함수나 값을 받아서 상태를 업데이트할 수 있다. `partial`이 함수면 현재 상태를 인자로 실행하고, 아니면 값 그대로 사용한다.
+
+여기에서 상태 업데이트 로직을 살펴보자.
+
+```ts
+if (!Object.is(nextState, state)) {
+  const previousState = state;
+  state =
+    (replace ?? (typeof nextState !== 'object' || nextState === null))
+      ? (nextState as TState)
+      : Object.assign({}, state, nextState);
+  listeners.forEach((listener) => listener(state, previousState));
+}
+```
+
+새 상태가 현재 상태와 다른 경우에만 업데이트를 수행한다. `replace` 옵션이 `true`이거나 새 상태가 객체가 아닐 경우 완전히 대체한다. 객체인 경우 얕은 병합을 수행한다. 상태가 변경되면 모든 리스너에게 새 상태와 이전 상태를 전달한다.
+
+새 상태와 현재 상태를 비교하는 것은 `Object.is` 함수를 이용해서 하게 되는데, 비교 기준은 아래 문서에 자세하게 기술되어 있다.
+
+- [Object.is - MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is)
+
+```ts
+const getState: StoreApi<TState>['getState'] = () => state;
+
+const getInitialState: StoreApi<TState>['getInitialState'] = () => initialState;
+
+const subscribe: StoreApi<TState>['subscribe'] = (listener) => {
+  listeners.add(listener);
+  // Unsubscribe
+  return () => listeners.delete(listener);
+};
+```
+
+그 외 아래 유틸리티 메서드들은 아주 쉽게 구현되어 있다.
+
+- `getState`: 현재 상태를 반환
+- `getInitialState`: 초기 상태를 반환
+- `subscribe`: 리스너를 등록하고 구독 해제 함수를 반환
+
+```ts
+const api = { setState, getState, getInitialState, subscribe };
+const initialState = (state = createState(setState, getState, api));
+```
+
+이후에 API 객체를 생성, 초기 상태를 설정하고 스토어 API를 반환한다.
+
+이 구현은 상태 관리의 핵심 패턴인 pub/sub 패턴을 사용하며, 불변성을 유지하면서 상태를 업데이트하는 안전한 방법을 제공한다.
+
+또한, `state` 변수를 클로저로 캡슐화하여 외부에서 직접 접근 불가능하게 상태 관리하였다.
+
+따라서 `getState`, `setState` 등이 클로저를 통해 상태를 관리할 수 있도록 API를 제공하고 있다.
+
+### createStore
+
+```ts
+export const createStore = ((createState) =>
+  createState ? createStoreImpl(createState) : createStoreImpl) as CreateStore;
+```
+
+결과적으로 해당 스토어를 생성하는 `createStoreImpl`함수를 위에서 언급한 두 가지 방법으로 제공하게 된다. (직접 실행, 커링)
+
+## Zustand - React
+
+Zustand는 위에서 본 것처럼 특정 프레임워크나, 라이브러리 위에서만 동작되는 라이브러리가 아니다.
+
+그렇지만, 흔히 사용되는 리액트에서 쉽게 사용할 수 있도록 유틸리티를 제공하는데 이에 대해 살펴보자.
+
+### useStore
+
+```ts
+export function useStore<S extends ReadonlyStoreApi<unknown>>(api: S): ExtractState<S>;
+
+export function useStore<S extends ReadonlyStoreApi<unknown>, U>(api: S, selector: (state: ExtractState<S>) => U): U;
+
+export function useStore<TState, StateSlice>(
+  api: ReadonlyStoreApi<TState>,
+  selector: (state: TState) => StateSlice = identity as any,
+) {
+  const slice = React.useSyncExternalStore(
+    api.subscribe,
+    () => selector(api.getState()),
+    () => selector(api.getInitialState()),
+  );
+  React.useDebugValue(slice);
+  return slice;
+}
+```
+
+Zustand에서 `useStore`라는 훅을 제공하는데, 2가지의 함수 오버로드가 있다.
+
+1. 전체 상태를 반환
+2. `selector`를 통해서 선택된 상태를 반환
+
+이후에 아래 실제 구현 내용을 보면, `React.useSyncExternalStore`라는 함수를 통해서 리액트와 상호작용을 하게 된다는 것을 볼 수 있다.
+
+`React.useSyncExternalStore` 함수에 대해선 아래 내용을 참고하자.
+
+- [React.useSyncExternalStore](https://ko.react.dev/reference/react/useSyncExternalStore)
+
+이를 통해서 스토어의 변경에 대해 반응하게 되어, 렌더링을 진행하게 된다.
+
+이제, 이를 통해서 스토어를 생성하는 것에 대해서 더 살펴보자.
+
+### UseBoundStore
+
+```ts
+export type UseBoundStore<S extends ReadonlyStoreApi<unknown>> = {
+  (): ExtractState<S>;
+  <U>(selector: (state: ExtractState<S>) => U): U;
+} & S;
+```
+
+이 타입은 아래 내용들을 결합한 상태를 나타낸다.
+
+1. 전체 상태를 반환하는 함수
+2. 선택자를 통한 부분 상태 접근
+3. 스토어 API 메서드들
+
+### Create
+
+```ts
+type Create = {
+  <T, Mos extends [StoreMutatorIdentifier, unknown][] = []>(
+    initializer: StateCreator<T, [], Mos>,
+  ): UseBoundStore<Mutate<StoreApi<T>, Mos>>;
+  <T>(): <Mos extends [StoreMutatorIdentifier, unknown][] = []>(
+    initializer: StateCreator<T, [], Mos>,
+  ) => UseBoundStore<Mutate<StoreApi<T>, Mos>>;
+};
+```
+
+스토어 생성을 하는 함수를 구현하기 전에 앞서, 타입을 정의하고 있는데 이전과 같이 두 가지 시그니처를 제공하고 있다.
+
+1. 직접 초기화
+2. 커링된 초기화
+
+### createImpl, create
+
+```ts
+const createImpl = <T>(createState: StateCreator<T, [], []>) => {
+  const api = createStore(createState);
+
+  const useBoundStore: any = (selector?: any) => useStore(api, selector);
+
+  Object.assign(useBoundStore, api);
+
+  return useBoundStore;
+};
+
+export const create = (<T>(createState: StateCreator<T, [], []> | undefined) =>
+  createState ? createImpl(createState) : createImpl) as Create;
+```
+
+`vanilla.ts` 파일에서 볼 수 있었던 `createStore` 함수를 이용해서 스토어를 생성하고, `useStore` 훅을 연결한다.
+
+이를 이용해서 두 가지 오버로드된 시그니처 타입을 제공하는 `create` 함수를 통해서 스토어를 생성하고 `useStore` 훅을 통해서 리액트와 연결하여 사용할 수 있게 된다.
+
+## 마지막
+
+Zustand는 간단하면서도 유연한 API로 상태를 관리하며, 내부적으로 pub/sub 패턴과 불변 상태 업데이트 로직을 사용해 상태 관리를 제공한다. 또한, 리액트의 `useSyncExternalStore` 훅을 통해서 리액트에서의 렌더링을 제공하고 있다.
