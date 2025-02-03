@@ -12,6 +12,7 @@ import { ResolvingMetadata, Metadata } from 'next';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import { PostPage } from '@/page/post';
 
 type Props = {
   params: Promise<{ postName: string }>;
@@ -26,7 +27,7 @@ export async function generateMetadata({ params }: Props, parent: ResolvingMetad
   };
 }
 
-export default async function Page({ params }: { params: Promise<{ postName: string }> }) {
+export default async function Page({ params }: Props) {
   const postName = (await params).postName;
 
   const post = getPost(postName);
@@ -46,14 +47,5 @@ export default async function Page({ params }: { params: Promise<{ postName: str
     })
     .process(post.content);
 
-  return (
-    <section className='w-full'>
-      <header className='flex flex-col gap-2 text-slate-800'>
-        <h1 className='text-3xl font-bold'>{post.title}</h1>
-        <p className='text-sm text-slate-500'>{post.date}</p>
-      </header>
-      <hr className='my-4 w-full' />
-      <article className='prose w-full !max-w-none' dangerouslySetInnerHTML={{ __html: markdown.value }}></article>
-    </section>
-  );
+  return <PostPage post={post} markdown={markdown} />;
 }
