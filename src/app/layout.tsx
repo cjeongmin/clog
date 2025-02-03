@@ -20,6 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang='ko-kr' className='h-full w-full'>
       <head>
+        <meta name='google-site-verification' content='ktuwDBkR2dZGl0nMI1lDu6kIdrkuAE-u8G8Gp5vwzS0' />
         <GoogleAnalytics />
         <link
           rel='stylesheet'
