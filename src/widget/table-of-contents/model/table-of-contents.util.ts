@@ -12,7 +12,7 @@ export const getTableOfContents = (content: Post['content']) => {
     tableOfContents.push({
       level,
       text,
-      anchor: `anchor-${text}`,
+      anchor: `anchor-${tableOfContents.length + 1}`,
     });
   }
 

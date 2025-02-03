@@ -19,7 +19,7 @@ export default function TableOfContents({ content, className }: TableOfContentsP
       <ul className='flex flex-col gap-1 text-sm text-slate-500'>
         {tableOfContents.map((item) => (
           <li
-            key={item.text}
+            key={`${item.level}-${item.text}`}
             style={{ paddingLeft: `${(item.level - 1) * 1.5}rem` }}
             className={`transition-all hover:font-medium hover:text-slate-800 ${
               item.anchor === activeAnchor ? 'font-medium text-slate-800' : ''
