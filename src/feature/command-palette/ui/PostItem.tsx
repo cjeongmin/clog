@@ -1,5 +1,6 @@
-import { Post } from '@/entity/post';
 import { useRouter } from 'next/navigation';
+
+import { Post } from '@/entity/post';
 
 interface PostItemProps {
   post: Post;

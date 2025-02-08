@@ -1,6 +1,7 @@
-import { parsePostFile } from '@/entity/post';
 import fs from 'fs';
 import path from 'path';
+
+import { parsePostFile } from '@/entity/post';
 
 export const getPosts = () => {
   const postsDirectory = path.join(process.cwd(), 'post');

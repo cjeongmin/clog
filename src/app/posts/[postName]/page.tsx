@@ -1,4 +1,3 @@
-import { getPost } from '@/feature/get-post';
 import rehypeHighlight from 'rehype-highlight';
 import rehypeHighlightCodeLines from 'rehype-highlight-code-lines';
 import rehypeRaw from 'rehype-raw';
@@ -12,6 +11,8 @@ import { ResolvingMetadata, Metadata } from 'next';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+
+import { getPost } from '@/feature/get-post';
 import { PostPage } from '@/page/post';
 
 type Props = {

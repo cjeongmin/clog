@@ -1,8 +1,9 @@
 'use client';
 
 import { Post } from '@/entity/post';
-import { getTableOfContents } from '../model/table-of-contents.util';
 import { usePostAnchorStore } from '@/entity/post-anchor';
+
+import { getTableOfContents } from '../model/table-of-contents.util';
 
 interface TableOfContentsProps {
   content: Post['content'];

@@ -1,4 +1,5 @@
 import { TableOfContents } from '@/widget/table-of-contents';
+
 import Markdown from './Markdown';
 
 interface PostPageProps {
