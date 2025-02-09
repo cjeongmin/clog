@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+
 import { Post } from './post.type';
 
 interface PostState {

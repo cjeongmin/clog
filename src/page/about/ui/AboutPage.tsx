@@ -1,8 +1,9 @@
 'use client';
 
-import { useAlertStore } from '@/feature/alert';
 import { useRouter } from 'next/navigation';
 import { useLayoutEffect } from 'react';
+
+import { useAlertStore } from '@/feature/alert';
 
 export default function AboutPage() {
   const router = useRouter();

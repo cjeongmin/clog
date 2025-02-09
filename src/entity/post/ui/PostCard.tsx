@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+
 import { Post } from '../model/post.type';
 
 export default function PostCard({ title, thumbnail, date }: Pick<Post, 'title' | 'thumbnail' | 'date'>) {

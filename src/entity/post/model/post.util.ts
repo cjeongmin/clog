@@ -1,5 +1,7 @@
 import fs from 'fs';
+
 import matter from 'gray-matter';
+
 import { Post } from './post.type';
 
 export const parsePostFile = (filePath: string): Post => {
@@ -9,6 +11,7 @@ export const parsePostFile = (filePath: string): Post => {
   return {
     title: data.title,
     date: data.date,
+    draft: data.draft ?? false,
     thumbnail: data.thumbnail,
     content,
   };

@@ -1,7 +1,8 @@
 'use client';
 
-import { usePostAnchorStore } from '@/entity/post-anchor';
 import { useEffect, useRef } from 'react';
+
+import { usePostAnchorStore } from '@/entity/post-anchor';
 
 interface MarkdownProps {
   content: string;
