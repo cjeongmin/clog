@@ -1,6 +1,6 @@
 export interface Post {
   title: string;
-  draft: false;
+  draft: boolean;
   date: string;
   thumbnail?: string;
   content: string;
