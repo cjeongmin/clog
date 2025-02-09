@@ -7,8 +7,10 @@ export const getPosts = () => {
   const postsDirectory = path.join(process.cwd(), 'post');
   const filenames = fs.readdirSync(postsDirectory);
 
-  return filenames.map((filename) => {
-    const filePath = path.join(postsDirectory, filename);
-    return parsePostFile(filePath);
-  });
+  return filenames
+    .map((filename) => {
+      const filePath = path.join(postsDirectory, filename);
+      return parsePostFile(filePath);
+    })
+    .sort((a, b) => (a.date < b.date ? 1 : -1));
 };

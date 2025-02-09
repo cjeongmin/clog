@@ -1,7 +1,7 @@
 export interface Post {
   title: string;
   draft: false;
-  date?: string;
+  date: string;
   thumbnail?: string;
   content: string;
 }
