@@ -235,6 +235,8 @@ f1();
 
 시점을 다루기 위해서, 프로미스를 다르게 사용하는 것에서 흥미를 느낄 수 있었고, 여러가지 다른 사례들도 살펴보면서 시야가 확장된 느낌을 받을 수 있었던 것 같다.
 
+마지막으로 `prisma`에서는 사이드 이펙트를 발생시키기 위해선, `await`, `then`, `catch`, `finally`를 사용해야한다는 점을 잊지 말자.
+
 ## 참고자료
 
 - [Clarify when Prisma queries are run (PrismaPromise behavior)](https://github.com/prisma/docs/issues/800)
