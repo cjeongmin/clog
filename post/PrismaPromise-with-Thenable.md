@@ -1,0 +1,243 @@
+---
+title: 'PrismaPromise (with. Thenable)'
+date: '2025-02-10'
+thumbnail: '/post/PrismaPromise-with-Thenable/thumbnail.png'
+---
+
+팀원들과 함께 개발하던 중, 특이한 현상을 발견했다.
+백엔드에서 ORM으로 `prisma`를 사용하고 있는 상황이였다. `repository` 레이어에서 데이터베이스에 레코드를 생성하기 위해서 아래 같이 코드를 작성했다.
+
+```ts
+// 예시 코드
+create(dto: DTO) {
+  this.prisma.table.create({ data: dto });
+}
+```
+
+큰 고민 없이, 데이터베이스에 접근하는 코드에서 그 이후에 특별히 해야하는 것이 없어서, `async/await` 키워드를 사용하지 않았고, 프로미스의 메서드들을 이용하지도 않았다.
+
+이후에 테스트를 진행하여, API를 호출하니 실제로 레코드가 생기지 않는 것을 확인할 수 있었다. 어떠한 이유였을까?
+
+이런 저런 이유를 알아보기 위해서 많은 테스트를 했지만 결과적으로 알아낸 것은, `await`, `then`, `catch`, `finally` 와 같은 키워드, 메서드를 이용해서 호출하지 않으면 실행되지 않는다는 것을 발견했다.
+
+즉, 아래와 같은 형태는 정상적으로 실행이 된다.
+
+```ts
+create(dto: DTO) {
+  this.prisma.table.create({ data: dto }).then();
+}
+```
+
+일반적으로, `Node.js`에선 데이터베이스에 접근하는 코드들은 블로킹을 막기 위해서 비동기로 작동하기 위해서 프로미스를 이용한다. 따라서, 당연히 `prisma` 또한 그럴 것이라고 생각한 것이였다.
+
+하지만, 아니였다.
+
+## Thenable
+
+`prisma` 에서는 단순히 JavaScript 에서 제공되는 프로미스를 이용하지 않는다.
+
+일단, `Thenable`이 뭔지 알아보자.
+
+`Thenable` 이란, then() 메서드가 있는 객체를 의미한다. 이는 프로미스와 유사하게 동작하는 객체로, 프로미스처럼 체이닝이나 `async/await` 구문에서 사용할 수 있다. 즉, 모든 프로미스는 `Thenable`이지만, 모든 `Thenable`이 프로미스인 것은 아니다.
+
+> 프로미스는 ECMAScript 표준에 따라 비동기 작업의 상태 관리와 체이닝, 에러 처리 등 완전한 기능을 제공하는 객체인데, 반면 `Thenable`은 단순히 `then()` 메서드만 있는 객체이므로 그 자체로는 표준 프로미스가 아닐 수 있다.
+
+따라서, 아래 코드는 동작한다.
+
+```ts
+const thenable = {
+  then: <TResult1 = void, TResult2 = never>(
+    onfulfilled?: ((value: void) => TResult1) | null,
+    onrejected?: ((reason: any) => TResult2) | null,
+  ) => {
+    console.log('thenable');
+  },
+};
+
+(async () => {
+  await thenable;
+})();
+
+// Output: "thenable"
+```
+
+이로 인해, 프로미스와 호환되는 객체로, 다른 라이브러리에서 제공하는 비프로미스 객체라도 `then` 메서드가 구현되어 있으면 프로미스 체인에서 사용할 수 있게 해준다.
+
+## PrismaPromise
+
+그러면, `prisma`에서는 프로미스를 어떻게 사용하고 있나 조금 더 살펴보자.
+
+```ts
+export interface PrismaPromise<TResult, TSpec extends PrismaOperationSpec<unknown> = any> extends Promise<TResult> {
+  get spec(): TSpec;
+
+  then<R1 = TResult, R2 = never>(
+    onfulfilled?: (value: TResult) => R1 | PromiseLike<R1>,
+    onrejected?: (error: unknown) => R2 | PromiseLike<R2>,
+    transaction?: PrismaPromiseTransaction,
+  ): Promise<R1 | R2>;
+
+  catch<R = never>(
+    onrejected?: ((reason: any) => R | PromiseLike<R>) | undefined | null,
+    transaction?: PrismaPromiseTransaction,
+  ): Promise<TResult | R>;
+
+  finally(onfinally?: (() => void) | undefined | null, transaction?: PrismaPromiseTransaction): Promise<TResult>;
+
+  requestTransaction?(transaction: PrismaPromiseBatchTransaction): PromiseLike<unknown>;
+}
+```
+
+**코드에서 주석과, 일부 타입은 제거 했다.**
+
+위 코드에서 보면 알 수 있는 것은, 내부에서 사용되는 `PrismaPromise` 타입이 `Promise`를 상속받고 있다는 점과, 일부 확장한 타입에 불과하다는 것이다. 근본적으로는 프로미스다.
+
+우리가 겪었던 문제에 대한 이유는 아래 코드에서 볼 수 있다.
+
+```ts
+export type PrismaPromiseFactory = <T extends PrismaOperationSpec<unknown>>(
+  callback: PrismaPromiseCallback,
+  op?: T,
+) => PrismaPromise<unknown>;
+
+export function createPrismaPromiseFactory(transaction?: PrismaPromiseTransaction): PrismaPromiseFactory {
+  return function createPrismaPromise<TSpec extends PrismaOperationSpec<unknown>>(
+    callback: PrismaPromiseCallback,
+    op?: TSpec,
+  ): PrismaPromise<unknown, TSpec> {
+    let promise: PrismaPromise<unknown> | undefined;
+    const _callback = (callbackTransaction = transaction): PrismaPromise<unknown> => {
+      try {
+        if (callbackTransaction === undefined || callbackTransaction?.kind === 'itx') {
+          return (promise ??= valueToPromise(callback(callbackTransaction)));
+        }
+
+        return valueToPromise(callback(callbackTransaction));
+      } catch (error) {
+        return Promise.reject(error) as PrismaPromise<unknown>;
+      }
+    };
+
+    return {
+      then(onFulfilled, onRejected) {
+        return _callback().then(onFulfilled, onRejected);
+      },
+      catch(onRejected) {
+        return _callback().catch(onRejected);
+      },
+      finally(onFinally) {
+        return _callback().finally(onFinally);
+      },
+    };
+  };
+}
+```
+
+**코드가 길기 때문에, 일부 내용은 생략했다.**
+
+중요한 점은, `then`, `catch`, `finally` 3가지 메서드에서 `_callback`을 호출할 때, 작업 시점이 결졍된다는 것이다. 즉, 기존 프로미스와 다르게 바로 실행하는 것이 아닌, 지연되어 실행된다.
+
+이러한 특성으로 3가지 메서드가 호출되지 않으면 콜백이 실행되지 않고, 우리가 개발시 레코드가 생기지 않았던 이유도 지연되어 실행되는 특성으로 발생했던 문제였다.
+
+### 그래서?
+
+일단, 어떤 방식으로 실행이 되는지는 알았다.
+
+그러나, 왜 이런 방식으로 결정했을까?
+
+결과를 먼저 이야기한다면, 개발자가 실행 시점을 조절할 수 있다는 점에서 결정된 내용이다.
+
+지연 방식으로 동작하게 되면, 쿼리 객체가 바로 실행되지 않고 트랜잭션과 같은 기능 구현에 다음과 같은 방식으로 유용하게 작용한다.
+
+- 쿼리 배치 실행
+  - 여러 쿼리를 순차적으로 작성해두고, 실제 실행은 하나의 트랜잭션 내부에서 한 번에 실행할 수 있다. 예를 들어, 각각의 쿼리는 실행되지 않은 채로 존재하다가, 배열로 모아서 `prisma.$transaction([...])`와 같이 전달하면, 이 모든 쿼리가 하나의 트랜잭션 내에서 순차적으로 실행된다. 이렇게 하면 여러 개의 개별적인 데이터베이스 호출을 하나의 트랜잭션으로 묶어 실행할 수 있다.
+- 원자성 보장
+  - 트랜잭션은 여러 작업을 하나의 단위로 실행하여, 중간에 오류가 발생할 경우 전체 작업을 롤백할 수 있게 한다. lazy evaluation을 사용하면 쿼리 실행 시점을 개발자가 명시적으로 제어할 수 있으므로, 모든 쿼리가 준비된 후 한꺼번에 실행하여 트랜잭션의 원자성을 보다 쉽게 보장할 수 있다.
+- 성능 최적화
+  - 즉시 실행되는 프로미스와 달리, lazy evaluation은 여러 쿼리를 미리 구성해두고 한 번의 트랜잭션 호출로 실행하기 때문에, 데이터베이스와의 불필요한 왕복 호출을 줄여 성능 최적화에도 기여한다.
+
+## 직접 구현하기
+
+그러면, 간단하게 지연 동작하는 프로미스를 구현해보자.
+
+```ts
+class LazyPromise<T> extends Promise<T> {
+  private promise: Promise<T> | null = null;
+
+  constructor(
+    private executor: (resolve: (value: T | PromiseLike<T>) => void, reject: (reason?: any) => void) => void,
+  ) {
+    super(() => {});
+  }
+
+  then<TResult1 = T, TResult2 = never>(
+    onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | null,
+    onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null,
+  ): Promise<TResult1 | TResult2> {
+    if (!this.promise) this.promise = new Promise(this.executor);
+    return this.promise.then(onfulfilled, onrejected);
+  }
+
+  catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | null): Promise<T | TResult> {
+    if (!this.promise) this.promise = new Promise(this.executor);
+    return this.promise.catch(onrejected);
+  }
+
+  finally(onfinally?: (() => void) | null): Promise<T> {
+    if (!this.promise) this.promise = new Promise(this.executor);
+    return this.promise.finally(onfinally);
+  }
+}
+```
+
+기존에 봤던 예제처럼, 특별한 기능을 요구하진 않기에 평가 시점을 개발자가 마음대로 조절할 수 있게, 지연 동작하는 프로미스를 만들어봤다.
+
+단순하게, 실행한 콜백을 전달 받고, 이를 `then`, `catch`, `finally` 메서드를 통해서 호출되면, 평가되게끔 구현했다.
+
+이는 아래와 같은 코드에서 정상 동작한다.
+
+```ts
+const create = (data: any) => {
+  return new LazyPromise(() => {
+    console.log('create', data);
+  });
+};
+
+const f1 = () => {
+  create('data');
+};
+
+f1();
+```
+
+`f1`을 호출하더라도, `LazyPromise`로 전달하고 있기 때문에, 우리가 겪었던 문제처럼 실제로 평가되지 않아 실행되지 않는다.
+
+```ts
+const create = (data: any) => {
+  return new LazyPromise(() => {
+    console.log('create', data);
+  });
+};
+
+const f1 = () => {
+  create('data').then();
+};
+
+f1();
+// Output: create data
+```
+
+하지만, 위 코드는 `then` 메서드를 이용해서 평가를 받고, 실제로 프로미스를 실행하기 때문에 동작한다.
+
+이렇게, 간단하게 지연 동작하는 프로미스를 만들어 봤다.
+
+평소엔 백엔드를 잘 다뤄보지도 않고 더욱 `prisma` 같은 라이브러리는 잘 사용해보지 않았는데, 신기한 경험을 하게 되었다.
+
+시점을 다루기 위해서, 프로미스를 다르게 사용하는 것에서 흥미를 느낄 수 있었고, 여러가지 다른 사례들도 살펴보면서 시야가 확장된 느낌을 받을 수 있었던 것 같다.
+
+## 참고자료
+
+- [Clarify when Prisma queries are run (PrismaPromise behavior)](https://github.com/prisma/docs/issues/800)
+- [PrismaPromise](https://github.com/prisma/prisma/blob/main/packages/client/src/runtime/core/request/PrismaPromise.ts#L32)
+- [createPrismaPromise](https://github.com/prisma/prisma/blob/38de36b93b6de7088c483b30e7d03407c29d7950/packages/client/src/runtime/core/request/createPrismaPromise.ts#L14)
+- [createLockCountPromise](https://github.com/prisma/prisma/blob/38de36b93b6de7088c483b30e7d03407c29d7950/packages/client/src/runtime/core/transaction/utils/createLockCountPromise.ts#L11_)
