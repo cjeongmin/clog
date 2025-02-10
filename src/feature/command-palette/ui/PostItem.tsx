@@ -11,7 +11,7 @@ export default function PostItem({ post, onClick }: PostItemProps) {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push(`/posts/${post.title}`);
+    router.push(`/posts/${post.fileName}`);
     onClick();
   };
 
