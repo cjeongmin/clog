@@ -3,9 +3,14 @@ import Image from 'next/image';
 
 import { Post } from '../model/post.type';
 
-export default function PostCard({ title, thumbnail, date }: Pick<Post, 'title' | 'thumbnail' | 'date'>) {
+export default function PostCard({
+  title,
+  thumbnail,
+  date,
+  fileName,
+}: Pick<Post, 'title' | 'thumbnail' | 'date' | 'fileName'>) {
   return (
-    <Link className='flex flex-col gap-2' key={title} href={`/posts/${encodeURIComponent(title)}`}>
+    <Link className='flex flex-col gap-2' key={title} href={`/posts/${encodeURIComponent(fileName)}`}>
       <div className='aspect-video h-48 rounded-md border p-[1px] sm:transition-all sm:hover:border-slate-400'>
         {thumbnail ? (
           <Image
