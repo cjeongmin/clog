@@ -72,7 +72,7 @@ export default function CommandPalette() {
               <p>게시글</p>
               <p className='text-slate-400'>{filteredPosts.length}</p>
             </div>
-            <ul className='flex-1'>
+            <ul className='flex w-full flex-1 flex-col gap-2'>
               {filteredPosts.map((post) => (
                 <PostItem key={post.title} post={post} onClick={toggleVisible} />
               ))}
