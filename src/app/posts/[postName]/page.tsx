@@ -22,9 +22,10 @@ type Props = {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function generateMetadata({ params }: Props, parent: ResolvingMetadata): Promise<Metadata> {
   const postName = (await params).postName;
+  const { title } = getPost(postName);
 
   return {
-    title: decodeURIComponent(postName),
+    title,
   };
 }
 
