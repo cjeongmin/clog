@@ -2,7 +2,7 @@
   background-color: #f7fafc;
   padding: 0.2rem 0.4rem;
   border-radius: 0.25rem;
-  font-family: monospace;
+  font-family: 'Menlo', 'Hack';
 }
 
 .prose pre {
