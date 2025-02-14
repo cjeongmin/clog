@@ -13,10 +13,10 @@ export default function Giscus() {
     scriptElem.async = true;
     scriptElem.crossOrigin = 'anonymous';
 
-    scriptElem.setAttribute('data-repo', 'cjeongmin/blog-comments');
-    scriptElem.setAttribute('data-repo-id', 'R_kgDON5Svcw');
+    scriptElem.setAttribute('data-repo', 'cjeongmin/clog');
+    scriptElem.setAttribute('data-repo-id', 'R_kgDONg5zXA');
     scriptElem.setAttribute('data-category', 'Comments');
-    scriptElem.setAttribute('data-category-id', 'DIC_kwDON5Svc84Cm8yP');
+    scriptElem.setAttribute('data-category-id', 'DIC_kwDONg5zXM4Cm80K');
     scriptElem.setAttribute('data-mapping', 'og:title');
     scriptElem.setAttribute('data-strict', '0');
     scriptElem.setAttribute('data-reactions-enabled', '1');
