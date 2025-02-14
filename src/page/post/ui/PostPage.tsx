@@ -22,8 +22,9 @@ export default function PostPage({ post, markdown }: PostPageProps) {
           <h1 className='text-3xl font-bold'>{post.title}</h1>
           <p className='text-sm text-slate-500'>{post.date}</p>
         </header>
-        <hr className='my-4 w-full' />
+        <hr className='my-8 w-full' />
         <Markdown content={markdown.value as string} />
+        <hr className='my-8 w-full' />
         <Giscus />
       </div>
       <aside className='hidden xl:block'>
