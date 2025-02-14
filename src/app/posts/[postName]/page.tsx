@@ -26,6 +26,9 @@ export async function generateMetadata({ params }: Props, parent: ResolvingMetad
 
   return {
     title,
+    openGraph: {
+      title,
+    },
   };
 }
 
