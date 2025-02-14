@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import './globals.css';
 import Link from 'next/link';
+import './globals.css';
 
-import { CommandPalette } from '@/feature/command-palette';
 import { Alert } from '@/feature/alert';
+import { CommandPalette } from '@/feature/command-palette';
 import { GoogleAnalytics } from '@/feature/google-analytics';
 
 const inter = Inter({ subsets: ['latin'] });

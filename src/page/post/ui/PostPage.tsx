@@ -1,4 +1,5 @@
 import { TableOfContents } from '@/widget/table-of-contents';
+import { Giscus } from '@/feature/giscus';
 
 import Markdown from './Markdown';
 
@@ -23,6 +24,7 @@ export default function PostPage({ post, markdown }: PostPageProps) {
         </header>
         <hr className='my-4 w-full' />
         <Markdown content={markdown.value as string} />
+        <Giscus />
       </div>
       <aside className='hidden xl:block'>
         <TableOfContents className='sticky top-4 ml-8 max-h-[calc(100vh-2rem)] overflow-auto' content={post.content} />
