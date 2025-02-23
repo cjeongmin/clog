@@ -9,6 +9,7 @@ export default function AboutPage() {
   const router = useRouter();
 
   const show = useAlertStore((state) => state.show);
+  const hide = useAlertStore((state) => state.hide);
 
   useLayoutEffect(() => {
     show({
@@ -16,7 +17,9 @@ export default function AboutPage() {
       message: '페이지 작성 중입니다!',
       confirm: () => router.push('/'),
     });
-  }, [show, router]);
+
+    return () => hide();
+  }, [show, hide, router]);
 
   return <div></div>;
 }
