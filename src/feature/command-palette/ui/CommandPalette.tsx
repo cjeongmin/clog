@@ -15,7 +15,7 @@ export default function CommandPalette() {
 
   const posts = usePostStore((state) => state.posts);
   const setPosts = usePostStore((state) => state.setPosts);
-  const filteredPosts = posts.filter((post) => post.title.includes(query));
+  const filteredPosts = posts.filter((post) => post.title.toLowerCase().includes(query.toLowerCase()));
 
   const toggleVisible = () => {
     setQuery('');
