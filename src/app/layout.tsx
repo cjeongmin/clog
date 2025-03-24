@@ -14,7 +14,23 @@ export const metadata: Metadata = {
     template: '%s | cjeongmin',
     default: 'cjeongmin',
   },
-  description: 'A blog about cjeongmin',
+  description: 'A blog by cjeongmin',
+  openGraph: {
+    title: 'cjeongmin',
+    description: 'A blog by cjeongmin',
+    url: 'https://cjeongmin.vercel.app',
+    siteName: 'cjeongmin',
+    images: [
+      {
+        url: 'https://cjeongmin.vercel.app/favicon.ico',
+        width: 1200,
+        height: 630,
+        alt: 'cjeongmin blog',
+      },
+    ],
+    locale: 'ko_KR',
+    type: 'website',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
