@@ -18,13 +18,7 @@ const withMDX = createMDX({
   // Add markdown plugins here, as desired
   options: {
     remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter, remarkGfm, remarkMath],
-    rehypePlugins: [
-      [rehypeRaw, { passThrough: ['mdxjsEsm'] }],
-      rehypeSanitize,
-      rehypeHighlight,
-      rehypeKatex,
-      [rehypeHighlightCodeLines, { showLineNumbers: true }],
-    ],
+    rehypePlugins: [rehypeHighlight, rehypeKatex, [rehypeHighlightCodeLines, { showLineNumbers: true }]],
   },
 });
 
