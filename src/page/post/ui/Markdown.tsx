@@ -1,14 +1,10 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { PropsWithChildren, useEffect, useRef } from 'react';
 
 import { usePostAnchorStore } from '@/entity/post-anchor';
 
-interface MarkdownProps {
-  content: string;
-}
-
-export default function Markdown({ content }: MarkdownProps) {
+export default function Markdown({ children }: PropsWithChildren) {
   const articleRef = useRef<HTMLDivElement>(null);
   const setActiveAnchor = usePostAnchorStore((state) => state.setActiveAnchor);
 
@@ -39,10 +35,8 @@ export default function Markdown({ content }: MarkdownProps) {
   }, [setActiveAnchor, articleRef]);
 
   return (
-    <article
-      ref={articleRef}
-      className='prose w-full !max-w-none'
-      dangerouslySetInnerHTML={{ __html: content }}
-    ></article>
+    <article ref={articleRef} className='prose w-full !max-w-none'>
+      {children}
+    </article>
   );
 }

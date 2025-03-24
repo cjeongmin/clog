@@ -1,20 +1,21 @@
-import { TableOfContents } from '@/widget/table-of-contents';
+import { getPostMDX } from '@/feature/get-post';
 import { Giscus } from '@/feature/giscus';
+import { TableOfContents } from '@/widget/table-of-contents';
 
 import Markdown from './Markdown';
 
 interface PostPageProps {
   post: {
+    fileName: string;
     title: string;
     content: string;
     date?: string;
   };
-  markdown: {
-    value: unknown;
-  };
 }
 
-export default function PostPage({ post, markdown }: PostPageProps) {
+export default async function PostPage({ post }: PostPageProps) {
+  const MDXPost = await getPostMDX(post.fileName);
+
   return (
     <section className='flex w-full flex-row'>
       <div className='w-full max-w-3xl'>
@@ -23,7 +24,9 @@ export default function PostPage({ post, markdown }: PostPageProps) {
           <p className='text-sm text-slate-500'>{post.date}</p>
         </header>
         <hr className='my-8 w-full' />
-        <Markdown content={markdown.value as string} />
+        <Markdown>
+          <MDXPost />
+        </Markdown>
         <hr className='my-8 w-full' />
         <Giscus />
       </div>

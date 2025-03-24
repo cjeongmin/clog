@@ -1,16 +1,5 @@
-import rehypeHighlight from 'rehype-highlight';
-import rehypeHighlightCodeLines from 'rehype-highlight-code-lines';
-import rehypeRaw from 'rehype-raw';
-import rehypeSanitize from 'rehype-sanitize';
-import rehypeStringify from 'rehype-stringify';
-import remarkParse from 'remark-parse';
-import remarkRehype from 'remark-rehype';
-import { unified } from 'unified';
+import { Metadata, ResolvingMetadata } from 'next';
 import './post.css';
-import { ResolvingMetadata, Metadata } from 'next';
-import remarkGfm from 'remark-gfm';
-import remarkMath from 'remark-math';
-import rehypeKatex from 'rehype-katex';
 
 import { getPost } from '@/feature/get-post';
 import { PostPage } from '@/page/post';
@@ -37,20 +26,5 @@ export default async function Page({ params }: Props) {
 
   const post = getPost(postName);
 
-  const markdown = await unified()
-    .use(remarkParse)
-    .use(remarkMath)
-    .use(remarkGfm)
-    .use(remarkRehype, { allowDangerousHtml: true })
-    .use(rehypeRaw)
-    .use(rehypeSanitize)
-    .use(rehypeStringify)
-    .use(rehypeHighlight)
-    .use(rehypeKatex)
-    .use(rehypeHighlightCodeLines, {
-      showLineNumbers: true,
-    })
-    .process(post.content);
-
-  return <PostPage post={post} markdown={markdown} />;
+  return <PostPage post={post} />;
 }
