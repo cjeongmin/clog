@@ -1,12 +1,23 @@
+export const dynamic = 'force-static';
+
 import { Metadata, ResolvingMetadata } from 'next';
 import './post.css';
 
 import { getPost } from '@/feature/get-post';
 import { PostPage } from '@/page/post';
+import { getPosts } from '@/feature/get-posts';
 
-type Props = {
+export async function generateStaticParams() {
+  const posts = getPosts();
+
+  return posts.map((post) => ({
+    postName: post.fileName,
+  }));
+}
+
+interface Props {
   params: Promise<{ postName: string }>;
-};
+}
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function generateMetadata({ params }: Props, parent: ResolvingMetadata): Promise<Metadata> {

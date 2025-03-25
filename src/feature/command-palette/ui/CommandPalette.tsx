@@ -4,29 +4,24 @@ import { useEffect, useRef, useState } from 'react';
 import { IoIosSearch } from 'react-icons/io';
 
 import { Post } from '@/entity/post';
-import { usePostStore } from '@/entity/post/model/post.store';
 
 import PostItem from './PostItem';
 
-export default function CommandPalette() {
+interface CommandPaletteProps {
+  posts: Post[];
+}
+
+export default function CommandPalette({ posts }: CommandPaletteProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [visible, setVisible] = useState(false);
   const [query, setQuery] = useState('');
 
-  const posts = usePostStore((state) => state.posts);
-  const setPosts = usePostStore((state) => state.setPosts);
   const filteredPosts = posts.filter((post) => post.title.toLowerCase().includes(query.toLowerCase()));
 
   const toggleVisible = () => {
     setQuery('');
     setVisible((prev) => !prev);
   };
-
-  useEffect(() => {
-    fetch('/api/posts')
-      .then((res) => res.json() as Promise<{ posts: Post[] }>)
-      .then((data) => setPosts(data.posts));
-  }, []);
 
   useEffect(() => {
     if (visible) {

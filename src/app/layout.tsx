@@ -6,6 +6,7 @@ import './globals.css';
 import { Alert } from '@/feature/alert';
 import { CommandPalette } from '@/feature/command-palette';
 import { GoogleAnalytics } from '@/feature/google-analytics';
+import { getPosts } from '@/feature/get-posts';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -34,6 +35,8 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const posts = getPosts();
+
   return (
     <html lang='ko-kr' className='h-full w-full'>
       <head>
@@ -66,7 +69,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <Link href='/about' className='mr-4 text-slate-600 hover:text-slate-900'>
                     About
                   </Link>
-                  <CommandPalette />
+                  <CommandPalette posts={posts} />
                 </nav>
               </div>
             </div>
