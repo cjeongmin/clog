@@ -9,7 +9,6 @@ import remarkMath from 'remark-math';
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter';
 
 const env = process.env.NEXT_CONFIG_ENV || 'development';
-const outdir = process.env.NEXT_PUBLIC_BASE_PATH || '/';
 
 const defaultConfig: NextConfig = {
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
@@ -21,11 +20,11 @@ const nextConfig: NextConfig =
     development: {} as NextConfig,
     production: {
       output: 'export',
-      basePath: outdir,
       images: {
         loader: 'custom',
         loaderFile: './lib/imageLoader.ts',
       },
+      trailingSlash: true,
     } as NextConfig,
   }[env] || {};
 

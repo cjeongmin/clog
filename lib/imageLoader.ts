@@ -1,5 +1,5 @@
 export default function imageLoader({ src, width, quality }: { src: string; width: number; quality?: number }): string {
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '/';
+  const basePath = process.env.NEXT_PUBLIC_DOMAIN_PATH || process.env.NEXT_PUBLIC_BASE_PATH || '/';
 
   if (src.startsWith('http://') || src.startsWith('https://')) {
     return src;
