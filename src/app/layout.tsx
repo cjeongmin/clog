@@ -19,11 +19,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'cjeongmin',
     description: 'A blog by cjeongmin',
-    url: 'https://cjeongmin.vercel.app',
+    url: 'https://cjeongmin.github.io',
     siteName: 'cjeongmin',
     images: [
       {
-        url: 'https://cjeongmin.vercel.app/favicon.ico',
+        url: 'https://cjeongmin.github.io/favicon.ico',
         width: 1200,
         height: 630,
         alt: 'cjeongmin blog',
