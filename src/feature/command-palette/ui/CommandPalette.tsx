@@ -2,16 +2,18 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { IoIosSearch } from 'react-icons/io';
+import { useRouter } from 'next/navigation';
 
 import { Post } from '@/entity/post';
-
-import PostItem from './PostItem';
+import PostItem from '@/entity/post/ui/PostItem';
 
 interface CommandPaletteProps {
   posts: Post[];
 }
 
 export default function CommandPalette({ posts }: CommandPaletteProps) {
+  const router = useRouter();
+
   const inputRef = useRef<HTMLInputElement>(null);
   const [visible, setVisible] = useState(false);
   const [query, setQuery] = useState('');
@@ -69,7 +71,21 @@ export default function CommandPalette({ posts }: CommandPaletteProps) {
             </div>
             <ul className='flex w-full flex-1 flex-col gap-2'>
               {filteredPosts.map((post) => (
-                <PostItem key={post.title} post={post} onClick={toggleVisible} />
+                <button
+                  onClick={() => {
+                    router.push(`/posts/${post.fileName}`);
+                    toggleVisible();
+                  }}
+                  key={post.title}
+                  className='flex w-full flex-row items-end gap-2 rounded-md border p-3 sm:transition-all sm:hover:border-slate-400'
+                >
+                  <PostItem post={post}>
+                    <div className='flex w-full flex-row items-center gap-2'>
+                      <PostItem.Title className='truncate text-base text-slate-600' />
+                      <PostItem.Date className='whitespace-nowrap text-sm text-slate-400' />
+                    </div>
+                  </PostItem>
+                </button>
               ))}
             </ul>
             <footer className='flex self-end'>
