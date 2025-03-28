@@ -1,7 +1,7 @@
 'use client';
 
 import { Post } from '@/entity/post';
-import { usePostAnchorStore } from '@/entity/post-anchor';
+import { usePostAnchorActionsContext, usePostAnchorStateContext } from '@/entity/post-anchor';
 
 import { getTableOfContents } from '../model/table-of-contents.util';
 
@@ -12,8 +12,8 @@ interface TableOfContentsProps {
 export default function TableOfContents({ content, className }: TableOfContentsProps & { className?: string }) {
   const tableOfContents = getTableOfContents(content);
 
-  const activeAnchor = usePostAnchorStore((state) => state.activeAnchor);
-  const setActiveAnchor = usePostAnchorStore((state) => state.setActiveAnchor);
+  const { activeAnchor } = usePostAnchorStateContext();
+  const { setActiveAnchor } = usePostAnchorActionsContext();
 
   return (
     <nav className={`${className}`}>

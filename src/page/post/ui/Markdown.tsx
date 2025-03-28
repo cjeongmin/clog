@@ -2,11 +2,12 @@
 
 import { PropsWithChildren, useEffect, useRef } from 'react';
 
-import { usePostAnchorStore } from '@/entity/post-anchor';
+import { usePostAnchorActionsContext } from '@/entity/post-anchor';
 
 export default function Markdown({ children }: PropsWithChildren) {
   const articleRef = useRef<HTMLDivElement>(null);
-  const setActiveAnchor = usePostAnchorStore((state) => state.setActiveAnchor);
+
+  const { setActiveAnchor } = usePostAnchorActionsContext();
 
   useEffect(() => {
     if (!articleRef.current) return;

@@ -1,10 +1,10 @@
 'use client';
 
-import { useAlertStore } from '../model/alert.store';
+import { useAlertActionsContext, useAlertStateContext } from '../model/alert.context';
 
 export default function Alert() {
-  const alert = useAlertStore((state) => state.alert);
-  const hide = useAlertStore((state) => state.hide);
+  const { alert } = useAlertStateContext();
+  const { hideAlert: hide } = useAlertActionsContext();
 
   if (!alert) {
     return null;

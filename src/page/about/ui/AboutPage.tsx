@@ -3,13 +3,12 @@
 import { useRouter } from 'next/navigation';
 import { useLayoutEffect } from 'react';
 
-import { useAlertStore } from '@/feature/alert';
+import { useAlertActionsContext } from '@/feature/alert';
 
 export default function AboutPage() {
   const router = useRouter();
 
-  const show = useAlertStore((state) => state.show);
-  const hide = useAlertStore((state) => state.hide);
+  const { showAlert: show, hideAlert: hide } = useAlertActionsContext();
 
   useLayoutEffect(() => {
     show({
