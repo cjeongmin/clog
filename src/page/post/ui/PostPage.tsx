@@ -5,6 +5,8 @@ import { PostAnchorProvider } from '@/entity/post-anchor';
 
 import Markdown from './Markdown';
 
+import './post-page.css';
+
 interface PostPageProps {
   post: {
     fileName: string;
@@ -19,7 +21,7 @@ export default async function PostPage({ post }: PostPageProps) {
 
   return (
     <PostAnchorProvider>
-      <section className='flex w-full flex-row'>
+      <section className='relative flex w-full flex-row'>
         <div className='w-full max-w-3xl'>
           <header className='flex flex-col gap-2 text-slate-800'>
             <h1 className='text-3xl font-bold'>{post.title}</h1>
@@ -32,7 +34,7 @@ export default async function PostPage({ post }: PostPageProps) {
           <hr className='my-8 w-full' />
           <Giscus />
         </div>
-        <aside className='hidden xl:block'>
+        <aside className='absolute left-full hidden w-64 xl:block'>
           <TableOfContents
             className='sticky top-4 ml-8 max-h-[calc(100vh-2rem)] overflow-auto'
             content={post.content}
