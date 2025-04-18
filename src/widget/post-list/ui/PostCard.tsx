@@ -9,7 +9,7 @@ export default function PostCard({ post }: { post: Post }) {
   return (
     <Link className='flex flex-col gap-2' key={post.title} href={`/posts/${encodeURIComponent(post.fileName)}`}>
       <PostItem post={post}>
-        <div className='aspect-video h-48 rounded-md border p-[1px] sm:transition-all sm:hover:border-slate-400'>
+        <div className='relative aspect-video h-48 overflow-hidden rounded-md border sm:transition-all sm:hover:border-slate-400'>
           <PostItem.Thumbnail />
         </div>
         <div className='flex min-h-[3rem] flex-col gap-1 text-slate-600'>

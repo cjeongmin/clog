@@ -1,15 +1,11 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import Link from 'next/link';
 import './globals.css';
 
-import { Alert } from '@/feature/alert';
+import { Alert, AlertProvider } from '@/feature/alert';
 import { CommandPalette } from '@/feature/command-palette';
-import { GoogleAnalytics } from '@/feature/google-analytics';
 import { getPosts } from '@/feature/get-posts';
-import { AlertProvider } from '@/feature/alert';
-
-const inter = Inter({ subsets: ['latin'] });
+import { GoogleAnalytics } from '@/feature/google-analytics';
 
 export const metadata: Metadata = {
   title: {
@@ -56,7 +52,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <AlertProvider>
-        <body className={`${inter.className} h-full w-full overflow-auto font-sans`}>
+        <body className='h-full w-full overflow-auto font-sans'>
           <div className='flex min-h-full flex-col gap-4'>
             <header className='mt-4 h-fit w-full px-4'>
               <div className='mx-auto h-full max-w-3xl'>
