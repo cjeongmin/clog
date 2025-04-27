@@ -126,6 +126,8 @@ interface Logger {
 }
 
 class ConsoleLogger implements Logger {
+  private static instance: ConsoleLogger;
+
   private constructor() {}
 
   public static getInstance(): ConsoleLogger {
@@ -164,6 +166,8 @@ const userService = new UserService(logger);
 
 ```typescript
 class FileLogger implements Logger {
+  private static instance: FileLogger;
+
   private constructor() {}
 
   public static getInstance(): FileLogger {
