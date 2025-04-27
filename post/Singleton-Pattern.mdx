@@ -1,0 +1,192 @@
+---
+title: '싱글톤 패턴, 의존성 주입'
+date: '2025-04-27'
+thumbnail: '/post/Singleton-Pattern/thumbnail.webp'
+---
+
+import { Outline } from '@/widget/outline';
+
+<Outline
+  content={`이 글은 소프트웨어 디자인 패턴 중 하나인 싱글톤 패턴의 개념과 장단점을 설명한다. 또, 싱글톤 패턴 사용 시 발생할 수 있는 문제점과 이를 해결하기 위한 방법으로 의존성 주입(DI)을 소개한다.`}
+/>
+
+## 싱글톤 패턴
+
+소프트웨어 개발에서 자주 듣게 되는 디자인 패턴 중 하나가 싱글톤 패턴이다.
+
+애플리케이션 전체에서 하나의 인스턴스만 생성해서 사용하는 패턴이다.
+
+예를 들어, 앱 전체에서 하나만 존재해야 하는 설정 관리 객체나 로깅 시스템처럼 매번 새로 생성하는 것보다 하나만 만들어서 공유하는 게 효율적일 때 싱글톤 패턴을 사용한다.
+
+### 왜 싱글톤 패턴을 사용할까?
+
+싱글톤 패턴은 주로 이런 상황에서 필요하다.
+
+- 하나의 인스턴스로 자원을 관리해야 할 때 (DB 연결, 설정값 관리 등)
+- 전역 상태를 유지해야 할 때
+- 객체 생성 비용이 클 때
+
+하지만 글로벌 상태처럼 사용되기 때문에 잘못 쓰면 오히려 코드 품질이 나빠질 수 있다.
+
+### 싱글톤 패턴 구현 방법
+
+간단하게 타입스크립트로 싱글톤 패턴을 구현하는 방법을 보자.
+
+```typescript
+class Singleton {
+  private static instance: Singleton;
+
+  private constructor() {}
+
+  public static getInstance(): Singleton {
+    if (!Singleton.instance) {
+      Singleton.instance = new Singleton();
+    }
+    return Singleton.instance;
+  }
+}
+```
+
+`Singleton` 클래스의 인스턴스를 하나만 생성하고, `getInstance` 메서드로 반환한다.
+
+여기서 핵심은 `private constructor` 다. 외부에서 직접 인스턴스를 생성할 수 없고, 오직 `getInstance` 로만 인스턴스를 얻을 수 있다.
+
+### 장점과 단점
+
+이 패턴의 장점은 다음과 같다.
+
+- 하나의 인스턴스 관리: 메모리 효율적
+- 글로벌 접근: 어디서든 접근 가능
+- 상태 관리 용이: 공통 자원 공유에 유용
+
+당연히 단점도 있다.
+
+- 높은 결합도: 특정 클래스에 강하게 의존하게 됨
+- 테스트 어려움: 상태가 고정돼 Mock 작업이 어려움
+- 명시적 의존성 부족: 코드만 봐서는 어떤 의존성이 있는지 파악이 어려움
+
+특히 결합도 문제가 크다. 싱글톤 패턴을 사용하면 특정 클래스에 강하게 의존해서 코드의 유연성이 떨어질 수 있다. 그래서 꼭 필요한 경우에만 사용하는 게 좋다.
+
+또, 무분별하게 싱글톤을 남발하면 코드가 글로벌 상태에 의존하게 되어 복잡해지고 가독성이 떨어진다. 상태가 변하는 싱글톤 객체는 예측하기 어려우니 주의가 필요하다.
+
+## 의존성 주입
+
+싱글톤을 사용하다 보면 클래스 내부에서 직접 싱글톤 인스턴스의 메서드를 호출하게 된다. 이러면 클래스가 싱글톤에 강하게 의존해서 결합도가 높아진다. 테스트도 어려워지고 코드의 유연성도 떨어진다.
+
+### DI(Dependency Injection)란?
+
+DI는 필요한 의존성을 외부에서 주입받는 방식이다. 클래스 내부에서 직접 인스턴스를 생성하지 않고, 외부에서 주입받아 사용한다.
+
+이렇게 하면 클래스가 구체적인 구현체에 의존하지 않아서 테스트나 확장성이 좋아진다.
+
+### DI를 통한 싱글톤 사용 예시
+
+DI 없이 싱글톤을 사용한 예시다.
+
+```typescript
+class ConsoleLogger {
+  private static instance: ConsoleLogger;
+
+  private constructor() {}
+
+  public static getInstance(): ConsoleLogger {
+    if (!ConsoleLogger.instance) {
+      ConsoleLogger.instance = new ConsoleLogger();
+    }
+    return ConsoleLogger.instance;
+  }
+
+  log(message: string): void {
+    console.log(message);
+  }
+}
+
+class UserService {
+  private logger: ConsoleLogger;
+
+  constructor() {
+    this.logger = ConsoleLogger.getInstance();
+  }
+
+  createUser(name: string): void {
+    this.logger.log(`User ${name} created`);
+  }
+}
+
+const userService = new UserService();
+```
+
+`UserService` 가 `ConsoleLogger` 에 강하게 의존하고 있어서 테스트도 어렵고, 다른 로깅 시스템으로 바꾸기도 힘들다.
+
+이번엔 DI를 활용한 예시를 보자.
+
+```typescript
+interface Logger {
+  log(message: string): void;
+}
+
+class ConsoleLogger implements Logger {
+  private constructor() {}
+
+  public static getInstance(): ConsoleLogger {
+    if (!ConsoleLogger.instance) {
+      ConsoleLogger.instance = new ConsoleLogger();
+    }
+    return ConsoleLogger.instance;
+  }
+
+  log(message: string): void {
+    console.log(message);
+  }
+}
+```
+
+```typescript
+class UserService {
+  private logger: Logger;
+
+  constructor(logger: Logger) {
+    this.logger = logger;
+  }
+
+  createUser(name: string): void {
+    this.logger.log(`User ${name} created`);
+  }
+}
+
+const logger = ConsoleLogger.getInstance();
+const userService = new UserService(logger);
+```
+
+`UserService` 가 `Logger` 인터페이스에 의존하게 되어, `ConsoleLogger` 외에도 다른 로깅 시스템을 쉽게 주입할 수 있다. 테스트할 때도 Mock 객체를 주입하면 된다.
+
+만약 파일에 로그를 남기는 `FileLogger`가 필요하다면 `Logger` 인터페이스를 구현한 `FileLogger` 클래스를 만들고, DI를 통해 주입하면 된다.
+
+```typescript
+class FileLogger implements Logger {
+  private constructor() {}
+
+  public static getInstance(): FileLogger {
+    if (!FileLogger.instance) {
+      FileLogger.instance = new FileLogger();
+    }
+    return FileLogger.instance;
+  }
+
+  log(message: string): void {
+    // 파일에 로그 남기기
+  }
+}
+const logger = FileLogger.getInstance();
+const userService = new UserService(logger);
+```
+
+이렇게 DI를 활용하면 싱글톤 패턴을 사용하면서도 결합도를 낮추고, 테스트와 확장성을 높일 수 있다.
+
+## 결론
+
+싱글톤 패턴은 효율적인 자원 관리에 유용하지만, 잘못 사용하면 코드의 유연성을 해친다.
+
+그래서 싱글톤 패턴을 사용할 때는 주의가 필요하다. DI를 활용하면 싱글톤 패턴의 단점을 보완할 수 있다. 의존성을 외부에서 주입받으면 결합도를 낮추고 테스트와 확장성을 높일 수 있다.
+
+결국 언제, 어떻게 쓰느냐가 중요하다.
