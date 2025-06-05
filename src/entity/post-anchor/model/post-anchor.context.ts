@@ -10,12 +10,12 @@ interface PostAnchorActions {
   setActiveAnchor: (anchor: string) => void;
 }
 
-export const postAnchorStateContext = createContext<PostAnchorState | undefined>(undefined);
+export const PostAnchorStateContext = createContext<PostAnchorState | undefined>(undefined);
 
-export const postAnchorActionsContext = createContext<PostAnchorActions | undefined>(undefined);
+export const PostAnchorActionsContext = createContext<PostAnchorActions | undefined>(undefined);
 
 export const usePostAnchorStateContext = () => {
-  const context = useContext(postAnchorStateContext);
+  const context = useContext(PostAnchorStateContext);
   if (!context) {
     throw new Error('usePostAnchorStateContext must be used within a PostAnchorProvider');
   }
@@ -23,7 +23,7 @@ export const usePostAnchorStateContext = () => {
 };
 
 export const usePostAnchorActionsContext = () => {
-  const context = useContext(postAnchorActionsContext);
+  const context = useContext(PostAnchorActionsContext);
   if (!context) {
     throw new Error('usePostAnchorActionsContext must be used within a PostAnchorProvider');
   }

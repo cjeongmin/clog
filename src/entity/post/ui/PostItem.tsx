@@ -20,7 +20,7 @@ const usePostItemContext = () => {
 };
 
 function PostItem({ post, children }: PropsWithChildren<Readonly<PostItemProps>>) {
-  return <PostItemContext.Provider value={{ post }}>{children}</PostItemContext.Provider>;
+  return <PostItemContext value={{ post }}>{children}</PostItemContext>;
 }
 
 function Thumbnail() {

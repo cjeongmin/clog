@@ -2,7 +2,7 @@
 
 import { PropsWithChildren, useMemo, useState } from 'react';
 
-import { postAnchorStateContext, postAnchorActionsContext } from './post-anchor.context';
+import { PostAnchorStateContext, PostAnchorActionsContext } from './post-anchor.context';
 
 export default function PostAnchorProvider({ children }: Readonly<PropsWithChildren>) {
   const [activeAnchor, setActiveAnchor] = useState<string | undefined>(undefined);
@@ -22,8 +22,8 @@ export default function PostAnchorProvider({ children }: Readonly<PropsWithChild
   );
 
   return (
-    <postAnchorStateContext.Provider value={state}>
-      <postAnchorActionsContext.Provider value={actions}>{children}</postAnchorActionsContext.Provider>
-    </postAnchorStateContext.Provider>
+    <PostAnchorStateContext value={state}>
+      <PostAnchorActionsContext value={actions}>{children}</PostAnchorActionsContext>
+    </PostAnchorStateContext>
   );
 }
