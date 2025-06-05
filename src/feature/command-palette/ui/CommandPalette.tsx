@@ -90,7 +90,7 @@ export default function CommandPalette({ posts }: CommandPaletteProps) {
             </ul>
             <footer className='flex self-end'>
               <p className='hidden text-sm text-slate-400 sm:block'>
-                {navigator?.platform?.toLowerCase().includes('mac')
+                {navigator.userAgent.toLowerCase().includes('mac')
                   ? '⌘ K to toggle palette'
                   : 'Ctrl K to toggle palette'}
               </p>
