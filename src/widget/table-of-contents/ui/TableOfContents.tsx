@@ -9,7 +9,10 @@ interface TableOfContentsProps {
   content: Post['content'];
 }
 
-export default function TableOfContents({ content, className }: TableOfContentsProps & { className?: string }) {
+export default function TableOfContents({
+  content,
+  className,
+}: Readonly<TableOfContentsProps & { className?: string }>) {
   const tableOfContents = getTableOfContents(content);
 
   const { activeAnchor } = usePostAnchorStateContext();

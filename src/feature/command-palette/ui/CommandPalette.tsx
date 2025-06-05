@@ -11,7 +11,7 @@ interface CommandPaletteProps {
   posts: Post[];
 }
 
-export default function CommandPalette({ posts }: CommandPaletteProps) {
+export default function CommandPalette({ posts }: Readonly<CommandPaletteProps>) {
   const router = useRouter();
 
   const inputRef = useRef<HTMLInputElement>(null);

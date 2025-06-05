@@ -19,7 +19,7 @@ const usePostItemContext = () => {
   return context;
 };
 
-function PostItem({ post, children }: PropsWithChildren<PostItemProps>) {
+function PostItem({ post, children }: PropsWithChildren<Readonly<PostItemProps>>) {
   return <PostItemContext.Provider value={{ post }}>{children}</PostItemContext.Provider>;
 }
 

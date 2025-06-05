@@ -14,7 +14,7 @@ interface PostPageProps {
   };
 }
 
-export default async function PostPage({ post }: PostPageProps) {
+export default async function PostPage({ post }: Readonly<PostPageProps>) {
   const MDXPost = await getPostMDX(post.fileName);
 
   return (

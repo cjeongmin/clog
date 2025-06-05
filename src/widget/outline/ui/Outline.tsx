@@ -2,7 +2,7 @@ interface OutlineProps {
   content: string;
 }
 
-function Outline({ content }: OutlineProps) {
+function Outline({ content }: Readonly<OutlineProps>) {
   return (
     <div className='flex w-full flex-col gap-4 rounded-md bg-[#f7fafc] p-4'>
       <p className='m-0 text-xl font-semibold'>개요</p>

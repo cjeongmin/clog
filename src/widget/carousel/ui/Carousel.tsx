@@ -8,7 +8,7 @@ interface CarouselProps {
   autoSlideInterval?: number;
 }
 
-export function Carousel({ photos, autoSlideInterval = 5000 }: CarouselProps) {
+export function Carousel({ photos, autoSlideInterval = 5000 }: Readonly<CarouselProps>) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);

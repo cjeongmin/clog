@@ -4,7 +4,7 @@ interface PhotoGridProps {
   photos: string[];
 }
 
-export function PhotoGrid({ photos }: PhotoGridProps) {
+export function PhotoGrid({ photos }: Readonly<PhotoGridProps>) {
   return (
     <div className='m-1 grid h-full w-full grid-cols-1 gap-1 md:grid-cols-2'>
       {photos.map((photo, index) => {

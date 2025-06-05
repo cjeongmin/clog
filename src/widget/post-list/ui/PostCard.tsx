@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Post } from '@/entity/post';
 import PostItem from '@/entity/post/ui/PostItem';
 
-export default function PostCard({ post }: { post: Post }) {
+export default function PostCard({ post }: Readonly<{ post: Post }>) {
   return (
     <Link className='flex flex-col gap-2' key={post.title} href={`/posts/${encodeURIComponent(post.fileName)}`}>
       <PostItem post={post}>
