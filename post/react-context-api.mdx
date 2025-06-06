@@ -1,0 +1,275 @@
+---
+title: 'Context API: 의존성 주입부터 상태 관리 최적화까지'
+date: '2025. 06. 06'
+thumbnail: '/post/react-context-api/thumbnail.webp'
+---
+
+import { Outline } from '@/widget/outline';
+
+<Outline
+  content={`이 글에서는 React Context API의 핵심 목적인 의존성 주입 패턴을 통해 코드 품질을 높이는 방법을 소개한다. 나아가 Context API를 활용하여 상태 관리 시 발생하는 리렌더링 문제를 Zustand와 결합해 최적화하는 구체적인 패턴까지 함께 제안한다.`}
+/>
+
+## 들어가며
+
+과거에 [전역 상태를 사용하는 기준이 있으신가요?](https://frontend-fundamentals.com/code-quality/code/detail/?id=5) 라는 글을 보면서, 많은 사람들이 `Context API`의 성능 이슈 등으로 인해 다른 전역 상태 관리 도구를 선호하는 현상에 대해 다시금 고민하게 되었다. 나 역시 비슷한 경험을 했기에, 이 글에서는 `Context API`를 둘러싼 흔한 오해들을 먼저 짚어보고, 나아가 강점인 의존성 주입 패턴과, 상태 관리 시의 성능을 최적화하는 방법까지 함께 살펴보려 한다.
+
+## React Context API
+
+위에서 언급한 글에서 중간에 `React Context API`에 대한 언급이 있다. 보통 일반적으로 `React`를 처음 접하게 되면 여러 컴포넌트간 상태를 공유하기 위해서 `Context API`를 사용하게 된다. 하지만 이후 전역 상태 관리 라이브러리를 사용해보게 되면서 `Context API`를 사용하지 않게 되는 경우가 많다. 그 이유는 `Context API`가 전역 상태 관리 라이브러리와 비교했을 때 몇 가지 단점이 있기 때문이다.
+
+일단 `Context API`는 [문서](https://react.dev/learn/passing-data-deeply-with-context)를 읽어보면 알 수 있듯이, 컴포넌트 트리의 깊은 곳에 있는 컴포넌트에 데이터를 전달하기 위해서 사용된다.
+
+물론, 여기에서 사례 중에 상태 관리 용도로 사용할 수 있다고 나와있지만 실제로 상태 관리 용도로 사용하기에는 `Context API`는 기본적으로 상태 관리 방법에 대해서 제공하지 않는다. 상태 관리를 위해 사용하려면 [문서](https://react.dev/learn/scaling-up-with-reducer-and-context)에서도 안내되어있듯이 `Reducer`와 `Context`를 함께 사용하여 관리할 수 있다고 안내하고 있다.
+
+하지만 `Reducer`와 `Context`를 함께 사용하여 상태를 관리하는 것은 `Zustand`와 같은 라이브러리와 비교했을 때, 상태 관리 방법이 더 복잡해진다. 즉 자체적으로 상태를 어떻게 변경하고, 그 변경 로직을 어떻게 구조화할지에 대한 내장된 메커니즘이 없다. 앞서 이야기한 것처럼 `Reducer`를 활용하거나 `useState`와 같은 훅과 함께 사용해야 비로소 상태를 **관리**할 수 있게 되는데, 이 경우에도 여전히 `Context API`는 상태를 관리하기 위한 도구가 아니라, 단순히 데이터를 전달하기 위한 도구로 사용된다.
+
+또한, `Context API`는 상태 변경 시 해당 `Context`를 구독하고 있는 모든 컴포넌트가 리렌더링되기 때문에 성능에 영향을 줄 수 있다. 따라서 `Context API`는 상태 관리 라이브러리보다 구현이 복잡하고 성능 저하를 유발할 수 있으므로, 많은 경우 상태 관리 라이브러리를 사용하는 것이 더 효율적이다.
+
+**하지만, 분명히 해야하는 것은 `Context API`가 전역 상태를 관리하기 위해서 탄생한 것이 아니라, 컴포넌트 트리의 깊은 곳에 있는 컴포넌트에 데이터를 전달하기 위해서 사용되는 것이라는 점이다.**
+
+| without Context API                                               | with Context API                                                    |
+| ----------------------------------------------------------------- | ------------------------------------------------------------------- |
+| ![Passing Data Deeply with Props](/post/react-context-api/1.webp) | ![Passing Data Deeply with Context](/post/react-context-api/2.webp) |
+
+### Context API의 목적
+
+`Context API`의 가장 주된 목적 중 하나는 `props drilling`을 회피하는 것이다. 그리고 이를 위해 컴포넌트 트리 내에서 데이터나 함수를 명시적으로 `props`를 통해 단계별로 전달하지 않고도 필요한 컴포넌트에 직접 전달할 수 있는 새로운 채널을 제공한다고 볼 수 있다.
+
+이 채널이라는 특성 덕분에 의존성 주입과 같은 패턴을 구현할 수 있다. 예를 들어, 특정 기능의 구현체(예: API 호출, 테마 설정 등)를 `Context`를 통해 제공하고, 하위 컴포넌트들은 구체적인 구현에 의존하지 않고 해당 기능을 사용할 수 있게 된다. 이는 코드의 유연성과 테스트 용이성을 높일 수 있다.
+
+결론적으로 `Context API`의 핵심은 `props`를 일일이 넘기지 않고도 컴포넌트 트리에 데이터를 `broadcast`하고, 필요한 컴포넌트가 이를 `receive`할 수 있게 하는 매커니즘이다. 그리고 이러한 메커니즘은 `props drilling`회피라는 매우 중요한 문제를 해결하며, 더 나아가 의존성 주입과 같은 유용한 디자인 패턴을 구현할 수 있는 기반을 제공한다.
+
+그러면 조금 더 나아가서 예시로 살펴보자.
+
+### 의존성 주입 예시
+
+특정 서비스에 대해서 의존성 주입을 구현하는 예시를 살펴보자. 예를 들어 `UserService`라는 서비스를 `Context API`를 통해 의존성 주입하는 방법을 살펴보자.
+
+```typescript
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+export interface IUserService {
+  getUsers: () => Promise<User[]>;
+}
+```
+
+위와 같이 `UserService`의 인터페이스를 정의한다. 이 인터페이스는 사용자 정보를 가져오는 메서드를 포함하고 있다.
+
+```typescript
+class UserService implements IUserService {
+  public async getUsers(): Promise<User[]> {
+    try {
+      const response = await fetch('https://jsonplaceholder.typicode.com/users');
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+      }
+      return (await response.json()) as User[];
+    } catch (error) {
+      console.error('Error fetching real users:', error);
+      throw error;
+    }
+  }
+}
+
+export default new RealUserService();
+```
+
+위와 같이 `UserService`를 구현한다. 이 서비스는 실제 API를 호출하여 사용자 정보를 가져오는 메서드를 포함하고 있다.
+
+```ts
+export const UserServiceContext = React.createContext<IUserService | null>(null);
+
+export const useUserService = () => {
+  const context = React.useContext(UserServiceContext);
+  if (!context) {
+    throw new Error('useUserService must be used within a UserServiceProvider');
+  }
+  return context;
+};
+```
+
+위와 같이 `UserServiceContext`를 생성한다. 이 `Context`는 `IUserService` 타입의 값을 가지도록 설정하자. 참고로 `null`로 초기화하는 이유는 `Context`를 사용할 때, 해당 `Context`가 제공되지 않았을 때의 기본값을 설정하기 위함이다.
+
+또한, `useUserService`라는 커스텀 훅을 만들어서 `UserServiceContext`를 쉽게 사용할 수 있도록 한다. 이 훅은 `UserServiceContext`를 사용하여 `IUserService` 타입의 값을 반환한다. 만약 `UserServiceContext`가 제공되지 않았다면 에러를 발생시킨다.
+
+```tsx
+export default function UserList() {
+  const [users, setUsers] = useState<User[]>([]);
+  const userService = useUserService();
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const fetchedUsers = await userService.getUsers();
+        setUsers(fetchedUsers);
+      } catch (error) {
+        console.error('Failed to fetch users:', error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  return <></>;
+}
+```
+
+위와 같이 인터페이스에 정의된대로 `getUsers` 메서드를 호출하여 사용자 정보를 가져오는 컴포넌트를 작성한다. 이 컴포넌트는 `useUserService` 훅을 사용하여 `UserServiceContext`에서 `UserService`를 가져오고, 이를 통해 사용자 정보를 가져온다.
+
+만약 해당 컴포넌트를 테스트를 해야한다면 `UserService`를 모킹하여 테스트할 수 있다.
+
+```typescript
+class MockUserService implements IUserService {
+  public async getUsers(): Promise<User[]> {
+    return Promise.resolve([
+      { id: 1, name: 'Mock Alice', email: 'alice.mock@example.com' },
+      { id: 2, name: 'Mock Bob', email: 'bob.mock@example.com' },
+    ]);
+  }
+}
+
+export default new MockUserService();
+```
+
+위와 같이 `MockUserService`를 작성하여 `IUserService` 인터페이스를 구현한다. 이 모킹된 서비스는 실제 API를 호출하지 않고, 미리 정의된 사용자 정보를 반환한다. 이제 `UserServiceContext`를 제공하는 `Provider`에서 실제 서비스와 모킹된 서비스를 쉽게 교체할 수 있다.
+
+## React Context API를 상태 관리 용도로?
+
+앞서서 `Context API`는 상태 관리 용도로 사용하기에는 적합하지 않다고 언급했다. 이 글의 서두에서 이야기한 링크에서 전역 상태 관리 라이브러리를 사용하지 않고 `Context API`를 상태 관리 용도로 사용하는 경우에 대해서도 언급하고 있다.
+
+`Context API`를 상태 관리 용도로 사용하면 다른 전역 상태 관리 라이브러리와 비교했을 때 성능과 관련된 이슈가 있는 것은 분명하다. `React`의 리렌더링이 더 많이 유발되는 것은 맞으나, 실제로 DOM 업데이트가 일어나는 것은 `React`의 가상 DOM이 변경된 부분만을 실제 DOM에 반영하기 때문에, 성능 저하가 크게 느껴지지 않는 경우도 많다. 실제로 리렌더링 과정 중에 성능 저하가 느껴진다면 이는 불필요한 리렌더링으로 인한 문제일 수도 있으나 일반적으로 느린 렌더링 성능때문에 발생할 확률이 높기도 하다.
+
+즉, 리렌더링 자체보다 렌더링 중에 실행되는 특정 로직이 성능 저하의 주된 원인일 수 있으므로, 해당 코드를 찾아 최적화하는 작업이 우선되어야 한다. 이 문제를 수정하고 나서도 성능 저하가 발생하면 불필요한 리렌더링 이슈를 해결하는 것이 맞을 수 있다.
+
+따라서 애플리케이션의 특정 부분에서 국소적인 상태 관리가 필요할 때 `Context API`를 활용하는 것은 충분히 합리적인 선택이라 생각한다.
+
+## Context API + Zustand
+
+개인적으로는 전역 상태를 사용하는 것을 선호해왔다. 그 중에서 경량화된 라이브러리인 `Zustand`를 사용하는 것을 좋아했다.
+
+하지만 전역 상태로 일부 상태들을 관리하다보면 `React`의 생명 주기와 관련된 이슈가 발생할 수 있다. 예를 들어, 컴포넌트가 언마운트되었을 때 상태를 초기화하지 않으면 메모리 누수나 불필요한 상태 유지가 발생할 수 있다. 실제로 프로젝트를 진행하면서 특정 페이지에서 접근할 때 이전 상태가 있을 수 있어서 해당 상태를 초기화하는 작업을 진행해본 경험도 있다.
+
+이런 경우에 `Context API`를 사용하면 자연스럽게 생명 주기와 연관지어서 해당 이슈를 없앨 수 있지만, `Context API`만을 사용하기엔 위에서 언급한 불필요한 리렌더링 이슈라던지, 상태 관리 방법이 복잡해지는 등의 단점이 있다.
+
+이를 해결하기 위해서 `Zustand`와 `Context API`를 함께 사용하는 패턴을 살펴보자. 이 패턴은 `Zustand`의 상태 관리 기능을 활용하면서도 `Context API`의 생명 주기 관리 기능을 함께 사용할 수 있다. 이를 통해 상태를 관리하면서도 불필요한 리렌더링 문제를 해결할 수 있다.
+
+예시를 살펴보자. 관련된 전반적인 코드는 [Only Context API, Context API with Zustand | Gist](https://gist.github.com/cjeongmin/9fb6e883def62ac1fca261309a5113df)에서 확인할 수 있다.
+
+### Only Context API
+
+<video width='50%' controls>
+  <source src='/post/react-context-api/only-context-api.mov' />
+  브라우저가 video 태그를 지원하지 않습니다.
+</video>
+
+일단 예시에서 사용되는 `Context` 타입을 정의해보자. 아래 타입을 이용해서 작은 실험을 해볼 것이다.
+
+```typescript
+interface ContextType {
+  color: 'red' | 'blue';
+  setColor: (color: 'red' | 'blue') => void;
+}
+```
+
+또한 `Context`를 생성하고, 해당 `Context`를 제공하는 `Provider` 컴포넌트를 작성하고 해당 `Context`를 사용하는 커스텀 훅을 작성해보자. 아래 코드는 React 19 버전으로 작성된 예시이다.
+
+```tsx
+const Context = createContext<ContextType | undefined>(undefined);
+
+function ContextProvider({ children }: { children: React.ReactNode }) {
+  const [color, setColor] = useState<'red' | 'blue'>('red');
+
+  return <Context value={{ color, setColor }}>{children}</Context>;
+}
+
+const useContext = () => {
+  const context = use(Context);
+  if (!context) {
+    throw new Error('useContext must be used within a ContextProvider');
+  }
+  return context;
+};
+```
+
+해당 동영상에서 보이는 컴포넌트는 총 4개로 구성되어 있다. `Test1`, `Test2`, `Test3`, `Test4` 컴포넌트가 있다. 이 컴포넌트들은 각각 `Context API`를 사용하여 상태를 관리하고 있다. `Test1` 컴포넌트는 `color`, `setColor`를 구독하고 있으며 `Test2` 컴포넌트는 `color`만을 구독하고 있다. `Test3` 컴포넌트는 `setColor`만을 구독하고 있으며, `Test4` 컴포넌트는 아무것도 구독하지 않고 있다.
+
+동영상을 보면 알 수 있듯이 `Test3` 컴포넌트는 `setColor`만을 구독하고 있음에도 `color`의 값이 변경되면 리렌더링이 발생한다. 이는 `Context API`의 특성상 해당 `Context`를 구독하고 있는 모든 컴포넌트가 리렌더링되기 때문이다. 물론 속성과 액션을 분리하거나 `React` 최적화 API를 활용해 이 문제를 완화할 수는 있다. 하지만 상태 관리 전문 라이브러리에 비하면 구현이 번거롭다는 단점은 여전하다.
+
+추가로 확인할 수 있는 것은 `Context API`를 사용하여 상태 관리를 하고 있어, 컴포넌트의 생명 주기에 맞게 상태가 초기화되고 관리된다.
+
+앞서 이야기한 것처럼 리렌더링이 나쁜 것은 아니지만 불필요한 리렌더링이 성능에 영향을 준다고 파악이 되면 이를 해결하는 것은 필요하다.
+
+### Context API with Zustand
+
+<video width='50%' controls>
+  <source src='/post/react-context-api/context-api-with-zustand.mov' />
+  브라우저가 video 태그를 지원하지 않습니다.
+</video>
+
+위 동영상을 보면 `Test3` 컴포넌트는 `color`의 값이 변경되더라도 리렌더링이 발생하지 않는 것을 확인할 수 있다. 이는 `Zustand`를 사용하여 상태를 관리하고 있기 때문이다. `Zustand`를 이용하면서 `Context API`를 사용하여 상태를 관리하는 방법을 알아보자.
+
+```tsx
+const createContextStore = () =>
+  createStore<ContextType>((set) => ({
+    color: 'red',
+    setColor: (color) => set({ color }),
+  }));
+
+type Store = ReturnType<typeof createContextStore>;
+
+const Context = createContext<Store | undefined>(undefined);
+
+function ContextProvider({ children }: { children: React.ReactNode }) {
+  const storeRef = useRef<Store>(null);
+  if (!storeRef.current) {
+    storeRef.current = createContextStore();
+  }
+
+  return <Context value={storeRef.current}>{children}</Context>;
+}
+
+function useContext<U>(selector: (state: ContextType) => U): U;
+function useContext(): ContextType;
+function useContext<U>(selector?: (state: ContextType) => U): ContextType | U {
+  const store = use(Context);
+  if (!store) {
+    throw new Error('useContext must be used within a ContextProvider');
+  }
+  return useStore(store, selector as (state: ContextType) => ContextType | U);
+}
+```
+
+`Zustand`에서 스토어를 생성하기 위해서 보통 2가지 방법을 사용할 수 있다. 하나는 `create` 함수를 사용하여 스토어를 생성하는 것이고, 다른 하나는 `createStore` 함수를 사용하여 스토어를 생성하는 것이다. 여기서는 `createStore` 함수를 사용하여 스토어를 생성한다.
+
+`create` 함수는 내부적으로 리액트의 `useSyncExternalStore` 훅을 사용하여 스토어를 생성하는 반면, `createStore` 함수는 스토어를 생성하고 스토어의 기본적인 API를 만들고 이를 제공한다.
+
+이후 `ContextProvider` 컴포넌트에서 `useRef` 훅을 사용하여 스토어를 생성하고, 해당 스토어를 `Context`에 제공한다. 이때, `useRef` 훅을 사용하여 스토어를 생성하는 이유는 컴포넌트가 리렌더링될 때마다 새로운 스토어가 생성되지 않도록 하기 위함이다.
+
+이제 `useContext` 훅을 작성하여 `Context`를 사용할 수 있도록 한다. `useStore` 훅을 사용하여 리렌더링을 최적화할 수 있다. 또한 `selector` 패턴을 위해서 `useContext` 훅을 오버로딩하여 `selector`를 사용할 수 있도록 한다. 만약 `selector`가 제공되지 않으면 전체 상태를 반환하고, 제공되면 해당 상태의 부분을 반환한다.
+
+이제 `ContextProvider`를 사용하여 `Context`를 제공하고, `useContext` 훅을 사용하여 상태를 구독할 수 있다.
+
+`Zustand`의 `createStore`와 `useStore` 훅을 이용해서 `Context API`와 함께 상태를 관리하는 방법을 살펴보았다. 이 방법을 사용하면 `Context API`의 장점을 살리면서도 `Zustand`의 성능 최적화 기능을 활용할 수 있다.
+
+## 결론
+
+개인적으론 [전역 상태를 사용하는 기준이 있으신가요?](https://frontend-fundamentals.com/code-quality/code/detail/?id=5) 라는 글을 읽고 `Context API`를 다시 생각해보게 되면서 내가 이를 의존성 주입 도구로 생각하기보다는 평소에 상태 관리 도구로 생각하고 있었다는 생각에 여러가지 살펴본 것 같다.
+
+그래서 글이 조금 길어지고 하고자하는 이야기가 계속해서 바뀌기도 했다.
+
+이 글에서는 `Context API`의 본래 목적인 의존성 주입과 데이터 전달의 중요성을 강조했다. 또한 상태 관리 시 발생 가능한 성능 이슈를 짚어보고, `Zustand`와 결합하여 이를 최적화하는 구체적인 방안을 제시했다.
+
+결론적으로 상황별 권장 사항을 정리하자면 다음과 같다.
+
+- **단순 데이터 전달 및 의존성 주입**: `Context API` 사용
+- **컴포넌트와 생명주기를 같이하는 국소적 상태 관리**
+  - **성능에 민감하지 않은 경우**: `useReducer`와 `Context API` 조합
+  - **렌더링 최적화가 필요한 경우**: `Context API`와 `Zustand` 조합
+- **앱 전반의 복잡한 전역 상태 관리**: `Zustand`, `Jotai` 등 상태 관리 라이브러리 단독 사용
+
+다른 글에서도 마지막에 이야기한 것처럼, 결국엔 **'언제, 어떻게'** 쓰는지가 중요하다.
