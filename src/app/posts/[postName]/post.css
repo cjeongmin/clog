@@ -53,3 +53,7 @@ article img {
   border-radius: 6px;
   max-height: 50dvh;
 }
+
+article video {
+  margin: 4px;
+}
