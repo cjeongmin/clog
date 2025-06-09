@@ -12,6 +12,5 @@ export const getPosts = () => {
       const filePath = path.join(postsDirectory, filename);
       return parsePostFile(filePath);
     })
-    .filter((post) => !post.draft)
     .sort((a, b) => (a.date < b.date ? 1 : -1));
 };

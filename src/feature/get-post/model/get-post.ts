@@ -6,7 +6,6 @@ export const getPost = (fileName: string) => {
   try {
     const filePath = path.join(process.cwd(), 'post', `${decodeURIComponent(fileName)}.mdx`);
     const result = parsePostFile(filePath);
-    if (result.draft) throw new Error('Draft post is not allowed to be fetched');
     return result;
   } catch {
     throw new Error('Post not found');
