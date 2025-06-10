@@ -13,6 +13,11 @@
   margin: 1.5rem 0;
 }
 
+code::before,
+code::after {
+  display: none;
+}
+
 div.code-line:empty {
   height: 15.5938px;
 }
@@ -31,8 +36,10 @@ span.code-line {
 }
 
 .highlighted-code-line {
-  background-color: var(--color-highlighted-line);
-  border-left: 4px solid var(--color-highlighted-line-indicator);
+  background-color: #fef3cd;
+  border-left: 4px solid #ffca6e;
+  padding-left: 4px;
+  margin-left: -8px;
 }
 
 .numbered-code-line::before {
