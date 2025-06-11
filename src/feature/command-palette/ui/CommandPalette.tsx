@@ -18,7 +18,17 @@ export default function CommandPalette({ posts }: Readonly<CommandPaletteProps>)
   const [visible, setVisible] = useState(false);
   const [query, setQuery] = useState('');
 
-  const filteredPosts = posts.filter((post) => post.title.toLowerCase().includes(query.toLowerCase()));
+  const lowercasedQuery = query.toLowerCase();
+
+  const filteredPosts = posts.filter((post) => {
+    if (lowercasedQuery.startsWith('#')) {
+      const tagNameQuery = lowercasedQuery.substring(1).trim();
+      if (tagNameQuery.length === 0) return true;
+      return post.tags.some((tag) => tag.toLowerCase().includes(tagNameQuery));
+    } else {
+      return post.title.toLowerCase().includes(lowercasedQuery);
+    }
+  });
 
   const toggleVisible = () => {
     setQuery('');
@@ -80,9 +90,12 @@ export default function CommandPalette({ posts }: Readonly<CommandPaletteProps>)
                   className='flex w-full flex-row items-end gap-2 rounded-md border p-3 sm:transition-all sm:hover:border-slate-400'
                 >
                   <PostItem post={post}>
-                    <div className='flex w-full flex-row items-center gap-2'>
-                      <PostItem.Title className='truncate text-base text-slate-600' />
-                      <PostItem.Date className='whitespace-nowrap text-sm text-slate-400' />
+                    <div className='flex flex-col gap-2'>
+                      <div className='flex w-full flex-row items-center gap-2'>
+                        <PostItem.Title className='truncate text-base text-slate-600' />
+                        <PostItem.Date className='whitespace-nowrap text-sm text-slate-400' />
+                      </div>
+                      <PostItem.Tags />
                     </div>
                   </PostItem>
                 </button>

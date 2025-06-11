@@ -15,6 +15,7 @@ export default function PostCard({ post }: Readonly<{ post: Post }>) {
         <div className='flex min-h-[3rem] flex-col gap-1 text-slate-600'>
           <PostItem.Title />
           <PostItem.Date />
+          <PostItem.Tags />
         </div>
       </PostItem>
     </Link>
