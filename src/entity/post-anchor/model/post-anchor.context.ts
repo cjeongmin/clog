@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext } from 'react';
+import { createContext, use } from 'react';
 
 interface PostAnchorState {
   activeAnchor?: string;
@@ -15,7 +15,7 @@ export const PostAnchorStateContext = createContext<PostAnchorState | undefined>
 export const PostAnchorActionsContext = createContext<PostAnchorActions | undefined>(undefined);
 
 export const usePostAnchorStateContext = () => {
-  const context = useContext(PostAnchorStateContext);
+  const context = use(PostAnchorStateContext);
   if (!context) {
     throw new Error('usePostAnchorStateContext must be used within a PostAnchorProvider');
   }
@@ -23,7 +23,7 @@ export const usePostAnchorStateContext = () => {
 };
 
 export const usePostAnchorActionsContext = () => {
-  const context = useContext(PostAnchorActionsContext);
+  const context = use(PostAnchorActionsContext);
   if (!context) {
     throw new Error('usePostAnchorActionsContext must be used within a PostAnchorProvider');
   }

@@ -7,12 +7,9 @@ import { PostAnchorStateContext, PostAnchorActionsContext } from './post-anchor.
 export default function PostAnchorProvider({ children }: Readonly<PropsWithChildren>) {
   const [activeAnchor, setActiveAnchor] = useState<string | undefined>(undefined);
 
-  const state = useMemo(
-    () => ({
-      activeAnchor,
-    }),
-    [activeAnchor],
-  );
+  const state = {
+    activeAnchor,
+  };
 
   const actions = useMemo(
     () => ({
@@ -22,8 +19,8 @@ export default function PostAnchorProvider({ children }: Readonly<PropsWithChild
   );
 
   return (
-    <PostAnchorStateContext value={state}>
-      <PostAnchorActionsContext value={actions}>{children}</PostAnchorActionsContext>
-    </PostAnchorStateContext>
+    <PostAnchorActionsContext value={actions}>
+      <PostAnchorStateContext value={state}>{children}</PostAnchorStateContext>
+    </PostAnchorActionsContext>
   );
 }
