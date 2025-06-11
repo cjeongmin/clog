@@ -4,12 +4,6 @@ date: '2025. 06. 06'
 thumbnail: '/post/react-context-api/thumbnail.webp'
 ---
 
-import { Outline } from '@/widget/outline';
-
-<Outline
-  content={`이 글에서는 React Context API의 핵심 목적인 의존성 주입 패턴을 통해 코드 품질을 높이는 방법을 소개한다. 나아가 Context API를 활용하여 상태 관리 시 발생하는 리렌더링 문제를 Zustand와 결합해 최적화하는 구체적인 패턴까지 함께 제안한다.`}
-/>
-
 ## 들어가며
 
 과거에 [전역 상태를 사용하는 기준이 있으신가요?](https://frontend-fundamentals.com/code-quality/code/detail/?id=5) 라는 글을 보면서, 많은 사람들이 `Context API`의 성능 이슈 등으로 인해 다른 전역 상태 관리 도구를 선호하는 현상에 대해 다시금 고민하게 되었다. 나 역시 비슷한 경험을 했기에, 이 글에서는 `Context API`를 둘러싼 흔한 오해들을 먼저 짚어보고, 나아가 강점인 의존성 주입 패턴과, 상태 관리 시의 성능을 최적화하는 방법까지 함께 살펴보려 한다.
