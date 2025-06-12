@@ -38,6 +38,9 @@ export default function CommandPalette({ posts }: Readonly<CommandPaletteProps>)
   useEffect(() => {
     if (visible) {
       inputRef.current?.focus();
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
     }
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -51,7 +54,10 @@ export default function CommandPalette({ posts }: Readonly<CommandPaletteProps>)
     };
 
     document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+    };
   }, [visible]);
 
   return (
@@ -79,7 +85,7 @@ export default function CommandPalette({ posts }: Readonly<CommandPaletteProps>)
               <p>게시글</p>
               <p className='text-slate-400'>{filteredPosts.length}</p>
             </div>
-            <ul className='flex w-full flex-1 flex-col gap-2'>
+            <ul className='flex w-full flex-1 flex-col gap-2 overflow-y-auto'>
               {filteredPosts.map((post) => (
                 <button
                   onClick={() => {
@@ -87,7 +93,7 @@ export default function CommandPalette({ posts }: Readonly<CommandPaletteProps>)
                     toggleVisible();
                   }}
                   key={post.title}
-                  className='flex w-full flex-row items-end gap-2 rounded-md border p-3 sm:transition-all sm:hover:border-slate-400'
+                  className='flex w-full shrink-0 flex-row items-end gap-2 overflow-x-auto rounded-md border p-3 sm:transition-all sm:hover:border-slate-400'
                 >
                   <PostItem post={post}>
                     <div className='flex flex-col gap-2'>
