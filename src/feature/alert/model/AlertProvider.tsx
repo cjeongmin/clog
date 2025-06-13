@@ -2,7 +2,7 @@
 
 import { PropsWithChildren, useMemo, useState } from 'react';
 
-import { alertStateContext, alertActionsContext, Alert } from './alert.context';
+import { AlertStateContext, AlertActionsContext, Alert } from './alert.context';
 
 export default function AlertProvider({ children }: PropsWithChildren) {
   const [alert, setAlert] = useState<Alert | null>(null);
@@ -15,11 +15,11 @@ export default function AlertProvider({ children }: PropsWithChildren) {
     [],
   );
 
-  const state = useMemo(() => ({ alert }), [alert]);
+  const state = { alert };
 
   return (
-    <alertStateContext.Provider value={state}>
-      <alertActionsContext.Provider value={actions}>{children}</alertActionsContext.Provider>
-    </alertStateContext.Provider>
+    <AlertActionsContext value={actions}>
+      <AlertStateContext value={state}>{children}</AlertStateContext>
+    </AlertActionsContext>
   );
 }

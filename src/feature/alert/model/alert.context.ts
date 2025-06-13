@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext } from 'react';
+import { createContext, use } from 'react';
 
 type AlertType = 'info' | 'confirm';
 
@@ -20,12 +20,12 @@ interface AlertActions {
   hideAlert: () => void;
 }
 
-export const alertStateContext = createContext<AlertState | undefined>(undefined);
+export const AlertStateContext = createContext<AlertState | undefined>(undefined);
 
-export const alertActionsContext = createContext<AlertActions | undefined>(undefined);
+export const AlertActionsContext = createContext<AlertActions | undefined>(undefined);
 
 export const useAlertStateContext = () => {
-  const context = useContext(alertStateContext);
+  const context = use(AlertStateContext);
   if (!context) {
     throw new Error('useAlertStateContext must be used within an AlertProvider');
   }
@@ -33,7 +33,7 @@ export const useAlertStateContext = () => {
 };
 
 export const useAlertActionsContext = () => {
-  const context = useContext(alertActionsContext);
+  const context = use(AlertActionsContext);
   if (!context) {
     throw new Error('useAlertActionsContext must be used within an AlertProvider');
   }
