@@ -24,7 +24,7 @@ export default function CommandPalette({ posts }: Readonly<CommandPaletteProps>)
     if (lowercasedQuery.startsWith('#')) {
       const tagNameQuery = lowercasedQuery.substring(1).trim();
       if (tagNameQuery.length === 0) return true;
-      return post.tags.some((tag) => tag.toLowerCase().includes(tagNameQuery));
+      return post.tags != null && post.tags.some((tag) => tag.toLowerCase().includes(tagNameQuery));
     } else {
       return post.title.toLowerCase().includes(lowercasedQuery);
     }
