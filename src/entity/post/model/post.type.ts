@@ -1,8 +1,9 @@
 export interface Post {
-  fileName: string;
-  title: string;
-  date: string;
-  tags: string[];
-  thumbnail?: string;
   content: string;
+  date: string;
+  description?: string;
+  fileName: string;
+  tags?: string[];
+  thumbnail?: string;
+  title: string;
 }

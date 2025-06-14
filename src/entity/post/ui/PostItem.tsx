@@ -54,7 +54,7 @@ PostItem.Date = function Date({ className }: { className?: string }) {
 PostItem.Tags = function Tags({ className }: { className?: string }) {
   const { post } = usePostItemContext();
 
-  if (post.tags.length === 0) {
+  if (post.tags == null || post.tags.length === 0) {
     return null;
   }
 
@@ -67,6 +67,16 @@ PostItem.Tags = function Tags({ className }: { className?: string }) {
       ))}
     </div>
   );
+};
+
+PostItem.Description = function Description({ className }: { className?: string }) {
+  const { post } = usePostItemContext();
+
+  if (!post.description) {
+    return null;
+  }
+
+  return <p className={className ?? 'text-slate-500'}>{post.description}</p>;
 };
 
 export default PostItem;

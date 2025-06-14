@@ -9,11 +9,12 @@ export const parsePostFile = (filePath: string): Post => {
   const { data, content } = matter(fileContents);
 
   return {
-    fileName: (filePath.split('/').pop() ?? '').replace(/\.[^/.]+$/, ''),
-    title: data.title,
-    date: data.date,
-    tags: data.tags || [],
-    thumbnail: data.thumbnail,
     content,
+    date: data.date,
+    description: data.description,
+    fileName: (filePath.split('/').pop() ?? '').replace(/\.[^/.]+$/, ''),
+    tags: data.tags,
+    thumbnail: data.thumbnail,
+    title: data.title,
   };
 };
