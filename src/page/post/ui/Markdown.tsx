@@ -36,7 +36,7 @@ export default function Markdown({ children }: PropsWithChildren) {
   }, [setActiveAnchor, articleRef]);
 
   return (
-    <article ref={articleRef} className='prose w-full !max-w-none'>
+    <article ref={articleRef} className='prose w-full !max-w-none break-words break-keep'>
       {children}
     </article>
   );
