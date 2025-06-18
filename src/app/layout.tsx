@@ -57,7 +57,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <header className='mt-4 h-fit w-full px-4'>
               <div className='mx-auto h-full max-w-3xl'>
                 <div className='flex h-full flex-row items-center justify-between'>
-                  <Link href='/' className='font-["Hack"] text-xl font-bold'>
+                  <Link href='/' className='font-["Hack"] text-xl font-bold text-slate-900'>
                     @cjeongmin
                   </Link>
                   <nav className='mt-1 flex flex-row items-center gap-2'>
