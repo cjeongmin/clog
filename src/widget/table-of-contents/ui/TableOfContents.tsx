@@ -16,7 +16,24 @@ export default function TableOfContents({
   const tableOfContents = getTableOfContents(content);
 
   const { activeAnchor } = usePostAnchorStateContext();
-  const { setActiveAnchor } = usePostAnchorActionsContext();
+  const { setActiveAnchor, setTocScrolling } = usePostAnchorActionsContext();
+
+  const handleTocClick = (anchor: string) => {
+    const targetElement = document.getElementById(anchor);
+    if (!targetElement) return;
+
+    setTocScrolling(true);
+    setActiveAnchor(anchor);
+
+    targetElement.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+
+    setTimeout(() => {
+      setTocScrolling(false);
+    }, 800);
+  };
 
   return (
     <nav className={`${className}`}>
@@ -29,13 +46,7 @@ export default function TableOfContents({
               item.anchor === activeAnchor ? 'font-medium text-slate-800' : ''
             }`}
           >
-            <button
-              className='text-left'
-              onClick={() => {
-                setActiveAnchor(item.anchor);
-                document.getElementById(item.anchor)?.scrollIntoView({ behavior: 'smooth' });
-              }}
-            >
+            <button className='text-left' onClick={() => handleTocClick(item.anchor)}>
               {item.text}
             </button>
           </li>

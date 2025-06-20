@@ -4,10 +4,12 @@ import { createContext, use } from 'react';
 
 interface PostAnchorState {
   activeAnchor?: string;
+  isTocScrolling?: boolean;
 }
 
 interface PostAnchorActions {
   setActiveAnchor: (anchor: string) => void;
+  setTocScrolling: (isScrolling: boolean) => void;
 }
 
 export const PostAnchorStateContext = createContext<PostAnchorState | undefined>(undefined);

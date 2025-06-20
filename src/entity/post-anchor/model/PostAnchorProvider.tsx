@@ -6,14 +6,17 @@ import { PostAnchorStateContext, PostAnchorActionsContext } from './post-anchor.
 
 export default function PostAnchorProvider({ children }: Readonly<PropsWithChildren>) {
   const [activeAnchor, setActiveAnchor] = useState<string | undefined>(undefined);
+  const [isTocScrolling, setIsTocScrolling] = useState(false);
 
   const state = {
     activeAnchor,
+    isTocScrolling,
   };
 
   const actions = useMemo(
     () => ({
       setActiveAnchor: (anchor: string) => setActiveAnchor(anchor),
+      setTocScrolling: (isScrolling: boolean) => setIsTocScrolling(isScrolling),
     }),
     [],
   );
