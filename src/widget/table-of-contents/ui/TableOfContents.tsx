@@ -29,10 +29,6 @@ export default function TableOfContents({
       behavior: 'smooth',
       block: 'start',
     });
-
-    setTimeout(() => {
-      setTocScrolling(false);
-    }, 800);
   };
 
   return (

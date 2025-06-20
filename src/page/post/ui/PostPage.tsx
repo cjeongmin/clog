@@ -34,7 +34,7 @@ export default async function PostPage({ post }: Readonly<PostPageProps>) {
         </div>
         <aside className='hidden xl:block'>
           <TableOfContents
-            className='sticky top-4 ml-8 max-h-[calc(100vh-2rem)] w-64 overflow-auto'
+            className='sticky top-4 ml-8 max-h-[calc(100vh-2rem)] w-48 overflow-auto'
             content={post.content}
           />
         </aside>

@@ -7,7 +7,7 @@ import { usePostAnchorActionsContext, usePostAnchorStateContext } from '@/entity
 export default function Markdown({ children }: PropsWithChildren) {
   const articleRef = useRef<HTMLDivElement>(null);
 
-  const { setActiveAnchor } = usePostAnchorActionsContext();
+  const { setActiveAnchor, setTocScrolling } = usePostAnchorActionsContext();
   const { isTocScrolling } = usePostAnchorStateContext();
 
   useEffect(() => {
@@ -48,10 +48,20 @@ export default function Markdown({ children }: PropsWithChildren) {
       if (h.textContent) h.id = `anchor-${index + 1}`;
     });
 
+    const handleUserScroll = () => {
+      if (isTocScrolling) {
+        setTocScrolling(false);
+      }
+    };
+    window.addEventListener('wheel', handleUserScroll, { passive: true });
+    window.addEventListener('touchmove', handleUserScroll, { passive: true });
+
     return () => {
       headings.forEach((h) => observer.unobserve(h));
+      window.removeEventListener('wheel', handleUserScroll);
+      window.removeEventListener('touchmove', handleUserScroll);
     };
-  }, [setActiveAnchor, isTocScrolling]);
+  }, [setActiveAnchor, isTocScrolling, setTocScrolling]);
 
   return (
     <article ref={articleRef} className='prose w-full !max-w-none break-words break-keep'>
