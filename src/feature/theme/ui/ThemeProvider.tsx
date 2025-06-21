@@ -20,7 +20,7 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
     setMounted(true);
 
     const storedTheme = localStorage.getItem('theme') as Theme | null;
-    if (storedTheme && storedTheme !== theme) {
+    if (storedTheme) {
       setTheme(storedTheme);
     }
 

@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useTheme } from './ThemeProvider';
+
+import { useTheme } from '@/feature/theme';
 
 const HIGHLIGHT_THEME_ID = 'highlight-js-theme';
 

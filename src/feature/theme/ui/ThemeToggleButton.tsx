@@ -1,6 +1,7 @@
 'use client';
 
 import { IoMoonOutline, IoSunnyOutline } from 'react-icons/io5';
+
 import { useTheme } from './ThemeProvider';
 
 export default function ThemeToggleButton() {

@@ -1,7 +1,8 @@
 'use client';
 
-import { useTheme } from '@/feature/theme';
 import { useCallback, useEffect, useRef, useState } from 'react';
+
+import { useTheme } from '@/feature/theme';
 
 export default function Giscus() {
   const ref = useRef<HTMLDivElement>(null);
