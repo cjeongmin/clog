@@ -48,7 +48,7 @@ PostItem.Title = function Title({ className }: { className?: string }) {
 
 PostItem.Date = function Date({ className }: { className?: string }) {
   const { post } = usePostItemContext();
-  return <span className={className ?? 'text-sm text-slate-400'}>{post.date}</span>;
+  return <span className={className ?? 'text-text-muted text-sm'}>{post.date}</span>;
 };
 
 PostItem.Tags = function Tags({ className }: { className?: string }) {
@@ -61,7 +61,7 @@ PostItem.Tags = function Tags({ className }: { className?: string }) {
   return (
     <div className={className ?? 'flex flex-wrap gap-1'}>
       {post.tags.map((tag) => (
-        <span key={tag} className='rounded bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600'>
+        <span key={tag} className='bg-surface-muted text-text-secondary rounded px-2 py-1 text-xs font-medium'>
           {tag}
         </span>
       ))}
@@ -76,7 +76,7 @@ PostItem.Description = function Description({ className }: { className?: string 
     return null;
   }
 
-  return <p className={className ?? 'text-slate-500'}>{post.description}</p>;
+  return <p className={className ?? 'text-text-secondary'}>{post.description}</p>;
 };
 
 export default PostItem;

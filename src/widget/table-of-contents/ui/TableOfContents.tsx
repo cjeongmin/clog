@@ -33,13 +33,13 @@ export default function TableOfContents({
 
   return (
     <nav className={`${className}`}>
-      <ul className='flex flex-col gap-1 text-sm text-slate-500'>
+      <ul className='text-text-muted flex flex-col gap-1 text-sm'>
         {tableOfContents.map((item) => (
           <li
             key={`${item.level}-${item.text}`}
             style={{ paddingLeft: `${(item.level - 1) * 1.5}rem` }}
-            className={`transition-all hover:font-medium hover:text-slate-800 ${
-              item.anchor === activeAnchor ? 'font-medium text-slate-800' : ''
+            className={`hover:text-text-primary transition-all hover:font-medium ${
+              item.anchor === activeAnchor ? 'text-text-primary font-medium' : ''
             }`}
           >
             <button className='text-left' onClick={() => handleTocClick(item.anchor)}>

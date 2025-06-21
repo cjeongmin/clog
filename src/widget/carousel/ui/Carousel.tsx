@@ -66,7 +66,11 @@ export function Carousel({ photos, autoSlideInterval = 5000 }: Readonly<Carousel
   }, [resetTimer, photos.length, autoSlideInterval]);
 
   if (!photos || photos.length === 0) {
-    return <div className='flex h-48 w-full items-center justify-center bg-gray-200 md:h-64'>이미지가 없습니다</div>;
+    return (
+      <div className='bg-surface-placeholder flex h-48 w-full items-center justify-center md:h-64'>
+        이미지가 없습니다
+      </div>
+    );
   }
 
   return (
@@ -97,9 +101,9 @@ export function Carousel({ photos, autoSlideInterval = 5000 }: Readonly<Carousel
           <button
             key={index}
             onClick={() => goToSlide(index)}
-            className={`h-2.5 w-2.5 rounded-full border border-gray-600/30 transition-all duration-300 ${
+            className={`border-border-secondary h-2.5 w-2.5 rounded-full border transition-all duration-300 ${
               currentIndex === index
-                ? 'scale-110 bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)] ring-1 ring-gray-800/20'
+                ? 'bg-surface-primary ring-ring scale-110 shadow-[0_0_8px_rgba(255,255,255,0.8)] ring-1'
                 : 'bg-white/60 shadow-sm hover:bg-white/80'
             }`}
             aria-label={`슬라이드 ${index + 1}로 이동`}

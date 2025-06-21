@@ -5,11 +5,86 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-background: #ffffff;
+  --color-foreground: #171717;
+  --color-overlay: rgba(0, 0, 0, 0.5);
+
+  --color-text-primary: #1e293b;
+  --color-text-secondary: #475569;
+  --color-text-muted: #94a3b8;
+  --color-text-on-accent: #ffffff;
+
+  --color-border-primary: #cbd5e1;
+  --color-border-secondary: rgba(71, 85, 105, 0.3);
+  --color-border-accent: #ffca6e;
+  --color-border-interactive-hover: #94a3b8;
+
+  --color-surface-primary: #ffffff;
+  --color-surface-secondary: #f7fafc;
+  --color-surface-muted: #f1f5f9;
+  --color-surface-placeholder: #e5e7eb;
+
+  --color-interactive-primary-bg: #64748b;
+  --color-interactive-primary-bg-hover: #475569;
+  --color-interactive-secondary-bg: #e5e7eb;
+  --color-interactive-secondary-bg-hover: #d1d5db;
+
+  --color-ring: rgba(30, 41, 59, 0.2);
+
+  --color-code-bg: #f7fafc;
+  --color-line-highlight-bg: #fef3cd;
+  --color-line-number-text: #24292e;
+  --color-inserted-line-bg: rgba(67, 160, 71, 0.15);
+  --color-deleted-line-bg: rgba(229, 57, 53, 0.15);
+}
+
+html.dark {
+  --color-background: #18181b;
+  --color-foreground: #e4e4e7;
+  --color-overlay: rgba(0, 0, 0, 0.7);
+
+  --color-text-primary: #f4f4f5;
+  --color-text-secondary: #a1a1aa;
+  --color-text-muted: #71717a;
+  --color-text-on-accent: #ffffff;
+
+  --color-border-primary: #3f3f46;
+  --color-border-secondary: rgba(161, 161, 170, 0.3);
+  --color-border-accent: #ffca6e;
+  --color-border-interactive-hover: #a1a1aa;
+
+  --color-surface-primary: #27272a;
+  --color-surface-secondary: #1f1f22;
+  --color-surface-muted: #3f3f46;
+  --color-surface-placeholder: #3f3f46;
+
+  --color-interactive-primary-bg: #52525b;
+  --color-interactive-primary-bg-hover: #71717a;
+  --color-interactive-secondary-bg: #3f3f46;
+  --color-interactive-secondary-bg-hover: #52525b;
+
+  --color-ring: rgba(228, 228, 231, 0.2);
+
+  --color-code-bg: #27272a;
+  --color-line-highlight-bg: #443922;
+  --color-line-number-text: #71717a;
+  --color-inserted-line-bg: rgba(67, 208, 71, 0.15);
+  --color-deleted-line-bg: rgba(229, 87, 53, 0.15);
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
+  color: var(--color-foreground);
+  background: var(--color-background);
+  transition:
+    color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  transition:
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    fill 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    stroke 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }

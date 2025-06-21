@@ -14,9 +14,9 @@ export default function PostCard({ post }: Readonly<{ post: Post }>) {
     >
       <PostItem post={post}>
         <div className='flex min-h-[3rem] flex-col gap-1'>
-          <PostItem.Title className='break-words break-keep text-xl font-semibold text-slate-800' />
+          <PostItem.Title className='text-text-primary break-words break-keep text-xl font-semibold' />
           <PostItem.Date />
-          <PostItem.Description className='break-words break-keep text-slate-500' />
+          <PostItem.Description className='text-text-secondary break-words break-keep' />
           <PostItem.Tags />
         </div>
       </PostItem>

@@ -1,12 +1,12 @@
 .prose code {
-  background-color: #f7fafc;
+  background-color: var(--color-code-bg);
   padding: 0.2rem 0.4rem;
   border-radius: 0.25rem;
   font-family: 'Menlo', 'Hack';
 }
 
 .prose pre {
-  background-color: #f7fafc;
+  background-color: var(--color-code-bg);
   padding: 1rem;
   border-radius: 0.5rem;
   overflow-x: auto;
@@ -28,16 +28,16 @@ span.code-line {
 }
 
 .code-line.inserted {
-  background-color: var(--color-inserted-line);
+  background-color: var(--color-inserted-line-bg);
 }
 
 .code-line.deleted {
-  background-color: var(--color-deleted-line);
+  background-color: var(--color-deleted-line-bg);
 }
 
 .highlighted-code-line {
-  background-color: #fef3cd;
-  border-left: 4px solid #ffca6e;
+  background-color: var(--color-line-highlight-bg);
+  border-left: 4px solid var(--color-border-accent);
   padding-left: 4px;
   margin-left: -8px;
 }
@@ -48,7 +48,7 @@ span.code-line {
   margin-left: -8px;
   margin-right: 16px;
   width: 1rem;
-  color: var(--color-text-weak);
+  color: var(--color-line-number-text);
   text-align: right;
 
   display: inline-block;
@@ -56,7 +56,7 @@ span.code-line {
 
 article img {
   margin: 4px;
-  border: 0px solid rgb(229, 231, 235);
+  border: 0px solid var(--color-border-primary);
   border-radius: 6px;
   max-height: 50dvh;
 }
