@@ -1,0 +1,325 @@
+---
+title: 이진 트리 기반 레이아웃 시스템 구현해보기
+date: 2025. 07. 12
+description: 토스 테크 블로그 내용 무작정 따라하기
+---
+
+## 시작하게 된 계기
+
+최근 토스 테크 블로그에서 [자료구조를 활용한 복잡한 프론트엔드 컴포넌트 제작하기](https://toss.tech/article/frontend-tree-structure)라는 글을 읽게 되었다. 토스증권 PC의 종목 상세 페이지에서 사용자가 패널을 자유롭게 분할하고 크기를 조절할 수 있는 레이아웃 시스템을 **이진 트리 자료구조**로 구현했다는 내용이었다.
+
+라이브러리 대신 직접 구현을 선택한 이유부터 시작해서, 복잡한 레이아웃 문제를 자료구조적 사고로 해결한 과정이 인상적이었다. 특히 "레이아웃을 데이터로 표현하기" 부분에서 이진 트리로 중첩된 분할 구조를 모델링하는 접근법이 매우 흥미로웠다.
+
+그래서 이 글을 읽고 나서 생각했다. **"나도 한번 만들어보자!"**
+
+## 토스 접근법의 핵심: 이진 트리로 모델링
+
+토스 테크 블로그에서 강조한 핵심은 **패널의 분할을 이진 트리로 모델링**하는 것이었다. 각 분할은 두 개의 자식 영역을 만들고, 이 자식 영역은 다시 분할되거나 실제 패널 내용이 될 수 있다. 이는 완전히 이진 트리 구조다.
+
+```plain
+        분할(세로)
+       /         \
+   패널A      분할(가로)
+             /         \
+        패널B          패널C
+```
+
+이 구조의 장점은 다음과 같다.
+
+- **무한 중첩**: 제한 없이 분할 가능
+- **명확한 구조**: 각 노드의 역할이 명확
+- **효율적인 탐색**: 특정 패널을 찾거나 수정하기 쉬움
+- **재귀적 처리**: 동일한 로직으로 전체 구조 처리
+
+## 구현 목표와 설계
+
+토스 글에서 언급된 요구사항들을 참고해서 다음과 같은 기능을 구현하기로 했다.
+
+1. **패널 분할**: 세로/가로 분할 지원
+2. **패널 삭제**: 트리 구조 유지하면서 안전한 삭제
+3. **크기 조절**: 드래그로 패널 크기 실시간 조절
+4. **컨텍스트 메뉴**: 우클릭으로 패널 조작
+5. **패널 선택**: 현재 활성 패널 표시
+
+## 자료구조 설계: 타입 정의
+
+먼저 이진 트리 구조를 TypeScript로 정의했다. 토스 글에서 언급한 개념들을 참고했다.
+
+```typescript
+import { ReactNode } from 'react';
+
+export interface PanelContent {
+  id: string;
+  title?: string;
+  component: ReactNode;
+}
+
+export interface LayoutNode {
+  id: string;
+  direction: 'horizontal' | 'vertical';
+  left: {
+    ratio: number;
+    node: LayoutNode | PanelContent;
+  };
+  right: {
+    ratio: number;
+    node: LayoutNode | PanelContent;
+  };
+}
+
+export interface LayoutState {
+  root: LayoutNode | PanelContent;
+  selectedPanelId?: string;
+}
+```
+
+`LayoutNode`는 분할을 나타내는 내부 노드이고, `PanelContent`는 실제 패널 내용을 나타내는 리프 노드다. 각 노드는 `left`와 `right` 두 개의 자식을 가진다.
+
+## 상태 관리: React Context + useReducer
+
+Context API와 useReducer를 조합하여 레이아웃의 상태 관리를 구현했다.
+
+```typescript
+function layoutReducer(state: LayoutState, action: LayoutAction): LayoutState {
+  switch (action.type) {
+    case 'SPLIT_PANEL':
+      return {
+        ...state,
+        root: splitPanel(
+          action.panelId,
+          action.direction,
+          action.newPanelComponent || <EmptyPanel />,
+          state.root
+        ),
+      };
+    case 'UPDATE_RATIO':
+      return {
+        ...state,
+        root: updateRatio(action.nodeId, action.leftRatio, action.rightRatio, state.root),
+      };
+    case 'REMOVE_PANEL':
+      return {
+        ...state,
+        root: removePanel(action.panelId, state.root),
+      };
+    default:
+      return state;
+  }
+}
+```
+
+## 핵심 로직 구현
+
+### 패널 분할 로직
+
+패널을 분할할 때는 기존 패널을 새로운 `LayoutNode`로 교체하고, 기존 패널과 새 패널을 각각 자식으로 배치한다.
+
+```typescript
+function splitPanel(
+  panelId: string,
+  direction: 'horizontal' | 'vertical',
+  newPanelComponent: ReactNode,
+  root: LayoutNode | PanelContent,
+): LayoutNode | PanelContent {
+  if (root.id === panelId && isPanelContent(root)) {
+    const newPanel: PanelContent = {
+      id: generateId(),
+      component: newPanelComponent || <EmptyPanel />,
+      title: '빈 패널',
+    };
+
+    return {
+      id: generateId(),
+      direction,
+      left: {
+        ratio: 0.5,
+        node: root,
+      },
+      right: {
+        ratio: 0.5,
+        node: newPanel,
+      },
+    };
+  }
+
+  if (isLayoutNode(root)) {
+    return {
+      ...root,
+      left: {
+        ...root.left,
+        node: splitPanel(panelId, direction, newPanelComponent, root.left.node),
+      },
+      right: {
+        ...root.right,
+        node: splitPanel(panelId, direction, newPanelComponent, root.right.node),
+      },
+    };
+  }
+
+  return root;
+}
+```
+
+### 패널 삭제 로직
+
+삭제는 분할보다 복잡하다. 이진 트리에서 노드를 삭제할 때 트리 구조를 유지해야 하기 때문이다.
+
+핵심은 **형제 노드 승격**이다. 하나의 자식이 삭제되면 남은 형제 노드가 부모의 자리를 차지한다.
+
+```typescript
+function removePanel(panelId: string, root: LayoutNode | PanelContent): LayoutNode | PanelContent {
+  if (root.id === panelId && isPanelContent(root)) {
+    return {
+      id: generateId(),
+      component: <EmptyPanel />,
+      title: '빈 패널',
+    };
+  }
+
+  if (isLayoutNode(root)) {
+    if (root.left.node.id === panelId) {
+      return root.right.node;
+    }
+    if (root.right.node.id === panelId) {
+      return root.left.node;
+    }
+
+    return {
+      ...root,
+      left: {
+        ...root.left,
+        node: removePanel(panelId, root.left.node),
+      },
+      right: {
+        ...root.right,
+        node: removePanel(panelId, root.right.node),
+      },
+    };
+  }
+
+  return root;
+}
+```
+
+### 크기 조절 로직
+
+패널 크기 조절은 각 분할 노드의 비율을 조정하는 것이다.
+
+```typescript
+function updateRatio(
+  nodeId: string,
+  leftRatio: number,
+  rightRatio: number,
+  root: LayoutNode | PanelContent,
+): LayoutNode | PanelContent {
+  if (isLayoutNode(root) && root.id === nodeId) {
+    return {
+      ...root,
+      left: { ...root.left, ratio: leftRatio },
+      right: { ...root.right, ratio: rightRatio },
+    };
+  }
+
+  if (isLayoutNode(root)) {
+    return {
+      ...root,
+      left: {
+        ...root.left,
+        node: updateRatio(nodeId, leftRatio, rightRatio, root.left.node),
+      },
+      right: {
+        ...root.right,
+        node: updateRatio(nodeId, leftRatio, rightRatio, root.right.node),
+      },
+    };
+  }
+
+  return root;
+}
+```
+
+## 렌더링: 재귀적 컴포넌트 구조
+
+이 컴포넌트는 `LayoutNode`와 `PanelContent`를 재귀적으로 렌더링한다.
+
+핵심은 **재귀적 렌더링**이다. 트리 구조를 따라 재귀적으로 컴포넌트를 렌더링한다.
+
+```typescript
+function LayoutPanelContent({ node }: { node: LayoutNode | PanelContent }) {
+  if (isPanelContent(node)) {
+    return (
+      <div className="relative h-full w-full">
+        <div
+          className={`h-full w-full cursor-pointer border-2 transition-colors ${
+            isSelected
+              ? "border-blue-500 bg-blue-50"
+              : "border-gray-200 hover:border-gray-300"
+          }`}
+          onClick={() => handlePanelSelect(node.id)}
+        >
+          {node.component}
+        </div>
+      </div>
+    );
+  }
+
+  if (isLayoutNode(node)) {
+    return (
+      <div className={`flex h-full w-full ${
+        node.direction === "horizontal" ? "flex-row" : "flex-col"
+      }`}>
+        <div style={{ flex: node.left.ratio }}>
+          <LayoutPanelContent node={node.left.node} />
+        </div>
+
+        <div
+          onMouseDown={(e) => handleResize(e, node.id)}
+          className="cursor-col-resize bg-gray-200 hover:bg-blue-400"
+        />
+
+        <div style={{ flex: node.right.ratio }}>
+          <LayoutPanelContent node={node.right.node} />
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+}
+```
+
+## 자료구조적 사고의 중요성
+
+토스 글에서 강조한 대로, 복잡한 UI 문제를 적절한 자료구조로 모델링하면 구현이 훨씬 명확해진다. 패널 분할을 이진 트리로 생각하고 나니 모든 로직이 자연스럽게 따라왔다.
+
+## 재귀적 처리의 효율성
+
+이진 트리 구조 덕분에 모든 연산(분할, 삭제, 크기 조절, 렌더링)을 재귀적으로 처리할 수 있었다. 하나의 패턴으로 모든 복잡성을 해결할 수 있다는 것이 인상적이었다.
+
+## 성능
+
+이러한 구조를 가지고 있어서 불필요한 리렌더링이 발생한다. 예를 들어 2개의 패널이 있을 때, 하나의 패널을 수정하면 전체 레이아웃이 리렌더링된다. 반대편의 패널을 변경되지 않았음에도 분명 일어난다.
+
+특히 패널에 들어가는 컴포넌트가 많아질수록, 복잡할수록 성능 저하가 우려된다. 필요하다면 최적화를 추가해야겠다는 점을 충분히 인지해야할 것 같다고 생각이 들었다.
+
+## 결론
+
+<img alt='conclusion' src='/post/implementing-binary-tree-layout-inspired-by-toss/conclusion.gif' />
+
+토스 테크 블로그의 글을 읽고 직접 구현해본 결과, **자료구조적 사고가 복잡한 프론트엔드 문제를 해결하는 데 얼마나 강력한지** 체감할 수 있었다.
+
+토스에서 강조한 핵심 메시지는 다음과 같다.
+
+> 복잡한 UI 컴포넌트를 개발할 때는 먼저 '이 문제를 어떤 자료구조로 모델링할 수 있을까?'라는 질문부터 시작해보자.
+
+이 조언을 따라 이진 트리로 레이아웃을 모델링하고 나니, 모든 구현이 자연스럽게 따라왔다. 복잡해 보이는 UI 인터랙션도 명확한 자료구조 위에서는 단순한 트리 연산으로 해결될 수 있다는 것을 직접 경험했다.
+
+라이브러리 없이 처음부터 구현하는 것이 처음에는 부담스러워 보였지만, 적절한 자료구조를 선택하고 나니 오히려 더 명확하고 제어 가능한 솔루션을 만들 수 있었다. 토스 팀이 왜 라이브러리 대신 직접 구현을 선택했는지 이제 이해할 수 있다.
+
+앞으로도 복잡한 UI 문제를 마주했을 때는 "어떤 자료구조로 모델링할 수 있을까?"라는 질문부터 시작해보려고 한다. 자료구조와 알고리즘이 프론트엔드 개발에서도 이렇게 중요한 역할을 할 수 있다는 것을 다시 한 번 깨달았다.
+
+---
+
+## 참고자료
+
+- [토스 테크 블로그 - 자료구조를 활용한 복잡한 프론트엔드 컴포넌트 제작하기](https://toss.tech/article/frontend-tree-structure)
