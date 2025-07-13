@@ -10,11 +10,11 @@ export default function Alert() {
 
   return (
     <div
-      className='bg-overlay text-text-secondary fixed inset-0 z-50 flex items-center justify-center sm:items-start sm:p-10'
+      className='fixed inset-0 z-50 flex items-center justify-center bg-overlay text-text-secondary sm:items-start sm:p-10'
       onClick={() => hide()}
     >
       <div
-        className='bg-surface-primary flex max-h-fit min-h-36 w-80 flex-col items-center justify-center gap-4 overflow-auto rounded-md p-4 shadow-lg'
+        className='flex max-h-fit min-h-36 w-80 flex-col items-center justify-center gap-4 overflow-auto rounded-md bg-surface-primary p-4 shadow-lg'
         onClick={(event) => event.stopPropagation()}
       >
         <div className='flex w-full flex-1 items-center justify-center'>
@@ -23,7 +23,7 @@ export default function Alert() {
         <div className='flex w-full flex-row gap-2 font-medium'>
           {alert.type === 'confirm' && (
             <button
-              className='bg-interactive-secondary-bg sm:hover:bg-interactive-secondary-bg-hover flex-1 rounded-md py-2 sm:transition-all'
+              className='flex-1 rounded-md bg-interactive-secondary-bg py-2 sm:transition-all sm:hover:bg-interactive-secondary-bg-hover'
               onClick={() => {
                 alert.cancel?.();
                 hide();
@@ -33,7 +33,7 @@ export default function Alert() {
             </button>
           )}
           <button
-            className='bg-interactive-primary-bg text-text-on-accent sm:hover:bg-interactive-primary-bg-hover flex-1 rounded-md py-2 sm:transition-all'
+            className='flex-1 rounded-md bg-interactive-primary-bg py-2 text-text-on-accent sm:transition-all sm:hover:bg-interactive-primary-bg-hover'
             onClick={() => {
               alert.confirm?.();
               hide();

@@ -5,6 +5,12 @@
 @tailwind utilities;
 
 :root {
+  --duration-fast: 200ms;
+  --duration-medium: 300ms;
+  --duration-slow: 500ms;
+  --easing-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --easing-out: ease-out;
+
   --color-background: #ffffff;
   --color-foreground: #171717;
   --color-overlay: rgba(0, 0, 0, 0.5);
@@ -76,17 +82,17 @@ body {
   color: var(--color-foreground);
   background: var(--color-background);
   transition:
-    color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color var(--duration-medium) var(--easing-in-out),
+    background-color var(--duration-medium) var(--easing-in-out);
 }
 
 * {
   transition:
-    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    fill 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    stroke 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color var(--duration-medium) var(--easing-in-out),
+    border-color var(--duration-medium) var(--easing-in-out),
+    color var(--duration-medium) var(--easing-in-out),
+    fill var(--duration-medium) var(--easing-in-out),
+    stroke var(--duration-medium) var(--easing-in-out);
 }
 
 ::selection {

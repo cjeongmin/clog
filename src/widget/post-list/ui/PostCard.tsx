@@ -8,7 +8,7 @@ import PostItem from '@/entity/post/ui/PostItem';
 export default function PostCard({ post }: Readonly<{ post: Post }>) {
   return (
     <Link
-      className='transition-all duration-200 hover:scale-[1.005]'
+      className='transition-all duration-fast hover:scale-[1.005]'
       key={post.title}
       href={`/posts/${encodeURIComponent(post.fileName)}`}
     >

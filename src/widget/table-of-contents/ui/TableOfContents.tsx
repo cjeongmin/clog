@@ -2,6 +2,7 @@
 
 import { Post } from '@/entity/post';
 import { usePostAnchorActionsContext, usePostAnchorStateContext } from '@/entity/post-anchor';
+import { useScrollStatus } from '@/feature/scroll-observer';
 
 import { getTableOfContents } from '../model/table-of-contents.util';
 
@@ -18,6 +19,8 @@ export default function TableOfContents({
   const { activeAnchor } = usePostAnchorStateContext();
   const { setActiveAnchor, setTocScrolling } = usePostAnchorActionsContext();
 
+  const { showHeader } = useScrollStatus();
+
   const handleTocClick = (anchor: string) => {
     const targetElement = document.getElementById(anchor);
     if (!targetElement) return;
@@ -32,14 +35,16 @@ export default function TableOfContents({
   };
 
   return (
-    <nav className={`${className}`}>
-      <ul className='text-text-muted flex flex-col gap-1 text-sm'>
+    <nav
+      className={`${className} ${showHeader ? 'translate-y-0' : 'translate-y-header-hide'} duration-fast transition-transform ease-in-out`}
+    >
+      <ul className='flex flex-col gap-1 text-sm text-text-muted'>
         {tableOfContents.map((item) => (
           <li
             key={`${item.level}-${item.text}`}
             style={{ paddingLeft: `${(item.level - 1) * 1.5}rem` }}
-            className={`hover:text-text-primary transition-all hover:font-medium ${
-              item.anchor === activeAnchor ? 'text-text-primary font-medium' : ''
+            className={`duration-fast transition-all hover:font-medium hover:text-text-primary ${
+              item.anchor === activeAnchor ? 'font-medium text-text-primary' : ''
             }`}
           >
             <button className='text-left' onClick={() => handleTocClick(item.anchor)}>

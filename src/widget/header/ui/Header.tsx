@@ -1,11 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 
 import { Post } from '@/entity/post';
 import { CommandPalette } from '@/feature/command-palette';
+import { useScrollStatus } from '@/feature/scroll-observer';
 import { ThemeToggleButton, useTheme } from '@/feature/theme';
 
 interface HeaderProps {
@@ -14,47 +14,13 @@ interface HeaderProps {
 
 export default function Header({ posts }: Readonly<HeaderProps>) {
   const { theme } = useTheme();
-
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const lastScrollYRef = useRef(0);
-  const [showHeader, setShowHeader] = useState(true);
+  const { isScrolled, progress, showHeader } = useScrollStatus();
 
   const pathname = usePathname();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-
-      const scrollingDown = scrollTop > lastScrollYRef.current;
-      const scrollingUp = scrollTop < lastScrollYRef.current;
-
-      setIsScrolled(scrollTop > 16);
-
-      if (scrollTop <= 16) {
-        setShowHeader(true);
-      } else if (scrollingUp) {
-        setShowHeader(true);
-      } else if (scrollingDown && scrollTop > 100) {
-        setShowHeader(false);
-      }
-
-      lastScrollYRef.current = scrollTop;
-
-      const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const calculatedProgress = documentHeight > 0 ? (scrollTop / documentHeight) * 100 : 0;
-      setProgress(Math.min(100, Math.max(0, calculatedProgress)));
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
   return (
     <header
-      className={`sticky top-0 z-50 h-fit w-full px-4 py-4 backdrop-blur ${!showHeader ? '-translate-y-[60px]' : 'translate-y-0'} transition-transform duration-200 ease-in-out`}
+      className={`sticky top-0 z-50 h-fit w-full px-4 py-4 backdrop-blur ${!showHeader ? 'translate-y-header-hide' : 'translate-y-0'} duration-fast transition-transform ease-in-out`}
     >
       <div className='mx-auto h-full max-w-3xl'>
         <div className='flex h-full flex-row items-center justify-between'>

@@ -48,6 +48,14 @@ export default {
       fontFamily: {
         sans: ['Pretendard Variable', 'sans-serif'],
       },
+      transitionDuration: {
+        'fast': '200ms',
+        'medium': '300ms',
+        'slow': '500ms',
+      },
+      translate: {
+        'header-hide': '-60px',
+      },
       typography: {
         DEFAULT: {
           css: {

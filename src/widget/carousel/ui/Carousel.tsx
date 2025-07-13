@@ -76,7 +76,7 @@ export function Carousel({ photos, autoSlideInterval = 5000 }: Readonly<Carousel
   return (
     <div className='relative m-1 h-48 w-full overflow-hidden rounded-md border md:h-64'>
       <div
-        className='flex h-full w-full transition-transform duration-500 ease-out'
+        className='flex h-full w-full transition-transform duration-slow ease-out'
         style={{ transform: `translateX(-${currentIndex * 100}%)` }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
@@ -101,7 +101,7 @@ export function Carousel({ photos, autoSlideInterval = 5000 }: Readonly<Carousel
           <button
             key={index}
             onClick={() => goToSlide(index)}
-            className={`border-border-secondary h-2.5 w-2.5 rounded-full border transition-all duration-300 ${
+            className={`border-border-secondary h-2.5 w-2.5 rounded-full border transition-all duration-medium ${
               currentIndex === index
                 ? 'bg-surface-primary ring-ring scale-110 shadow-[0_0_8px_rgba(255,255,255,0.8)] ring-1'
                 : 'bg-white/60 shadow-sm hover:bg-white/80'
