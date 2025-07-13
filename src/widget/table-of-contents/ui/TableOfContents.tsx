@@ -3,12 +3,15 @@
 import { Post } from '@/entity/post';
 import { usePostAnchorActionsContext, usePostAnchorStateContext } from '@/entity/post-anchor';
 import { useScrollStatus } from '@/feature/scroll-observer';
+import { SCROLL_CONFIG } from '@/shared/constants/animation';
 
 import { getTableOfContents } from '../model/table-of-contents.util';
 
 interface TableOfContentsProps {
   content: Post['content'];
 }
+
+const ADDITIONAL_HEADER_OFFSET = 16;
 
 export default function TableOfContents({
   content,
@@ -28,9 +31,18 @@ export default function TableOfContents({
     setTocScrolling(true);
     setActiveAnchor(anchor);
 
-    targetElement.scrollIntoView({
+    const currentScrollY = window.scrollY;
+    const targetOffsetTop = targetElement.offsetTop;
+    const isScrollingDown = targetOffsetTop > currentScrollY;
+
+    const headerOffset = isScrollingDown
+      ? ADDITIONAL_HEADER_OFFSET
+      : SCROLL_CONFIG.HEADER_OFFSET + ADDITIONAL_HEADER_OFFSET;
+    const targetPosition = targetOffsetTop - headerOffset;
+
+    window.scrollTo({
+      top: targetPosition,
       behavior: 'smooth',
-      block: 'start',
     });
   };
 
