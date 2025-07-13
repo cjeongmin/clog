@@ -21,20 +21,20 @@ export default async function PostPage({ post }: Readonly<PostPageProps>) {
     <PostAnchorProvider>
       <section className='flex w-full flex-row'>
         <div className='w-full xl:min-w-[768px]'>
-          <header className='text-text-primary flex flex-col gap-2'>
+          <header className='flex flex-col gap-2 text-text-primary'>
             <h1 className='text-3xl font-bold'>{post.title}</h1>
-            <p className='text-text-muted text-sm'>{post.date}</p>
+            <p className='text-sm text-text-muted'>{post.date}</p>
           </header>
-          <hr className='border-border-primary my-8 w-full border-t-[0.5px]' />
+          <hr className='my-8 w-full border-t-[0.5px] border-border-primary' />
           <Markdown>
             <MDXPost />
           </Markdown>
-          <hr className='border-border-primary my-8 w-full border-t-[0.5px]' />
+          <hr className='my-8 w-full border-t-[0.5px] border-border-primary' />
           <Giscus />
         </div>
         <aside className='hidden xl:block'>
           <TableOfContents
-            className='sticky top-4 ml-8 max-h-[calc(100vh-2rem)] w-48 overflow-auto'
+            className='sticky top-20 ml-8 max-h-[calc(100vh-2rem)] w-48 overflow-auto'
             content={post.content}
           />
         </aside>
