@@ -1,7 +1,7 @@
 export const dynamic = 'force-static';
 
 import { Metadata, ResolvingMetadata } from 'next';
-import './post.css';
+import '@/app/post.css';
 
 import { getPost } from '@/feature/get-post';
 import { PostPage } from '@/page/post';
