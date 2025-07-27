@@ -11,7 +11,7 @@ export default async function AboutPage() {
         <div className='prose -my-4 w-full !max-w-none break-words break-keep'>
           <About />
         </div>
-        <div className='flex flex-row items-start gap-16'>
+        <div className='flex flex-row items-start gap-4 md:gap-16'>
           <div className='flex flex-col gap-2 break-words break-keep'>
             <ul className='list-disc space-y-2 pl-4'>
               <li>
