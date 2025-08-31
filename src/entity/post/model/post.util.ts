@@ -12,6 +12,7 @@ export const parsePostFile = (filePath: string): Post => {
     content,
     date: data.date,
     description: data.description,
+    draft: data.draft ?? false,
     fileName: (filePath.split('/').pop() ?? '').replace(/\.[^/.]+$/, ''),
     tags: data.tags,
     thumbnail: data.thumbnail,
