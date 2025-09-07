@@ -2,6 +2,7 @@
   "homepage": "https://cjeongmin.github.io/",
   "name": "clog",
   "version": "0.1.0",
+  "type": "module",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -10,7 +11,8 @@
     "lint": "next lint",
     "format": "prettier --write .",
     "predeploy": "next build",
-    "deploy": "touch out/.nojekyll && gh-pages -d out --dotfiles --branch main --repo https://github.com/cjeongmin/cjeongmin.github.io.git"
+    "deploy": "touch out/.nojekyll && gh-pages -d out --dotfiles --branch main --repo https://github.com/cjeongmin/cjeongmin.github.io.git",
+    "new:post": "node scripts/new-post.js"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.0",
