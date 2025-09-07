@@ -48,18 +48,18 @@ export default function TableOfContents({
 
   return (
     <nav
-      className={`${className} ${showHeader ? 'translate-y-0' : 'translate-y-header-hide'} duration-fast transition-transform ease-in-out`}
+      className={`${className} ${showHeader ? 'translate-y-0' : 'translate-y-header-hide'} transition-transform duration-fast ease-in-out`}
     >
       <ul className='flex flex-col gap-1 text-sm text-text-muted'>
         {tableOfContents.map((item) => (
           <li
             key={`${item.level}-${item.text}`}
             style={{ paddingLeft: `${(item.level - 1) * 1.5}rem` }}
-            className={`duration-fast transition-all hover:font-medium hover:text-text-primary ${
+            className={`transition-all duration-fast hover:font-medium hover:text-text-primary ${
               item.anchor === activeAnchor ? 'font-medium text-text-primary' : ''
             }`}
           >
-            <button className='text-left' onClick={() => handleTocClick(item.anchor)}>
+            <button className='w-full break-words break-keep text-left' onClick={() => handleTocClick(item.anchor)}>
               {item.text}
             </button>
           </li>
