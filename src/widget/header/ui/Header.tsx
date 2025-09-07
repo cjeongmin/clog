@@ -20,7 +20,7 @@ export default function Header({ posts }: Readonly<HeaderProps>) {
 
   return (
     <header
-      className={`sticky top-0 z-40 h-fit w-full px-4 py-4 backdrop-blur ${!showHeader ? 'translate-y-header-hide' : 'translate-y-0'} transition-transform duration-fast ease-in-out`}
+      className={`sticky top-0 z-40 h-fit w-full px-4 py-4 backdrop-blur ${pathname.startsWith('/posts') && !showHeader ? 'translate-y-header-hide' : 'translate-y-0'} transition-transform duration-fast ease-in-out`}
     >
       <div className='mx-auto h-full max-w-3xl'>
         <div className='flex h-full flex-row items-center justify-between'>
