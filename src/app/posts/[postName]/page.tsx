@@ -1,6 +1,6 @@
 export const dynamic = 'force-static';
 
-import { Metadata, ResolvingMetadata } from 'next';
+import { Metadata } from 'next';
 import '@/app/post.css';
 
 import { getPost } from '@/feature/get-post';
@@ -19,15 +19,19 @@ interface Props {
   params: Promise<{ postName: string }>;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function generateMetadata({ params }: Props, parent: ResolvingMetadata): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const postName = (await params).postName;
   const { title } = getPost(postName);
+  const canonicalPath = `/posts/${postName}/` as const;
 
   return {
     title,
+    alternates: {
+      canonical: canonicalPath,
+    },
     openGraph: {
       title,
+      url: canonicalPath,
     },
   };
 }

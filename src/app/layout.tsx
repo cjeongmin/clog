@@ -5,22 +5,27 @@ import { Alert, AlertProvider } from '@/feature/alert';
 import { getPosts } from '@/feature/get-posts';
 import { GoogleAnalytics } from '@/feature/google-analytics';
 import { HighlightJSTheme, ThemeProvider, ThemeScript } from '@/feature/theme';
+import { SITE_URL, toSiteUrl } from '@/shared/constants/site';
 import { Header } from '@/widget/header';
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
     template: '%s | cjeongmin',
     default: 'cjeongmin',
   },
   description: 'A blog by cjeongmin',
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
     title: 'cjeongmin',
     description: 'A blog by cjeongmin',
-    url: 'https://cjeongmin.github.io',
+    url: '/',
     siteName: 'cjeongmin',
     images: [
       {
-        url: 'https://cjeongmin.github.io/favicon.ico',
+        url: toSiteUrl('/favicon.ico'),
         width: 1200,
         height: 630,
         alt: 'cjeongmin blog',
