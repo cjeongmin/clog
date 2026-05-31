@@ -24,7 +24,7 @@ export default function Header({ posts }: Readonly<HeaderProps>) {
     >
       <div className='mx-auto h-full max-w-3xl'>
         <div className='flex h-full flex-row items-center justify-between'>
-          <Link href='/' className='font-["Hack"] text-xl font-bold text-text-primary'>
+          <Link href='/' className='font-["JetBrains_Mono"] text-xl font-bold text-text-primary'>
             @cjeongmin
           </Link>
           <nav className='mt-1 flex flex-row items-center gap-4'>
